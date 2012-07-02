@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>Epona</groupId>
-  <artifactId>Epona</artifactId>
+  <groupId>epona</groupId>
+  <artifactId>epona</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <repositories>
     <repository>
@@ -106,5 +106,31 @@
       <artifactId>async-http-client</artifactId>
       <version>1.7.4</version>
     </dependency>
+    <dependency>
+      <groupId>com.sun</groupId>
+      <artifactId>source</artifactId>
+      <version>1.6</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/tools.jar</systemPath>
+    </dependency>
   </dependencies>
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+    <resources>
+      <resource>
+        <directory>resources</directory>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.5.1</version>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
