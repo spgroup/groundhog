@@ -75,8 +75,8 @@ public class Extractor {
 	 * Recursively extracts an hierarchy of folders to a given destination folder.
 	 * The destination will be populated by the same hierarchy of the target, but will have the
 	 * originally archived files extracted.
-	 * @param target - target folder
-	 * @param destinationFolder - destination folder
+	 * @param target target folder
+	 * @param destinationFolder destination folder
 	 */
 	public void recursiveExtract(File target, File destinationFolder) {
 		recursiveExtract(target, target, destinationFolder);
@@ -85,8 +85,8 @@ public class Extractor {
 	/**
 	 * Extracts a given file to a given destination folder.
 	 * Logs a warning if it is unable to extract due a unknown compression format. 
-	 * @param file - target file
-	 * @param destinationFolder - destination folder
+	 * @param file target file
+	 * @param destinationFolder destination folder
 	 */
 	public void extractFile(File file, File destinationFolder) {
 		if (file.isFile()) {

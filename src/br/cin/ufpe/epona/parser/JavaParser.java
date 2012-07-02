@@ -32,7 +32,7 @@ public class JavaParser {
 	/**
 	 * Constructs a new JavaParser which will extract metrics of all Java source files inside
 	 * the given folder hierarchy.
-	 * @param folder - a source folder
+	 * @param folder a source folder
 	 */
 	public JavaParser(File folder) {
 		this.folder = folder;
@@ -81,7 +81,7 @@ public class JavaParser {
 	/**
 	 * Parses all Java source files inside this.folder and returns extracted metrics.
 	 * @return a map of metrics to another map of metric value and count.
-	 * @throws IOException - if something wrong happens when closing source file manager
+	 * @throws IOException if something wrong happens when closing source file manager
 	 */
 	public HashMap<String, HashMap<String, MutableInt>> parse() throws IOException {
 		recursiveSearch(folder);
@@ -94,7 +94,7 @@ public class JavaParser {
 	
 	/**
 	 * Pretty print metrics. 
-	 * @param counters - parse method result 
+	 * @param counters parse method result 
 	 */
 	public static void printResult(HashMap<String, HashMap<String, MutableInt>> counters) {
 		for (String metric : counters.keySet()) {
