@@ -37,14 +37,17 @@ public class SearchSourceForge implements ForgeSearch {
 			build();
 		Document doc = Jsoup.parse(Requests.getInstance().get("http://sourceforge.net/directory/language:java/?" + paramsStr));
 		for (Element li : doc.select(".projects > li")) {
-			String projectName = li.select("[itemprop=url]").first().attr("href").split("/")[2];
-			String description = li.select("[itemprop=description]").first().text();
-			String iconURL = li.select("[itemprop=image]").first().attr("src");
-			if (iconURL.startsWith("//")) {
-				iconURL = "http:" + iconURL;
+			Element a = li.select("[itemprop=url]").first();
+			if (a != null) {
+				String projectName = a.attr("href").split("/")[2];
+				String description = li.select("[itemprop=description]").first().text();
+				String iconURL = li.select("[itemprop=image]").first().attr("src");
+				if (iconURL.startsWith("//")) {
+					iconURL = "http:" + iconURL;
+				}
+				ForgeProject forgeProject = new ForgeProject(projectName, description, iconURL);
+				projects.add(forgeProject);
 			}
-			ForgeProject forgeProject = new ForgeProject(projectName, description, iconURL);
-			projects.add(forgeProject);
 		}
 		return projects;
 	}

@@ -73,6 +73,10 @@ public class Main {
 		
 		System.out.println("1 - Search for projects according to term...");
 		List<ForgeProject> projects = SearchSourceForge.getInstance().getProjects("facebook chat", 1);
+		if (projects.size() == 0) {
+			System.out.println("Ooops, no projects found! Aborting.");
+			System.exit(0);
+		}
 		ForgeProject project = projects.get(0);
 		projects = Arrays.asList(project); // analyze only the first project 
 		
