@@ -16,7 +16,7 @@ import br.cin.ufpe.epona.scm.client.GitClient;
 
 import com.google.common.io.Files;
 
-public class GitCodeHistory extends CodeHistory {
+public class GitCodeHistory implements CodeHistory {
 	
 	private static GitCodeHistory instance;
 	

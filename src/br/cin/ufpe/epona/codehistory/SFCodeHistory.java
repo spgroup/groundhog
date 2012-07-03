@@ -11,7 +11,7 @@ import com.google.common.io.Files;
 
 import br.cin.ufpe.epona.extractor.Extractor;
 
-public class SFCodeHistory extends CodeHistory {
+public class SFCodeHistory implements CodeHistory {
 	
 	private static SFCodeHistory instance;
 	

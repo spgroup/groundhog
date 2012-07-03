@@ -4,13 +4,13 @@ import java.io.File;
 import java.util.Date;
 
 /**
- * An abstract class that defines the code history functionality.
+ * An interface that defines the code history functionality.
  * This functionality allows temporal navigation through source code history,
  * making possible to get a project source code version by date.
  * @author fjsj
  *
  */
-public abstract class CodeHistory {
+public interface CodeHistory {
 	
 	/**
 	 * Checkouts the given project according to the given date. Returns a new temporary folder
@@ -22,7 +22,7 @@ public abstract class CodeHistory {
 	 * @return a new temporary folder with the project source code state at the given date.
 	 * @throws Exception when something nasty happens
 	 */
-	public abstract File checkoutToDate(String project, String url, Date date) throws Exception;
+	public File checkoutToDate(String project, String url, Date date) throws Exception;
 	
 	/**
 	 * Checkouts the given project according to the given date. Returns a new temporary folder
@@ -35,6 +35,6 @@ public abstract class CodeHistory {
 	 * @return a new temporary folder with the project source code state at the given date.
 	 * @throws Exception when something nasty happens
 	 */
-	public abstract File checkoutToDate(String project, File repositoryFolder, Date date) throws Exception;
+	public File checkoutToDate(String project, File repositoryFolder, Date date) throws Exception;
 
 }

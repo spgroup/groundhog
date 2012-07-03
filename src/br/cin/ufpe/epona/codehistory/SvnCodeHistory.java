@@ -11,7 +11,7 @@ import com.google.common.io.Files;
 
 import br.cin.ufpe.epona.scm.client.SVNClient;
 
-public class SvnCodeHistory extends CodeHistory {
+public class SvnCodeHistory implements CodeHistory {
 	
 	private static SvnCodeHistory instance;
 	
