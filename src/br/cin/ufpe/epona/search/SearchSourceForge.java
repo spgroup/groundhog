@@ -9,6 +9,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import br.cin.ufpe.epona.entity.ForgeProject;
+import br.cin.ufpe.epona.entity.SCM;
 import br.cin.ufpe.epona.http.ParamBuilder;
 import br.cin.ufpe.epona.http.Requests;
 
@@ -45,7 +46,8 @@ public class SearchSourceForge implements ForgeSearch {
 				if (iconURL.startsWith("//")) {
 					iconURL = "http:" + iconURL;
 				}
-				ForgeProject forgeProject = new ForgeProject(projectName, description, iconURL);
+				String projectURL = String.format("http://sourceforge.net/projects/%s/files/", projectName);
+				ForgeProject forgeProject = new ForgeProject(projectName, description, iconURL, SCM.SOURCE_FORGE, projectURL);
 				projects.add(forgeProject);
 			}
 		}

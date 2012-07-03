@@ -33,9 +33,8 @@ public abstract class ForgeCrawler {
 	
 	/**
 	 * Downloads a single project and returns its repository folder. A project repository folder is useful to be
-	 * manipulated by CodeHistory class and to be parsed by Parser class.
-	 * This method should set the given ForgeProject scm and scmURL attributes. 
-	 * @param project a ForgeProject. Will have its scm and scmURL attributes set.
+	 * manipulated by CodeHistory class and to be parsed by Parser class. 
+	 * @param project a ForgeProject.
 	 * @return a repository folder (if has SCM as Git or SVN) or a project folder (which contains archived/compressed files)
 	 * @throws Exception when something nasty happens
 	 */

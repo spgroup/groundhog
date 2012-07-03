@@ -23,7 +23,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import br.cin.ufpe.epona.entity.ForgeProject;
-import br.cin.ufpe.epona.entity.SCM;
 import br.cin.ufpe.epona.http.Requests;
 
 import com.ning.http.client.AsyncCompletionHandler;
@@ -153,8 +152,6 @@ public class CrawlSourceForge extends ForgeCrawler {
 		String projectName = project.getName();
 		List<String> urls = getDownloadURLs(projectName);
 		
-		project.setSCM(SCM.SOURCE_FORGE);
-		project.setScmURL(String.format("http://sourceforge.net/projects/%s/files/", project));
 		for (String url : urls) {
 			InputStream is = Requests.getInstance().download(url);
 			downloadAndSaveFile(projectName, url, is, destinationFolder);

@@ -18,9 +18,14 @@ public class ForgeProject {
 	}
 
 	public ForgeProject(String name, String description, String iconURL) {
-		this.name = name;
-		this.description = description;
+		this(name, description);
 		this.iconURL = iconURL;
+	}
+	
+	public ForgeProject(String name, String description, String iconURL, SCM scm, String scmURL) {
+		this(name, description, iconURL);
+		this.scm = scm;
+		this.scmURL = scmURL;
 	}
 
 	public String getName() {

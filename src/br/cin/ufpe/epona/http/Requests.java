@@ -52,7 +52,7 @@ public class Requests {
 		}
 	}
 	
-	public ListenableFuture<Integer> getAsync(String urlStr, AsyncCompletionHandler<Integer> callback) throws IOException {
+	public <T> ListenableFuture<T> getAsync(String urlStr, AsyncCompletionHandler<T> callback) throws IOException {
 		return asyncClient.prepareGet(urlStr).execute(callback);
 	}
 	

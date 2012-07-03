@@ -9,16 +9,12 @@ import java.util.concurrent.Future;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.TransportException;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tmatesoft.svn.core.SVNException;
 
 import br.cin.ufpe.epona.entity.ForgeProject;
 import br.cin.ufpe.epona.entity.SCM;
-import br.cin.ufpe.epona.http.Requests;
 import br.cin.ufpe.epona.scmclient.GitClient;
 
 public class CrawlGoogleCode extends ForgeCrawler {
@@ -29,44 +25,34 @@ public class CrawlGoogleCode extends ForgeCrawler {
 		super(destinationFolder);
 	}
 	
-	private String getCheckoutCommand(String project) throws IOException {
-		Document doc = Jsoup.parse(Requests.getInstance().get(String.format("http://code.google.com/p/%s/source/checkout", project)));
-		Elements es = doc.select("#checkoutcmd");
-		if (es.isEmpty()) {
-			return "";
-		} else {
-			return es.first().text();
-		}
-	}
-	
 	@Override
 	protected File downloadProject(ForgeProject project)
 			throws IOException, SVNException,
 			InvalidRemoteException, TransportException, GitAPIException {
 		String projectName = project.getName();
-		String command = getCheckoutCommand(projectName);
+		SCM projectSCM = project.getSCM();
 		File projectFolder = new File(destinationFolder, projectName);
 		
-		if (command.startsWith("svn")) {
-			String url = command.split(" ")[2];
-			project.setSCM(SCM.SVN);
-			project.setScmURL(url);
+		switch (projectSCM) {
+		case SVN:
 			// It is no advantage to checkout now, since SVN version history is stored remotely.
-			// The above line has set the SVN URL to ForgeProject and
-			// CodeHistory shall use this URL to checkout the desired version later.
-			//SVNClient.getInstance().checkout(url, projectFolder); 
-		} else if (command.startsWith("git")) {
-			String url = command.split(" ")[2];
-			project.setSCM(SCM.GIT);
-			project.setScmURL(url);
+			// CodeHistory shall use checkout the desired version later.
+			break;
+		case GIT:
+			String url = project.getScmURL();
 			GitClient.getInstance().clone(url, projectFolder);
-		} else if (command.equals("")) {
-			project.setSCM(SCM.NONE);
+			break;
+		case NONE:
 			logger.info(String.format("Project %s has no SCM.", projectName));
-		} else {
-			project.setSCM(SCM.UNKNOWN);
-			String scm = command.split(" ")[0];
+			break;
+		case UNKNOWN:
+			String scm = project.getSCM().toString();
 			logger.info(String.format("Project %s has a unsupported SCM: %s", projectName, scm));
+			break;
+		default:
+			scm = project.getSCM().toString();
+			logger.error(String.format("Project %s doesn't have %s as SCM, which isn't a Google Code compatible SCM. " +
+					"Are you sure this project came from Google Code?", projectName, scm));
 		}
 		return projectFolder;
 	}
