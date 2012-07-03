@@ -37,7 +37,7 @@ public abstract class ForgeCrawler {
 	 * This method should set the given ForgeProject scm and scmURL attributes. 
 	 * @param project a ForgeProject. Will have its scm and scmURL attributes set.
 	 * @return a repository folder (if has SCM as Git or SVN) or a project folder (which contains archived/compressed files)
-	 * @throws Exception
+	 * @throws Exception when something nasty happens
 	 */
 	protected abstract File downloadProject(ForgeProject project) throws Exception;
 	

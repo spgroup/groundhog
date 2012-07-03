@@ -10,52 +10,35 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.TransportException;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import br.cin.ufpe.epona.entity.ForgeProject;
-import br.cin.ufpe.epona.entity.SCM;
-import br.cin.ufpe.epona.http.Requests;
 import br.cin.ufpe.epona.scmclient.GitClient;
+import br.cin.ufpe.epona.search.SearchGitHub;
 
 public class CrawlGitHub extends ForgeCrawler {
 
-	private static String root = "https://api.github.com";
-	
 	public CrawlGitHub(File destinationFolder) {
 		super(destinationFolder);
 	}
 	
-	private JSONObject getJsonFromAPI(String urlStr) throws JSONException, IOException {
-		return new JSONObject(Requests.getInstance().get(urlStr));
-	}
-	
-	private String getProjectCloneURL(String project) throws JSONException, IOException {
-		String searchUrl = root + String.format("/legacy/repos/search/%s?start_page=1&language=java", project);
-		JSONObject firstResult = getJsonFromAPI(searchUrl).getJSONArray("repositories").getJSONObject(0);
-		String projectRealName = firstResult.getString("name");
-		String username = firstResult.getString("username");
-		String projectUrl = root + String.format("/repos/%s/%s", username, projectRealName);
-		String cloneUrl = getJsonFromAPI(projectUrl).getString("clone_url");
-		return cloneUrl;
-	}
 	
 	@Override
 	protected File downloadProject(ForgeProject project)
 			throws JSONException, IOException, 
 			InvalidRemoteException, TransportException, GitAPIException {
 		String projectName = project.getName();
-		String cloneUrl = getProjectCloneURL(projectName);
+		String cloneUrl = project.getScmURL();
 		File projectFolder = new File(destinationFolder, projectName);
 		
-		project.setSCM(SCM.GIT);
-		project.setScmURL(cloneUrl);
 		GitClient.getInstance().clone(cloneUrl, projectFolder);
 		return projectFolder;
 	}
 	
 	public static void main(String[] args) throws Exception {
 		long time = System.nanoTime();
-		List<ForgeProject> projects = Arrays.asList(new ForgeProject("junit", ""), new ForgeProject("playframework", ""));
+		ForgeProject junit = SearchGitHub.getInstance().getProjects("junit", 1).get(0);
+		ForgeProject playframework = SearchGitHub.getInstance().getProjects("playframework", 1).get(0);
+		List<ForgeProject> projects = Arrays.asList(junit, playframework);
 		File dest = new File("C:\\Users\\fjsj\\Downloads\\EponaProjects\\");
 		CrawlGitHub crawl = new CrawlGitHub(dest);
 		List<Future<File>> fs = crawl.downloadProjects(projects);

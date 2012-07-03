@@ -8,6 +8,10 @@ public class ForgeProject {
 	private SCM scm;
 	private String scmURL;
 	
+	public ForgeProject() {
+
+	}
+	
 	public ForgeProject(String name, String description) {
 		this.name = name;
 		this.description = description;

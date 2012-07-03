@@ -60,7 +60,7 @@ public class CrawlSourceForge extends ForgeCrawler {
 			if (href.endsWith("/download")) { // file
 				if (filename.toLowerCase().contains("src") || filename.toLowerCase().contains("source") &&
 					CompressedExtensions.getInstance().contains(extension)) {
-					String filePath = Requests.getInstance().unescape(href.substring(href.indexOf("/files/") + "/files/".length(), href.indexOf("/download")));
+					String filePath = Requests.getInstance().decodeURL(href.substring(href.indexOf("/files/") + "/files/".length(), href.indexOf("/download")));
 					try {
 						mapModifiedDate.put("/" + project + "/" + filePath, dateFormat.parse(modified));
 					} catch (ParseException e) {
@@ -69,7 +69,7 @@ public class CrawlSourceForge extends ForgeCrawler {
 					fileURLs.add(href);
 				}
 			} else { // folder
-				String folderPath = Requests.getInstance().unescape(href.substring(href.indexOf("/files/") + "/files/".length(), href.lastIndexOf('/')));
+				String folderPath = Requests.getInstance().decodeURL(href.substring(href.indexOf("/files/") + "/files/".length(), href.lastIndexOf('/')));
 				try {
 					mapModifiedDate.put("/" + project + "/" + folderPath, dateFormat.parse(modified));
 				} catch (ParseException e) {
@@ -110,7 +110,7 @@ public class CrawlSourceForge extends ForgeCrawler {
 	}
 	
 	private void downloadAndSaveFile(String projectName, String url, InputStream is, File destination) throws IOException {
-		url = Requests.getInstance().unescape(url);
+		url = Requests.getInstance().decodeURL(url);
 		String fileSeparator = File.separator;
 		String[] folders = url.substring(url.indexOf("/files/") + "/files/".length(), url.indexOf("/download")).split("/");
 		String filename = folders[folders.length - 1];

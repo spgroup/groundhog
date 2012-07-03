@@ -145,8 +145,8 @@ public class Main {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		gitHubExample();
-		//sourceForgeExample();
+		//gitHubExample();
+		sourceForgeExample();
 		//googleCodeExample("facebook-java-api"); // Google Code SVN
 		//googleCodeExample("guava-libraries"); // Google Code Git
 	}

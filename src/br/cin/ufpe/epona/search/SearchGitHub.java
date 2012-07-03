@@ -4,16 +4,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import br.cin.ufpe.epona.entity.ForgeProject;
-import br.cin.ufpe.epona.http.ParamBuilder;
+import br.cin.ufpe.epona.entity.SCM;
 import br.cin.ufpe.epona.http.Requests;
 
 public class SearchGitHub implements ForgeSearch {
 	
+	private static String root = "https://api.github.com";
 	private static SearchGitHub instance;
 	
 	public static SearchGitHub getInstance() {
@@ -27,33 +28,40 @@ public class SearchGitHub implements ForgeSearch {
 	
 	}
 	
-	public List<ForgeProject> getProjects(String term, int page) throws IOException {
+	private JSONObject getJsonFromAPI(String urlStr) throws IOException, JSONException {
+		return new JSONObject(Requests.getInstance().get(urlStr));
+	}
+	
+	public List<ForgeProject> getProjects(String term, int page) throws JSONException, IOException {
 		List<ForgeProject> projects = new ArrayList<ForgeProject>();
-		String paramsStr =
-			new ParamBuilder().
-			addParam("q", term).
-			addParam("repo", "").
-			addParam("langOverride", "").
-			addParam("start_value", String.valueOf(page)).
-			addParam("type", "Repositories").
-			addParam("language", "Java").
-			build();
-		Document doc = Jsoup.parse(Requests.getInstance().get("https://github.com/search?" + paramsStr));
-		for (Element result : doc.select("div.results div.result")) {
-			Element a = result.select("a").first();
-			String[] splitted = a.attr("href").split("/");
-			String username = splitted[1];
-			String projectName = splitted[2];
-			Element descriptionDiv = result.select("div.description").first();
-			String description = descriptionDiv.text();
-			ForgeProject forgeProject = new ForgeProject(projectName, description);
+		String searchUrl = root + String.format("/legacy/repos/search/%s?start_page=%s&language=java",
+				Requests.getInstance().encodeURL(term), page);
+		JSONArray results = getJsonFromAPI(searchUrl).getJSONArray("repositories");
+		
+		for (int i = 0; i < results.length(); i++) {
+			JSONObject result = results.getJSONObject(i);
+			ForgeProject forgeProject = new ForgeProject();
+			
+			String name = result.getString("name");
+			String username = result.getString("username");
+			String description = null;
+			if (result.has("description")) {
+				description = result.getString("description");
+			}
+			forgeProject.setName(name);
 			forgeProject.setCreator(username);
+			forgeProject.setSCM(SCM.GIT);
+			forgeProject.setScmURL(String.format("git://github.com/%s/%s.git", username, name));
+			forgeProject.setDescription(description);
+			
 			projects.add(forgeProject);
 		}
 		return projects;
 	}
 	
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
+		long time = System.nanoTime();
 		System.out.println(SearchGitHub.getInstance().getProjects("github api", 1));
+		System.out.printf("Elapsed: %.2f", (System.nanoTime() - time) / 1000000000.0);
 	}
 }

@@ -1,6 +1,5 @@
 package br.cin.ufpe.epona.search;
 
-import java.io.IOException;
 import java.util.List;
 
 import br.cin.ufpe.epona.entity.ForgeProject;
@@ -22,7 +21,8 @@ public interface ForgeSearch {
 	 * @param page 1-indexed page to get results (ie: starts with 1)
 	 * 
 	 * @return list of ForgeProject entities with projects info
+	 * @throws Exception when something nasty happens
 	 */
-	public List<ForgeProject> getProjects(String term, int page) throws IOException;
+	public List<ForgeProject> getProjects(String term, int page) throws Exception;
 
 }

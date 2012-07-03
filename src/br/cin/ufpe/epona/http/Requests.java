@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.concurrent.ExecutionException;
 
 import com.ning.http.client.AsyncCompletionHandler;
@@ -55,7 +56,17 @@ public class Requests {
 		return asyncClient.prepareGet(urlStr).execute(callback);
 	}
 	
-	public String unescape(String s) {
+	public String encodeURL(String s) {
+		try {
+			return URLEncoder.encode(s, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			new RuntimeException(e);
+		}
+		return null;
+	}
+	
+	public String decodeURL(String s) {
 		try {
 			return URLDecoder.decode(s, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
