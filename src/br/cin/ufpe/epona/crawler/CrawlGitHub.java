@@ -15,7 +15,7 @@ import org.json.JSONObject;
 import br.cin.ufpe.epona.entity.ForgeProject;
 import br.cin.ufpe.epona.entity.SCM;
 import br.cin.ufpe.epona.http.Requests;
-import br.cin.ufpe.epona.scm.client.GitClient;
+import br.cin.ufpe.epona.scmclient.GitClient;
 
 public class CrawlGitHub extends ForgeCrawler {
 

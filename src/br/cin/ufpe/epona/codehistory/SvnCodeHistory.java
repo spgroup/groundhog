@@ -9,7 +9,7 @@ import org.tmatesoft.svn.core.wc.SVNRevision;
 
 import com.google.common.io.Files;
 
-import br.cin.ufpe.epona.scm.client.SVNClient;
+import br.cin.ufpe.epona.scmclient.SVNClient;
 
 public class SvnCodeHistory implements CodeHistory {
 	

@@ -1,4 +1,4 @@
-package br.cin.ufpe.epona.scm.client;
+package br.cin.ufpe.epona.scmclient;
 
 import java.io.File;
 import java.io.IOException;

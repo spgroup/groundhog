@@ -12,7 +12,7 @@ import org.eclipse.jgit.api.errors.InvalidRefNameException;
 import org.eclipse.jgit.api.errors.RefAlreadyExistsException;
 import org.eclipse.jgit.api.errors.RefNotFoundException;
 
-import br.cin.ufpe.epona.scm.client.GitClient;
+import br.cin.ufpe.epona.scmclient.GitClient;
 
 import com.google.common.io.Files;
 
