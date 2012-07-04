@@ -22,6 +22,7 @@ import br.cin.ufpe.epona.crawler.CrawlSourceForge;
 import br.cin.ufpe.epona.crawler.ForgeCrawler;
 import br.cin.ufpe.epona.entity.ForgeProject;
 import br.cin.ufpe.epona.entity.SCM;
+import br.cin.ufpe.epona.http.Requests;
 import br.cin.ufpe.epona.parser.JavaParser;
 import br.cin.ufpe.epona.parser.MutableInt;
 import br.cin.ufpe.epona.search.SearchGitHub;
@@ -149,9 +150,10 @@ public class Main {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		//gitHubExample();
+		gitHubExample();
 		//sourceForgeExample();
-		googleCodeExample("facebook-java-api"); // Google Code SVN
+		//googleCodeExample("facebook-java-api"); // Google Code SVN
 		//googleCodeExample("guava-libraries"); // Google Code Git
+		Requests.getInstance().close();
 	}
 }

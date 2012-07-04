@@ -75,5 +75,10 @@ public class Requests {
 		}
 		return null;
 	}
-		
+
+	public void close() {
+		asyncClient.close();
+		instance = null;
+	}
+	
 }
