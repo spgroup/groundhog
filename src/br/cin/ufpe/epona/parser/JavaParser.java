@@ -17,6 +17,9 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 import javax.tools.JavaCompiler.CompilationTask;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Class that implements the metrics extraction functionality of this project.
  * Works by using the Compiler Tree API (com.sun.source.tree) with JavaCompiler class.
@@ -87,6 +90,19 @@ public class JavaParser {
 		recursiveSearch(folder);
 		if (!filesList.isEmpty()) {
 			return invokeProcessor();
+		} else {
+			return null;
+		}
+	}
+	
+	public JSONObject parseToJSON() throws IOException, JSONException {
+		JSONObject json = new JSONObject();
+		HashMap<String, HashMap<String, MutableInt>> counters = parse();
+		if (counters != null) {
+			for (Entry<String, HashMap<String, MutableInt>> entry : counters.entrySet()) {
+				json.put(entry.getKey(), entry.getValue());
+			}
+			return json;
 		} else {
 			return null;
 		}
