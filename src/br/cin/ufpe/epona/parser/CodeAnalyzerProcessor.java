@@ -14,6 +14,8 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 
+import com.sun.source.tree.CompilationUnitTree;
+import com.sun.source.tree.ImportTree;
 import com.sun.source.util.TreePath;
 import com.sun.source.util.Trees;
 
@@ -32,6 +34,15 @@ public class CodeAnalyzerProcessor extends AbstractProcessor {
         super.init(pe);
         trees = Trees.instance(pe);
     }
+    
+    public void setCounterValue(String counterName, String value, int count) {
+    	HashMap<String, MutableInt> counter = counters.get(counterName);
+    	if (counter == null) {
+    		counter =  new HashMap<String, MutableInt>();
+    		counters.put(counterName, counter);
+    	}
+    	counter.put(value, new MutableInt(count));
+    }
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnvironment) {
@@ -41,10 +52,13 @@ public class CodeAnalyzerProcessor extends AbstractProcessor {
             TreePath tp = trees.getPath(e);
            	
             if (tp != null) {
-                // TODO: line count
-            	//CompilationUnitTree compUnitTree = tp.getCompilationUnit();
-               	//int lines = countAllLines(compUnitTree.toString());
-               	visitor.scan(tp, trees);
+                CompilationUnitTree compUnitTree = tp.getCompilationUnit();
+               	int lines = countAllLines(compUnitTree.toString()); // count lines
+               	setCounterValue("line count", compUnitTree.getSourceFile().getName(), lines);
+               	for (ImportTree it : compUnitTree.getImports()) { // count imports
+               		visitor.count("import", it.getQualifiedIdentifier().toString());
+               	}
+               	visitor.scan(tp, trees); // count everything else
     		}
         }
         return true;

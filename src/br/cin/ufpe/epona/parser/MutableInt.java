@@ -1,7 +1,15 @@
 package br.cin.ufpe.epona.parser;
 
 public class MutableInt {
-	int value = 1;
+	int value;
+	
+	public MutableInt() {
+		value = 1;
+	}
+	
+	public MutableInt(int value) {
+		this.value = value;
+	}
 
 	public void increment() {
 		++value;

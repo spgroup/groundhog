@@ -36,7 +36,7 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
     	}
     }
     
-    private void count(String counterName, String value) {
+    protected void count(String counterName, String value) {
     	HashMap<String, MutableInt> counter = counters.get(counterName);
     	if (counter == null) {
     		counter =  new HashMap<String, MutableInt>();
@@ -57,6 +57,12 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 
     @Override
     public Object visitClass(ClassTree c, Trees ts) {    	
+    	String className = c.getSimpleName().toString();
+    	if (className.equals("")) {
+    		className = "<anonymous>";
+    	}
+    	count("class declaration", className);
+    	
     	Tree extendsClause = c.getExtendsClause();
     	if (extendsClause != null) {  	
     		count("extends", extendsClause.toString());
@@ -88,6 +94,8 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
     public Object visitMethod(MethodTree m, Trees trees) {
     	Set<Modifier> mods =  m.getModifiers().getFlags();
     	List<? extends ExpressionTree> throwss = m.getThrows();
+    	
+    	count("method declaration", m.getName().toString());
     	
     	for (Modifier mod : mods) {
     		count("method modifier", mod.toString());
