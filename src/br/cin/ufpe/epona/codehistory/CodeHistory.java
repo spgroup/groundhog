@@ -3,6 +3,8 @@ package br.cin.ufpe.epona.codehistory;
 import java.io.File;
 import java.util.Date;
 
+import br.cin.ufpe.epona.scmclient.EmptyProjectAtDateException;
+
 /**
  * An interface that defines the code history functionality.
  * This functionality allows temporal navigation through source code history,
@@ -22,7 +24,8 @@ public interface CodeHistory {
 	 * @return a new temporary folder with the project source code state at the given date.
 	 * @throws Exception when something nasty happens
 	 */
-	public File checkoutToDate(String project, String url, Date date) throws Exception;
+	public File checkoutToDate(String project, String url, Date date)
+			throws CheckoutException, EmptyProjectAtDateException;
 	
 	/**
 	 * Checkouts the given project according to the given date. Returns a new temporary folder
@@ -35,6 +38,7 @@ public interface CodeHistory {
 	 * @return a new temporary folder with the project source code state at the given date.
 	 * @throws Exception when something nasty happens
 	 */
-	public File checkoutToDate(String project, File repositoryFolder, Date date) throws Exception;
+	public File checkoutToDate(String project, File repositoryFolder, Date date)
+			throws CheckoutException, EmptyProjectAtDateException;
 
 }

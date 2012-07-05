@@ -32,31 +32,37 @@ public class SearchGitHub implements ForgeSearch {
 		return new JSONObject(Requests.getInstance().get(urlStr));
 	}
 	
-	public List<ForgeProject> getProjects(String term, int page) throws JSONException, IOException {
-		List<ForgeProject> projects = new ArrayList<ForgeProject>();
-		String searchUrl = root + String.format("/legacy/repos/search/%s?start_page=%s&language=java",
-				Requests.getInstance().encodeURL(term), page);
-		JSONArray results = getJsonFromAPI(searchUrl).getJSONArray("repositories");
-		
-		for (int i = 0; i < results.length(); i++) {
-			JSONObject result = results.getJSONObject(i);
-			ForgeProject forgeProject = new ForgeProject();
+	public List<ForgeProject> getProjects(String term, int page) throws SearchException {
+		try {
+			List<ForgeProject> projects = new ArrayList<ForgeProject>();
+			String searchUrl = root + String.format("/legacy/repos/search/%s?start_page=%s&language=java",
+					Requests.getInstance().encodeURL(term), page);
+			JSONArray results = getJsonFromAPI(searchUrl).getJSONArray("repositories");
 			
-			String name = result.getString("name");
-			String username = result.getString("username");
-			String description = null;
-			if (result.has("description")) {
-				description = result.getString("description");
+			for (int i = 0; i < results.length(); i++) {
+				JSONObject result = results.getJSONObject(i);
+				ForgeProject forgeProject = new ForgeProject();
+				
+				String name = result.getString("name");
+				String username = result.getString("username");
+				String description = null;
+				if (result.has("description")) {
+					description = result.getString("description");
+				}
+				forgeProject.setName(name);
+				forgeProject.setCreator(username);
+				forgeProject.setSCM(SCM.GIT);
+				forgeProject.setScmURL(String.format("git://github.com/%s/%s.git", username, name));
+				forgeProject.setDescription(description);
+				
+				projects.add(forgeProject);
 			}
-			forgeProject.setName(name);
-			forgeProject.setCreator(username);
-			forgeProject.setSCM(SCM.GIT);
-			forgeProject.setScmURL(String.format("git://github.com/%s/%s.git", username, name));
-			forgeProject.setDescription(description);
-			
-			projects.add(forgeProject);
+			return projects;
+		} catch (JSONException e) {
+			throw new SearchException(e);
+		} catch (IOException e) {
+			throw new SearchException(e);
 		}
-		return projects;
 	}
 	
 	public static void main(String[] args) throws Exception {

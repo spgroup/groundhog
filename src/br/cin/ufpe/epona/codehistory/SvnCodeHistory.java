@@ -27,10 +27,14 @@ public class SvnCodeHistory implements CodeHistory {
 	}
 	
 	@Override
-	public File checkoutToDate(String project, String url, Date date) throws SVNException {
-		File projectFolder = new File(Files.createTempDir(), project);
-		SVNClient.getInstance().checkout(url, projectFolder, SVNRevision.create(date));
-		return projectFolder;
+	public File checkoutToDate(String project, String url, Date date) throws CheckoutException {
+		try {
+			File projectFolder = new File(Files.createTempDir(), project);
+			SVNClient.getInstance().checkout(url, projectFolder, SVNRevision.create(date));
+			return projectFolder;
+		} catch (SVNException e) {
+			throw new CheckoutException(e);
+		}
 	}
 
 	@Override

@@ -28,33 +28,37 @@ public class SearchSourceForge implements ForgeSearch {
 		
 	}
 	
-	public List<ForgeProject> getProjects(String term, int page) throws IOException {
-		List<ForgeProject> projects = new ArrayList<ForgeProject>();
-		String paramsStr =
-			new ParamBuilder().
-			addParam("q", term).
-			addParam("sort", "popular").
-			addParam("page", String.valueOf(page)).
-			build();
-		Document doc = Jsoup.parse(Requests.getInstance().get("http://sourceforge.net/directory/language:java/?" + paramsStr));
-		for (Element li : doc.select(".projects > li")) {
-			Element a = li.select("[itemprop=url]").first();
-			if (a != null) {
-				String projectName = a.attr("href").split("/")[2];
-				String description = li.select("[itemprop=description]").first().text();
-				String iconURL = li.select("[itemprop=image]").first().attr("src");
-				if (iconURL.startsWith("//")) {
-					iconURL = "http:" + iconURL;
+	public List<ForgeProject> getProjects(String term, int page) throws SearchException {
+		try {
+			List<ForgeProject> projects = new ArrayList<ForgeProject>();
+			String paramsStr =
+				new ParamBuilder().
+				addParam("q", term).
+				addParam("sort", "popular").
+				addParam("page", String.valueOf(page)).
+				build();
+			Document doc = Jsoup.parse(Requests.getInstance().get("http://sourceforge.net/directory/language:java/?" + paramsStr));
+			for (Element li : doc.select(".projects > li")) {
+				Element a = li.select("[itemprop=url]").first();
+				if (a != null) {
+					String projectName = a.attr("href").split("/")[2];
+					String description = li.select("[itemprop=description]").first().text();
+					String iconURL = li.select("[itemprop=image]").first().attr("src");
+					if (iconURL.startsWith("//")) {
+						iconURL = "http:" + iconURL;
+					}
+					String projectURL = String.format("http://sourceforge.net/projects/%s/files/", projectName);
+					ForgeProject forgeProject = new ForgeProject(projectName, description, iconURL, SCM.SOURCE_FORGE, projectURL);
+					projects.add(forgeProject);
 				}
-				String projectURL = String.format("http://sourceforge.net/projects/%s/files/", projectName);
-				ForgeProject forgeProject = new ForgeProject(projectName, description, iconURL, SCM.SOURCE_FORGE, projectURL);
-				projects.add(forgeProject);
 			}
+			return projects;
+		} catch (IOException e) {
+			throw new SearchException(e);
 		}
-		return projects;
 	}
 	
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
 		System.out.println(SearchSourceForge.getInstance().getProjects("", 1));
 	}
 	

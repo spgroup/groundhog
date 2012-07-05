@@ -49,7 +49,8 @@ public class GitClient {
 	
 	public void checkout(File repositoryFolder, Date date)
 			throws IOException,RefAlreadyExistsException, RefNotFoundException,
-			InvalidRefNameException, CheckoutConflictException, GitAPIException {
+			InvalidRefNameException, CheckoutConflictException, GitAPIException,
+			EmptyProjectAtDateException {
 		Git git = Git.open(repositoryFolder);
 		Repository rep = git.getRepository();
 		CommitFinder finder = new CommitFinder(rep);
@@ -69,12 +70,16 @@ public class GitClient {
 		finder.setMatcher(filter);
 		finder.find();
 		
+		if (commits.size() == 0) {
+			rep.close();
+			throw new EmptyProjectAtDateException(date);
+		}
 		RevCommit closest = Collections.max(commits, new Comparator<RevCommit>() {
 			public int compare(RevCommit c1, RevCommit c2) {
 				return c1.getCommitterIdent().getWhen().compareTo(c2.getCommitterIdent().getWhen());
 			}
 		});
-		git.checkout().setName("to-analyze").setStartPoint(closest).setCreateBranch(true).call();
+		git.checkout().setName("master").setStartPoint(closest).setForce(true).call();
 		rep.close();
 	}
 	

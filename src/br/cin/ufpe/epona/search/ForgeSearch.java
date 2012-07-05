@@ -23,6 +23,6 @@ public interface ForgeSearch {
 	 * @return list of ForgeProject entities with projects info
 	 * @throws Exception when something nasty happens
 	 */
-	public List<ForgeProject> getProjects(String term, int page) throws Exception;
+	public List<ForgeProject> getProjects(String term, int page) throws SearchException;
 
 }

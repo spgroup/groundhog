@@ -43,11 +43,11 @@ public class CrawlGoogleCode extends ForgeCrawler {
 			GitClient.getInstance().clone(url, projectFolder);
 			break;
 		case NONE:
-			logger.info(String.format("Project %s has no SCM.", projectName));
+			logger.warn(String.format("Project %s has no SCM.", projectName));
 			break;
 		case UNKNOWN:
 			String scm = project.getSCM().toString();
-			logger.info(String.format("Project %s has a unsupported SCM: %s", projectName, scm));
+			logger.warn(String.format("Project %s has a unsupported SCM: %s", projectName, scm));
 			break;
 		default:
 			scm = project.getSCM().toString();

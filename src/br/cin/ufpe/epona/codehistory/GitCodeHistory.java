@@ -12,6 +12,7 @@ import org.eclipse.jgit.api.errors.InvalidRefNameException;
 import org.eclipse.jgit.api.errors.RefAlreadyExistsException;
 import org.eclipse.jgit.api.errors.RefNotFoundException;
 
+import br.cin.ufpe.epona.scmclient.EmptyProjectAtDateException;
 import br.cin.ufpe.epona.scmclient.GitClient;
 
 import com.google.common.io.Files;
@@ -38,12 +39,25 @@ public class GitCodeHistory implements CodeHistory {
 	
 	@Override
 	public File checkoutToDate(String project, File repositoryFolder, final Date date)
-			throws IOException, RefAlreadyExistsException, RefNotFoundException,
-			InvalidRefNameException, CheckoutConflictException, GitAPIException {
-		File projectFolder = new File(Files.createTempDir(), project);
-		FileUtils.copyDirectory(repositoryFolder, projectFolder);
-		GitClient.getInstance().checkout(projectFolder, date);
-		return projectFolder;
+			throws CheckoutException, EmptyProjectAtDateException {
+		try { 
+			File projectFolder = new File(Files.createTempDir(), project);
+			FileUtils.copyDirectory(repositoryFolder, projectFolder);
+			GitClient.getInstance().checkout(projectFolder, date);
+			return projectFolder;
+		} catch (IOException e) {
+			throw new CheckoutException(e);
+		} catch (RefAlreadyExistsException e) {
+			throw new CheckoutException(e);
+		} catch (RefNotFoundException e) {
+			throw new CheckoutException(e);
+		} catch (InvalidRefNameException e) {
+			throw new CheckoutException(e);
+		} catch (CheckoutConflictException e) {
+			throw new CheckoutException(e);
+		} catch (GitAPIException e) {
+			throw new CheckoutException(e);
+		}
 	}
 
 	public static void main(String[] args) throws Exception {

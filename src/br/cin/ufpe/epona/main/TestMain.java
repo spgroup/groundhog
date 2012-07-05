@@ -31,9 +31,9 @@ import br.cin.ufpe.epona.search.SearchSourceForge;
 
 import com.google.common.io.Files;
 
-public class Main {
+public class TestMain {
 	
-	private static Logger logger = LoggerFactory.getLogger(Main.class);
+	private static Logger logger = LoggerFactory.getLogger(TestMain.class);
 	
 	public static void gitHubExample(String term) throws Exception {
 		File downloadFolder = Files.createTempDir();
@@ -150,9 +150,9 @@ public class Main {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		gitHubExample("jsoup");
+		//gitHubExample("jsoup");
 		//sourceForgeExample();
-		//googleCodeExample("facebook-java-api"); // Google Code SVN
+		googleCodeExample("facebook-java-api"); // Google Code SVN
 		//googleCodeExample("guava-libraries"); // Google Code Git
 		Requests.getInstance().close();
 	}

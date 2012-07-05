@@ -45,4 +45,9 @@ public class SVNClient {
 				SVNDepth.INFINITY,
 				false);
 	}
+	
+	public void close() {
+		svn.dispose();
+		instance = null;
+	}
 }

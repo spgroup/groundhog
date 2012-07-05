@@ -61,49 +61,57 @@ public class SearchGoogleCode implements ForgeSearch {
 		}
 	}
 	
-	public List<ForgeProject> getProjects(String term, int page) throws IOException, InterruptedException, ExecutionException {
-		List<ForgeProject> projects = new ArrayList<ForgeProject>();
-		String paramsStr =
-			new ParamBuilder().
-			addParam("q", term + " label:Java").
-			addParam("start", String.valueOf((page - 1) * 10)).
-			build();
-		
-		Document doc = Jsoup.parse(Requests.getInstance().get(root + "/hosting/search?" + paramsStr));
-		for (Element tr : doc.select("#serp table tbody tr")) {
-			Element a = tr.child(0).child(0);
-			String projectName = a.attr("href").split("/")[2];
-			String description = tr.child(1).ownText();
-			String imgSrc = a.child(0).attr("src");
-			String iconURL = imgSrc;
-			if (imgSrc.startsWith("/")) {
-				iconURL = root + iconURL;
-			}
-			ForgeProject forgeProject = new ForgeProject(projectName, description, iconURL);
-			projects.add(forgeProject);
-		}
-		
-		// get checkout commands for each project in parallel (asynchronously)
-		List<Future<Integer>> futures = new ArrayList<Future<Integer>>();
-		for (final ForgeProject forgeProject : projects) {
-			String projectName = forgeProject.getName();
-			String checkoutPageURL = String.format("http://code.google.com/p/%s/source/checkout", projectName);
-			Future<Integer> f = Requests.getInstance().getAsync(checkoutPageURL, new AsyncCompletionHandler<Integer>() {
-				@Override
-				public Integer onCompleted(Response response) throws Exception {
-					String command = parseCheckoutCommand(response.getResponseBody());
-					setCheckoutCommandToProject(command, forgeProject);
-					return response.getStatusCode();
+	public List<ForgeProject> getProjects(String term, int page) throws SearchException {
+		try {
+			List<ForgeProject> projects = new ArrayList<ForgeProject>();
+			String paramsStr =
+				new ParamBuilder().
+				addParam("q", term + " label:Java").
+				addParam("start", String.valueOf((page - 1) * 10)).
+				build();
+			
+			Document doc = Jsoup.parse(Requests.getInstance().get(root + "/hosting/search?" + paramsStr));
+			for (Element tr : doc.select("#serp table tbody tr")) {
+				Element a = tr.child(0).child(0);
+				String projectName = a.attr("href").split("/")[2];
+				String description = tr.child(1).ownText();
+				String imgSrc = a.child(0).attr("src");
+				String iconURL = imgSrc;
+				if (imgSrc.startsWith("/")) {
+					iconURL = root + iconURL;
 				}
-			});
-			futures.add(f);
+				ForgeProject forgeProject = new ForgeProject(projectName, description, iconURL);
+				projects.add(forgeProject);
+			}
+			
+			// get checkout commands for each project in parallel (asynchronously)
+			List<Future<Integer>> futures = new ArrayList<Future<Integer>>();
+			for (final ForgeProject forgeProject : projects) {
+				String projectName = forgeProject.getName();
+				String checkoutPageURL = String.format("http://code.google.com/p/%s/source/checkout", projectName);
+				Future<Integer> f = Requests.getInstance().getAsync(checkoutPageURL, new AsyncCompletionHandler<Integer>() {
+					@Override
+					public Integer onCompleted(Response response) throws Exception {
+						String command = parseCheckoutCommand(response.getResponseBody());
+						setCheckoutCommandToProject(command, forgeProject);
+						return response.getStatusCode();
+					}
+				});
+				futures.add(f);
+			}
+			
+			// wait for all futures to have all 
+			for (Future<Integer> f : futures) {
+				f.get();
+			}
+			return projects;
+		} catch (ExecutionException e) {
+			throw new SearchException(e);
+		} catch (InterruptedException e) {
+			throw new SearchException(e);
+		} catch (IOException e) {
+			throw new SearchException(e);
 		}
-		
-		// wait for all futures to have all 
-		for (Future<Integer> f : futures) {
-			f.get();
-		}
-		return projects;
 	}
 	
 	public static void main(String[] args) throws Exception {
