@@ -273,6 +273,7 @@ public class CmdMain {
 			}
 		}
 		
+		logger.info("Disposing resources...");
 		// Free resources and delete temp directory (if exists)
 		freeResources(crawler, errorStream);
 		if (isDestinationTemp) {
@@ -282,6 +283,7 @@ public class CmdMain {
 				logger.warn("Could not delete temp folders (but they will be eventually deleted)");
 			}
 		}
+		logger.info("Done!");
 	}
 
 }
