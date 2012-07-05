@@ -11,8 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import br.cin.ufpe.epona.config.ThreadsConfig;
-
-import com.google.common.io.Files;
+import br.cin.ufpe.epona.util.FileUtil;
 
 /**
  * Singleton class to extract files and recursively extract all files within an hierarchy of folders.
@@ -108,7 +107,7 @@ public class Extractor {
 	}
 	
 	public static void main(String[] args) {
-		File destinationFolder = Files.createTempDir();
+		File destinationFolder = FileUtil.getInstance().createTempDir();
 		System.out.println(destinationFolder);
 		Extractor.getInstance().recursiveExtract(new File("C:\\Users\\fjsj\\Downloads\\EponaProjects\\geom-java"), destinationFolder);
 	}

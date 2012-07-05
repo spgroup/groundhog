@@ -7,10 +7,9 @@ import java.util.Date;
 import java.util.Deque;
 import java.util.GregorianCalendar;
 
-import com.google.common.io.Files;
-
 import br.cin.ufpe.epona.extractor.Extractor;
 import br.cin.ufpe.epona.scmclient.EmptyProjectAtDateException;
+import br.cin.ufpe.epona.util.FileUtil;
 
 public class SFCodeHistory implements CodeHistory {
 	
@@ -60,7 +59,7 @@ public class SFCodeHistory implements CodeHistory {
 			}
 		}
 		if (closest != null) {
-			File projectFolder = new File(Files.createTempDir(), project);
+			File projectFolder = new File(FileUtil.getInstance().createTempDir(), project);
 			Extractor.getInstance().extractFile(closest, projectFolder);
 			return projectFolder;
 		} else {

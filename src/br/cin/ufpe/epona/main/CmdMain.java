@@ -15,7 +15,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -43,9 +42,9 @@ import br.cin.ufpe.epona.search.SearchException;
 import br.cin.ufpe.epona.search.SearchGitHub;
 import br.cin.ufpe.epona.search.SearchGoogleCode;
 import br.cin.ufpe.epona.search.SearchSourceForge;
+import br.cin.ufpe.epona.util.FileUtil;
 
 import com.google.common.base.Joiner;
-import com.google.common.io.Files;
 
 public class CmdMain {
 
@@ -154,7 +153,7 @@ public class CmdMain {
 			String metricsFilename = f("%s-%s.json", name, datetimeStr);
 			logger.info(f("Project %s parsed, metrics extracted! Writing result to file %s...", name, metricsFilename));
 			File metricsFile = new File(metricsFolder, metricsFilename);
-			FileUtils.writeStringToFile(metricsFile, metrics.toString());
+			FileUtil.getInstance().writeStringToFile(metricsFile, metrics.toString());
 			logger.info(f("Metrics of project %s written to file %s", name, metricsFile.getAbsolutePath()));
 		} else {
 			logger.warn(f("Project %s has no Java source files! Metrics couldn't be extracted...", name));
@@ -165,6 +164,11 @@ public class CmdMain {
 		crawler.shutdown();
 		SVNClient.getInstance().close();
 		Requests.getInstance().close();
+		try {
+			FileUtil.getInstance().deleteTempDirs();
+		} catch (IOException e) {
+			logger.warn("Could not delete temp folders (but they will be eventually deleted)");
+		}
 		try {
 			if (errorStream != null) {
 				errorStream.close();
@@ -184,20 +188,18 @@ public class CmdMain {
 			cmd.printUsage(System.err);
 			return;
 		}*/
-		//opt.setDatetime("2012-01-01_12_00");
+		opt.setDatetime("2011-07-01_12_00");
 		//opt.setDestinationFolder(new File("download"));
-		opt.setForge(SupportedForge.GOOGLECODE);
+		opt.setForge(SupportedForge.GITHUB);
 		opt.setMetricsFolder(new File("metrics"));
-		opt.setnProjects(3);
+		opt.setnProjects(5);
 		opt.setArguments(Arrays.asList("facebook"));
 		
 		List<String> terms = opt.getArguments();
 		String term = Joiner.on(" ").join(terms);
 		File destinationFolder = opt.getDestinationFolder();
-		boolean isDestinationTemp = false;
 		if (destinationFolder == null) {
-			destinationFolder = Files.createTempDir();
-			isDestinationTemp = true;
+			destinationFolder = FileUtil.getInstance().createTempDir();
 		} else {
 			if (destinationFolder.list().length > 0) {
 				logger.warn("Attention, destination folder isn't empty! " +
@@ -288,16 +290,9 @@ public class CmdMain {
 			}
 		}
 		
-		// Free resources and delete temp directory (if exists)
+		// Free resources and delete temp directories
 		logger.info("Disposing resources...");
 		freeResources(crawler, errorStream);
-		if (isDestinationTemp) {
-			try {
-				FileUtils.deleteDirectory(destinationFolder);
-			} catch (IOException e) {
-				logger.warn("Could not delete temp folders (but they will be eventually deleted)");
-			}
-		}
 		logger.info("Done!");
 	}
 

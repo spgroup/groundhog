@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Future;
 
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,15 +27,14 @@ import br.cin.ufpe.epona.parser.MutableInt;
 import br.cin.ufpe.epona.search.SearchGitHub;
 import br.cin.ufpe.epona.search.SearchGoogleCode;
 import br.cin.ufpe.epona.search.SearchSourceForge;
-
-import com.google.common.io.Files;
+import br.cin.ufpe.epona.util.FileUtil;
 
 public class TestMain {
 	
 	private static Logger logger = LoggerFactory.getLogger(TestMain.class);
 	
 	public static void gitHubExample(String term) throws Exception {
-		File downloadFolder = Files.createTempDir();
+		File downloadFolder = FileUtil.getInstance().createTempDir();
 		
 		System.out.println("1 - Search for projects according to term...");
 		List<ForgeProject> projects = SearchGitHub.getInstance().getProjects(term, 1);
@@ -62,15 +60,14 @@ public class TestMain {
 		JavaParser.printResult(counters);
 		
 		try {
-			FileUtils.deleteDirectory(temp.getParentFile());
-			FileUtils.deleteDirectory(downloadFolder);
+			FileUtil.getInstance().deleteTempDirs();
 		} catch (IOException e) {
 			logger.info("Could not delete temp files :( (but they will be eventually deleted)");
 		}
 	}
 	
 	public static void sourceForgeExample() throws Exception {
-		File downloadFolder = Files.createTempDir();
+		File downloadFolder = FileUtil.getInstance().createTempDir();
 		
 		System.out.println("1 - Search for projects according to term...");
 		List<ForgeProject> projects = SearchSourceForge.getInstance().getProjects("facebook chat", 1);
@@ -100,15 +97,14 @@ public class TestMain {
 		JavaParser.printResult(counters);
 		
 		try {
-			FileUtils.deleteDirectory(temp.getParentFile());
-			FileUtils.deleteDirectory(downloadFolder);
+			FileUtil.getInstance().deleteTempDirs();
 		} catch (IOException e) {
 			logger.info("Could not delete temp files :( (but they will be eventually deleted)");
 		}
 	}
 	
 	public static void googleCodeExample(String term) throws Exception {
-		File downloadFolder = Files.createTempDir();
+		File downloadFolder = FileUtil.getInstance().createTempDir();
 		
 		System.out.println("1 - Search for projects according to term...");
 		List<ForgeProject> projects = SearchGoogleCode.getInstance().getProjects(term, 1);
@@ -142,8 +138,7 @@ public class TestMain {
 		JavaParser.printResult(counters);
 		
 		try {
-			FileUtils.deleteDirectory(temp.getParentFile());
-			FileUtils.deleteDirectory(downloadFolder);
+			FileUtil.getInstance().deleteTempDirs();
 		} catch (IOException e) {
 			logger.info("Could not delete temp files :( (but they will be eventually deleted)");
 		}

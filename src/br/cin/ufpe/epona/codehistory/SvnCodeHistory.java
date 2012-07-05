@@ -7,9 +7,8 @@ import java.util.GregorianCalendar;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 
-import com.google.common.io.Files;
-
 import br.cin.ufpe.epona.scmclient.SVNClient;
+import br.cin.ufpe.epona.util.FileUtil;
 
 public class SvnCodeHistory implements CodeHistory {
 	
@@ -29,7 +28,7 @@ public class SvnCodeHistory implements CodeHistory {
 	@Override
 	public File checkoutToDate(String project, String url, Date date) throws CheckoutException {
 		try {
-			File projectFolder = new File(Files.createTempDir(), project);
+			File projectFolder = new File(FileUtil.getInstance().createTempDir(), project);
 			SVNClient.getInstance().checkout(url, projectFolder, SVNRevision.create(date));
 			return projectFolder;
 		} catch (SVNException e) {

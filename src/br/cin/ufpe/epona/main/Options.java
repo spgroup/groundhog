@@ -64,7 +64,8 @@ public class Options {
 	}
 
 	public void setDatetime(String datetime) {
-		this.datetime = dateFormat.format(datetime);
+		this.datetime = datetime;
+		
 	}
 
 	public int getnProjects() {

@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.errors.CheckoutConflictException;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRefNameException;
@@ -14,8 +13,7 @@ import org.eclipse.jgit.api.errors.RefNotFoundException;
 
 import br.cin.ufpe.epona.scmclient.EmptyProjectAtDateException;
 import br.cin.ufpe.epona.scmclient.GitClient;
-
-import com.google.common.io.Files;
+import br.cin.ufpe.epona.util.FileUtil;
 
 public class GitCodeHistory implements CodeHistory {
 	
@@ -41,8 +39,8 @@ public class GitCodeHistory implements CodeHistory {
 	public File checkoutToDate(String project, File repositoryFolder, final Date date)
 			throws CheckoutException, EmptyProjectAtDateException {
 		try { 
-			File projectFolder = new File(Files.createTempDir(), project);
-			FileUtils.copyDirectory(repositoryFolder, projectFolder);
+			File projectFolder = new File(FileUtil.getInstance().createTempDir(), project);
+			FileUtil.getInstance().copyDirectory(repositoryFolder, projectFolder);
 			GitClient.getInstance().checkout(projectFolder, date);
 			return projectFolder;
 		} catch (IOException e) {
