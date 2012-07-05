@@ -1,7 +1,10 @@
 package br.cin.ufpe.epona.main;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -162,10 +165,15 @@ public class CmdMain {
 		}
 	}
 	
-	public static void freeResources(ForgeCrawler crawler) {
+	public static void freeResources(ForgeCrawler crawler, OutputStream errorStream) {
 		crawler.shutdown();
 		SVNClient.getInstance().close();
 		Requests.getInstance().close();
+		try {
+			errorStream.close();
+		} catch (IOException e) {
+			logger.trace("Unable to close error.log stream", e);
+		}
 	}
 	
 	public static void main(String[] args) {
@@ -204,6 +212,15 @@ public class CmdMain {
 			return;
 		}
 		int nProjects = opt.getnProjects();
+		
+		// Redirect System.err to file
+		PrintStream errorStream = null;
+		try {
+			errorStream = new PrintStream("error.log");
+			System.setErr(errorStream);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 		
 		// Search for projects
 		logger.info("Searching for projects...");
@@ -257,7 +274,7 @@ public class CmdMain {
 		}
 		
 		// Free resources and delete temp directory (if exists)
-		freeResources(crawler);
+		freeResources(crawler, errorStream);
 		if (isDestinationTemp) {
 			try {
 				FileUtils.deleteDirectory(destinationFolder);
