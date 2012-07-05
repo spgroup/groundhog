@@ -28,6 +28,7 @@ import br.cin.ufpe.epona.codehistory.GitCodeHistory;
 import br.cin.ufpe.epona.codehistory.SFCodeHistory;
 import br.cin.ufpe.epona.codehistory.SvnCodeHistory;
 import br.cin.ufpe.epona.codehistory.UnsupportedSCMException;
+import br.cin.ufpe.epona.config.ThreadsConfig;
 import br.cin.ufpe.epona.crawler.CrawlGitHub;
 import br.cin.ufpe.epona.crawler.CrawlGoogleCode;
 import br.cin.ufpe.epona.crawler.CrawlSourceForge;
@@ -106,8 +107,8 @@ public class CmdMain {
 		return codehistory;
 	}
 	
-	public static void downloadAndAnalyseProject(ForgeProject project, Date datetime, Future<File> repositoryFolderFuture, File metricsFolder)
-			throws InterruptedException, ExecutionException {
+	public static File downloadAndCheckoutProject(ForgeProject project, Date datetime, Future<File> repositoryFolderFuture)
+			throws InterruptedException, ExecutionException, CheckoutException {
 		// Wait for project download
 		String name = project.getName();
 		File repositoryFolder = repositoryFolderFuture.get();
@@ -121,47 +122,44 @@ public class CmdMain {
 			codehistory = defineCodeHistory(project.getSCM());
 		} catch (UnsupportedSCMException e) {
 			logger.warn(f("Project %s has an unsupported SCM: %s", name, e.getSCM()));
-			return;
+			return null;
 		}
+		File checkedOutRepository = null;
 		try {
 			if (project.getSCM() != SCM.SVN) {
-				codehistory.checkoutToDate(project.getName(), repositoryFolder, datetime);
+				checkedOutRepository = codehistory.checkoutToDate(project.getName(), repositoryFolder, datetime);
 			} else {
-				codehistory.checkoutToDate(project.getName(), project.getScmURL(), datetime);
+				checkedOutRepository = codehistory.checkoutToDate(project.getName(), project.getScmURL(), datetime);
 			}
-		} catch (CheckoutException e) {
-			e.printStackTrace();
-			return;
 		} catch (EmptyProjectAtDateException e) {
 			logger.warn(f("Project %s was empty at specified date: %s", name, datetimeStr));
-			return;
+			return null;
 		}
-		logger.info(f("Project %s successfully checked out to %s", name, datetimeStr));
+		logger.info(f("Project %s successfully checked out to %s", name, datetimeStr));	
+		
+		return checkedOutRepository;
+	}
+	
+	public static void analyzeProject(ForgeProject project, File projectFolder, Date datetime, File metricsFolder)
+			throws IOException, JSONException {
+		String name = project.getName();
+		String datetimeStr = dateFormat.format(datetime);
 		
 		// Parse project
 		logger.info(f("Parsing project %s...", name));
-		JavaParser parser = new JavaParser(repositoryFolder);
+		JavaParser parser = new JavaParser(projectFolder);
 		JSONObject metrics = null;
-		try {
-			metrics = parser.parseToJSON();
-		} catch (IOException e) {
-			e.printStackTrace();
-			return;
-		} catch (JSONException e) {
-			e.printStackTrace();
-			return;
-		}
+		metrics = parser.parseToJSON();
 		
-		// Save metrics to file
-		String metricsFilename = f("%s-%s.json", name, datetimeStr);
-		logger.info(f("Project %s parsed, metrics extracted! Writing result to file %s...", name, metricsFilename));
-		try {
+		if (metrics != null) {
+			// Save metrics to file
+			String metricsFilename = f("%s-%s.json", name, datetimeStr);
+			logger.info(f("Project %s parsed, metrics extracted! Writing result to file %s...", name, metricsFilename));
 			File metricsFile = new File(metricsFolder, metricsFilename);
 			FileUtils.writeStringToFile(metricsFile, metrics.toString());
 			logger.info(f("Metrics of project %s written to file %s", name, metricsFile.getAbsolutePath()));
-		} catch (IOException e) {
-			e.printStackTrace();
-			return;
+		} else {
+			logger.warn(f("Project %s has no Java source files! Metrics couldn't be extracted...", name));
 		}
 	}
 	
@@ -170,7 +168,9 @@ public class CmdMain {
 		SVNClient.getInstance().close();
 		Requests.getInstance().close();
 		try {
-			errorStream.close();
+			if (errorStream != null) {
+				errorStream.close();
+			}
 		} catch (IOException e) {
 			logger.trace("Unable to close error.log stream", e);
 		}
@@ -188,6 +188,7 @@ public class CmdMain {
 		}*/
 		opt.setDatetime("2012-01-01_12_00");
 		//opt.setDestinationFolder(new File("download"));
+		opt.setForge(SupportedForge.GoogleCode);
 		opt.setMetricsFolder(new File("metrics"));
 		opt.setArguments(Arrays.asList("facebook"));
 		
@@ -222,6 +223,9 @@ public class CmdMain {
 			e.printStackTrace();
 		}
 		
+		// Set ThreadsConfig.nThreads
+		ThreadsConfig.nThreads = opt.getnThreads();
+		
 		// Search for projects
 		logger.info("Searching for projects...");
 		ForgeSearch search = defineForgeSearch(opt.getForge());
@@ -240,7 +244,7 @@ public class CmdMain {
 		
 		// Download and analyze projects
 		logger.info("Downloading and processing projects...");
-		ExecutorService ex = Executors.newFixedThreadPool(4);
+		ExecutorService ex = Executors.newFixedThreadPool(ThreadsConfig.nThreads);
 		List<Future<File>> downloadFutures = crawler.downloadProjects(projects);
 		List<Future<?>> analysisFutures = new ArrayList<Future<?>>();
 		for (int i = 0; i < downloadFutures.size(); i++) {
@@ -252,12 +256,20 @@ public class CmdMain {
 			analysisFutures.add(ex.submit(new Runnable() {
 				@Override
 				public void run() { 
+					File checkedOutRepository = null;
 					try {
-						downloadAndAnalyseProject(project, datetime_, repositoryFolderFuture, metricsFolder_);
-					} catch (InterruptedException e) {
+						checkedOutRepository = downloadAndCheckoutProject(project, datetime_, repositoryFolderFuture);
+					} catch (Exception e) {
 						logger.trace(f("Error while downloading project %s", project.getName()), e);
-					} catch (ExecutionException e) {
-						logger.trace(f("Error while downloading project %s", project.getName()), e);
+					}
+					if (checkedOutRepository != null) {
+						try {
+							analyzeProject(project, checkedOutRepository, datetime_, metricsFolder_);
+						} catch (Exception e) {
+							logger.trace(f("Error while analyzing project %s", project.getName()), e);
+						}
+					} else {
+						logger.warn(f("Project %s can't be analyzed", project.getName()));
 					}
 				}
 			}));
@@ -273,8 +285,8 @@ public class CmdMain {
 			}
 		}
 		
-		logger.info("Disposing resources...");
 		// Free resources and delete temp directory (if exists)
+		logger.info("Disposing resources...");
 		freeResources(crawler, errorStream);
 		if (isDestinationTemp) {
 			try {

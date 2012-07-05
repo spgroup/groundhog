@@ -10,6 +10,8 @@ import java.util.concurrent.Future;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import br.cin.ufpe.epona.config.ThreadsConfig;
+
 import com.google.common.io.Files;
 
 /**
@@ -40,7 +42,7 @@ public class Extractor {
 	}
 	
 	private void recursiveExtract(final File root, File next, final File destinationFolder) {
-		ExecutorService executor = Executors.newFixedThreadPool(4);
+		ExecutorService executor = Executors.newFixedThreadPool(ThreadsConfig.nThreads);
 		File[] subFiles = next.listFiles();
 		List<Future<?>> futures = new ArrayList<Future<?>>();
 		

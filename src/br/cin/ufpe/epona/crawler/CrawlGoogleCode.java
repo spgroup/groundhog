@@ -45,8 +45,12 @@ public class CrawlGoogleCode extends ForgeCrawler {
 		case NONE:
 			logger.warn(String.format("Project %s has no SCM.", projectName));
 			break;
-		case UNKNOWN:
+		case HG:
 			String scm = project.getSCM().toString();
+			logger.warn(String.format("Project %s has a unsupported SCM: %s", projectName, scm));
+			break;
+		case UNKNOWN:
+			scm = project.getSCM().toString();
 			logger.warn(String.format("Project %s has a unsupported SCM: %s", projectName, scm));
 			break;
 		default:

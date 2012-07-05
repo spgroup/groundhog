@@ -54,6 +54,10 @@ public class SearchGoogleCode implements ForgeSearch {
 			String url = command.split(" ")[2];
 			project.setSCM(SCM.GIT);
 			project.setScmURL(url);
+		} else if (command.startsWith("hg")) {
+			String url = command.split(" ")[2];
+			project.setSCM(SCM.HG);
+			project.setScmURL(url);
 		} else if (command.equals("")) {
 			project.setSCM(SCM.NONE);
 		} else {
