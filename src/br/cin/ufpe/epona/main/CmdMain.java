@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.apache.commons.io.FileUtils;
@@ -45,6 +47,7 @@ import com.google.common.io.Files;
 public class CmdMain {
 
 	private static Logger logger = LoggerFactory.getLogger(CrawlGoogleCode.class);
+	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH_mm");
 	
 	private static String f(String s, Object... args) {
 		return String.format(s, args);
@@ -100,6 +103,65 @@ public class CmdMain {
 		return codehistory;
 	}
 	
+	public static void downloadAndAnalyseProject(ForgeProject project, Date datetime, Future<File> repositoryFolderFuture, File metricsFolder)
+			throws InterruptedException, ExecutionException {
+		// Wait for project download
+		String name = project.getName();
+		File repositoryFolder = repositoryFolderFuture.get();
+		logger.info(f("Project %s was downloaded", name));
+		
+		// Checkout project to date
+		String datetimeStr = dateFormat.format(datetime);
+		logger.info(f("Checking out project %s to %s...", name, datetimeStr));
+		CodeHistory codehistory = null;
+		try {
+			codehistory = defineCodeHistory(project.getSCM());
+		} catch (UnsupportedSCMException e) {
+			logger.warn(f("Project %s has an unsupported SCM: %s", name, e.getSCM()));
+			return;
+		}
+		try {
+			if (project.getSCM() != SCM.SVN) {
+				codehistory.checkoutToDate(project.getName(), repositoryFolder, datetime);
+			} else {
+				codehistory.checkoutToDate(project.getName(), project.getScmURL(), datetime);
+			}
+		} catch (CheckoutException e) {
+			e.printStackTrace();
+			return;
+		} catch (EmptyProjectAtDateException e) {
+			logger.warn(f("Project %s was empty at specified date: %s", name, datetimeStr));
+			return;
+		}
+		logger.info(f("Project %s successfully checked out to %s", name, datetimeStr));
+		
+		// Parse project
+		logger.info(f("Parsing project %s...", name));
+		JavaParser parser = new JavaParser(repositoryFolder);
+		JSONObject metrics = null;
+		try {
+			metrics = parser.parseToJSON();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return;
+		}
+		
+		// Save metrics to file
+		String metricsFilename = f("%s-%s.json", name, datetimeStr);
+		logger.info(f("Project %s parsed, metrics extracted! Writing result to file %s...", name, metricsFilename));
+		try {
+			File metricsFile = new File(metricsFolder, metricsFilename);
+			FileUtils.writeStringToFile(metricsFile, metrics.toString());
+			logger.info(f("Metrics of project %s written to file %s", name, metricsFile.getAbsolutePath()));
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		}
+	}
+	
 	public static void freeResources(ForgeCrawler crawler) {
 		crawler.shutdown();
 		SVNClient.getInstance().close();
@@ -107,7 +169,6 @@ public class CmdMain {
 	}
 	
 	public static void main(String[] args) {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
 		Options opt = new Options();
 		/*CmdLineParser cmd = new CmdLineParser(opt);
 		try {
@@ -117,10 +178,10 @@ public class CmdMain {
 			cmd.printUsage(System.err);
 			return;
 		}*/
-		opt.setDatetime("2012-01-01 12:00:00 GMT");
+		opt.setDatetime("2012-01-01_12_00");
 		//opt.setDestinationFolder(new File("download"));
 		opt.setMetricsFolder(new File("metrics"));
-		opt.setArguments(Arrays.asList("facebook", "api"));
+		opt.setArguments(Arrays.asList("facebook"));
 		
 		List<String> terms = opt.getArguments();
 		String term = Joiner.on(" ").join(terms);
@@ -160,69 +221,38 @@ public class CmdMain {
 			projects.add(allProjects.get(i));
 		}
 		
-		// Download projects
+		// Download and analyze projects
 		logger.info("Downloading and processing projects...");
-		List<Future<File>> futures = crawler.downloadProjects(projects);
-		for (int i = 0; i < futures.size(); i++) {
-			try {
-				// Wait for project download
-				ForgeProject project = projects.get(i);
-				String name = project.getName();
-				File repositoryFolder = futures.get(i).get();
-				logger.info(f("Project %s was downloaded", name));
-				
-				// Checkout project to date
-				logger.info(f("Checking out project %s to specified date...", name));
-				CodeHistory codehistory = null;
-				try {
-					codehistory = defineCodeHistory(project.getSCM());
-				} catch (UnsupportedSCMException e) {
-					logger.warn(f("Project %s with unsupported SCM: %s", name, e.getSCM()));
-					continue;
-				}
-				try {
-					if (project.getSCM() != SCM.SVN) {
-						codehistory.checkoutToDate(project.getName(), repositoryFolder, datetime);
-					} else {
-						codehistory.checkoutToDate(project.getName(), project.getScmURL(), datetime);
+		ExecutorService ex = Executors.newFixedThreadPool(4);
+		List<Future<File>> downloadFutures = crawler.downloadProjects(projects);
+		List<Future<?>> analysisFutures = new ArrayList<Future<?>>();
+		for (int i = 0; i < downloadFutures.size(); i++) {
+			final ForgeProject project = projects.get(i);
+			final Date datetime_ = datetime;
+			final Future<File> repositoryFolderFuture = downloadFutures.get(i);
+			final File metricsFolder_ = metricsFolder;
+			
+			analysisFutures.add(ex.submit(new Runnable() {
+				@Override
+				public void run() { 
+					try {
+						downloadAndAnalyseProject(project, datetime_, repositoryFolderFuture, metricsFolder_);
+					} catch (InterruptedException e) {
+						logger.trace(f("Error while downloading project %s", project.getName()), e);
+					} catch (ExecutionException e) {
+						logger.trace(f("Error while downloading project %s", project.getName()), e);
 					}
-				} catch (CheckoutException e) {
-					e.printStackTrace();
-					return;
-				} catch (EmptyProjectAtDateException e) {
-					logger.warn(f("Project %s was empty at specified date: %s", name, e.getDate()));
-					continue;
 				}
-				logger.info(f("Project %s successfully checked out to %s", name, datetimeStr));
-				
-				// Parse project
-				logger.info(f("Parsing project %s...", name));
-				JavaParser parser = new JavaParser(repositoryFolder);
-				JSONObject metrics = null;
-				try {
-					metrics = parser.parseToJSON();
-				} catch (IOException e) {
-					e.printStackTrace();
-					return;
-				} catch (JSONException e) {
-					e.printStackTrace();
-					return;
-				}
-				
-				// Save metrics to file
-				logger.info(f("Project %s parsed, metrics extracted! Writing result to file %s...", name, name + ".json"));
-				try {
-					File metricsFile = new File(metricsFolder, name + ".json");
-					FileUtils.writeStringToFile(metricsFile, metrics.toString());
-					logger.info(f("Metrics of project %s written to file %s", name, metricsFile.getAbsolutePath()));
-				} catch (IOException e) {
-					e.printStackTrace();
-					return;
-				}
+			}));
+		}
+		ex.shutdown();
+		for (int i = 0; i < analysisFutures.size(); i++) {
+			try {
+				analysisFutures.get(i).get();
 			} catch (InterruptedException e) {
-				logger.error(f("Failed to download project %s", projects.get(i).getName()));
+				logger.trace(f("Error while analyzing project %s", projects.get(i).getName()), e);
 			} catch (ExecutionException e) {
-				logger.error(f("Failed to download project %s", projects.get(i).getName()));
+				logger.trace(f("Error while analyzing project %s", projects.get(i).getName()), e);
 			}
 		}
 		
