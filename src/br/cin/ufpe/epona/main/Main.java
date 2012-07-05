@@ -35,11 +35,11 @@ public class Main {
 	
 	private static Logger logger = LoggerFactory.getLogger(Main.class);
 	
-	public static void gitHubExample() throws Exception {
+	public static void gitHubExample(String term) throws Exception {
 		File downloadFolder = Files.createTempDir();
 		
 		System.out.println("1 - Search for projects according to term...");
-		List<ForgeProject> projects = SearchGitHub.getInstance().getProjects("facebook", 1);
+		List<ForgeProject> projects = SearchGitHub.getInstance().getProjects(term, 1);
 		ForgeProject project = projects.get(0);
 		projects = Arrays.asList(project); // analyze only the first project 
 		
@@ -53,7 +53,7 @@ public class Main {
 		}
 		
 		System.out.println("3 - Checkout repository to a given date...");
-		Date date = new GregorianCalendar(2011, 0, 2).getTime();
+		Date date = new GregorianCalendar(2012, 6, 1).getTime();
 		File temp = GitCodeHistory.getInstance().checkoutToDate(project.getName(), repositoryFolder, date);
 		
 		System.out.println("4 - Parse...");
@@ -150,7 +150,7 @@ public class Main {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		gitHubExample();
+		gitHubExample("jsoup");
 		//sourceForgeExample();
 		//googleCodeExample("facebook-java-api"); // Google Code SVN
 		//googleCodeExample("guava-libraries"); // Google Code Git
