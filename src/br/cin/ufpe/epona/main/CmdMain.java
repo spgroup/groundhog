@@ -186,7 +186,7 @@ public class CmdMain {
 		}*/
 		//opt.setDatetime("2012-01-01_12_00");
 		//opt.setDestinationFolder(new File("download"));
-		opt.setForge(SupportedForge.GITHUB);
+		opt.setForge(SupportedForge.GOOGLECODE);
 		opt.setMetricsFolder(new File("metrics"));
 		opt.setnProjects(3);
 		opt.setArguments(Arrays.asList("facebook"));
@@ -198,6 +198,11 @@ public class CmdMain {
 		if (destinationFolder == null) {
 			destinationFolder = Files.createTempDir();
 			isDestinationTemp = true;
+		} else {
+			if (destinationFolder.list().length > 0) {
+				logger.warn("Attention, destination folder isn't empty! " +
+						"Errors may happen if any of the projects to be downloaded already exist in this folder.");
+			}
 		}
 		File metricsFolder = opt.getMetricsFolder();
 		if (!metricsFolder.exists()) {
