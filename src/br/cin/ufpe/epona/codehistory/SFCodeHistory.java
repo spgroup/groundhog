@@ -10,6 +10,7 @@ import java.util.GregorianCalendar;
 import com.google.common.io.Files;
 
 import br.cin.ufpe.epona.extractor.Extractor;
+import br.cin.ufpe.epona.scmclient.EmptyProjectAtDateException;
 
 public class SFCodeHistory implements CodeHistory {
 	
@@ -34,7 +35,7 @@ public class SFCodeHistory implements CodeHistory {
 	// TODO: how to know if the single extracted file is really the source code of the project
 	// and isn't a library or just a part?
 	@Override
-	public File checkoutToDate(String project, File repositoryFolder, Date date) {
+	public File checkoutToDate(String project, File repositoryFolder, Date date) throws EmptyProjectAtDateException {
 		long dateLong = date.getTime();
 		File closest = null;
 		Deque<File> stack = new ArrayDeque<File>();
@@ -63,11 +64,11 @@ public class SFCodeHistory implements CodeHistory {
 			Extractor.getInstance().extractFile(closest, projectFolder);
 			return projectFolder;
 		} else {
-			return null;
+			throw new EmptyProjectAtDateException(date);
 		}
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		new SFCodeHistory().checkoutToDate("geom-java",
 				new File("C:\\Users\\fjsj\\Downloads\\EponaProjects\\geom-java"),
 				new GregorianCalendar(2010, 10, 7).getTime());

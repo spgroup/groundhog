@@ -1,20 +1,25 @@
 package br.cin.ufpe.epona.main;
 
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
 enum SupportedForge {
-	GitHub, SourceForge, GoogleCode
+	GITHUB, SOURCEFORGE, GOOGLECODE
 }
 
 public class Options {
 	
+	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH_mm");
+	
 	@Option(name="-forge", usage="forge to be used in search and crawling process")
-	private SupportedForge forge = SupportedForge.GitHub;
+	private SupportedForge forge = SupportedForge.GITHUB;
 	
 	@Option(name="-dest", usage="destination folder into which projects will be downloaded")
 	private File destinationFolder = null;
@@ -23,7 +28,7 @@ public class Options {
 	private File metricsFolder = null;
 	
 	@Option(name="-datetime", usage="datetime of projects source code to be processed")
-	private String datetime = null;
+	private String datetime = dateFormat.format(new Date());
 	
 	@Option(name="-nprojects", usage="maximum number of projects to be downloaded and processed")
 	private int nProjects = 4;
@@ -54,12 +59,12 @@ public class Options {
 		this.metricsFolder = metricsFolder;
 	}
 
-	public String getDatetime() {
-		return datetime;
+	public Date getDatetime() throws ParseException {
+		return dateFormat.parse(datetime);
 	}
 
 	public void setDatetime(String datetime) {
-		this.datetime = datetime;
+		this.datetime = dateFormat.format(datetime);
 	}
 
 	public int getnProjects() {
@@ -88,6 +93,10 @@ public class Options {
 
 	public void setForge(SupportedForge forge) {
 		this.forge = forge;
+	}
+	
+	public static SimpleDateFormat getDateFormat() {
+		return dateFormat;
 	}
 
 }
