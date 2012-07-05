@@ -60,7 +60,7 @@ public class GitCodeHistory implements CodeHistory {
 
 	public static void main(String[] args) throws Exception {
 		new GitCodeHistory().checkoutToDate("javacv",
-				new File("C:\\Users\\fjsj\\Downloads\\EponaProjects\\javacv"),
+				new File("C:\\Users\\fjsj\\Downloads\\EponaProjects\\playframework"),
 				new GregorianCalendar(2012, 5, 23).getTime());
 	}
 	

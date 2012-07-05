@@ -7,7 +7,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
+import org.eclipse.jgit.api.AddCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.CheckoutConflictException;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -79,7 +81,25 @@ public class GitClient {
 				return c1.getCommitterIdent().getWhen().compareTo(c2.getCommitterIdent().getWhen());
 			}
 		});
-		git.checkout().setName("master").setStartPoint(closest).setForce(true).call();
+		
+		// Workaround ahead, since JGit in Windows automatically
+		// adds ^M (Carriage Returns) to some files after, leaving the working tree dirty.
+		// JGit stash won't work and reset also not. So we need to commit!
+		// This commit doesn't affects metrics, since we do a checkout after it.
+		// To reproduce this bug, try to checkout https://github.com/playframework/ to 2012-05-01 12:00
+		// TODO: report this bug to JGit team.
+		Set<String> mods = git.status().call().getModified();
+		if (!mods.isEmpty()) {
+			AddCommand addCmd = git.add();
+			for (String m : mods) {
+				addCmd.addFilepattern(m);
+			}
+			addCmd.call();
+			git.commit().setMessage("Epona commit").call();
+		}
+		// workaround end.
+		
+		git.checkout().setName("epona-analyze").setStartPoint(closest).setCreateBranch(true).call();
 		rep.close();
 	}
 	

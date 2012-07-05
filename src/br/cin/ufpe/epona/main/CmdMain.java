@@ -188,7 +188,7 @@ public class CmdMain {
 			cmd.printUsage(System.err);
 			return;
 		}*/
-		opt.setDatetime("2011-07-01_12_00");
+		opt.setDatetime("2012-07-01_12_00");
 		//opt.setDestinationFolder(new File("download"));
 		opt.setForge(SupportedForge.GITHUB);
 		opt.setMetricsFolder(new File("metrics"));
