@@ -70,8 +70,8 @@ public class SearchGoogleCode implements ForgeSearch {
 			List<ForgeProject> projects = new ArrayList<ForgeProject>();
 			String paramsStr =
 				new ParamBuilder().
-				addParam("q", term + " label:Java").
-				addParam("start", String.valueOf((page - 1) * 10)).
+				add("q", term + " label:Java").
+				add("start", String.valueOf((page - 1) * 10)).
 				build();
 			
 			Document doc = Jsoup.parse(Requests.getInstance().get(root + "/hosting/search?" + paramsStr));

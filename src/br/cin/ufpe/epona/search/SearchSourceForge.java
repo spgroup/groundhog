@@ -33,9 +33,9 @@ public class SearchSourceForge implements ForgeSearch {
 			List<ForgeProject> projects = new ArrayList<ForgeProject>();
 			String paramsStr =
 				new ParamBuilder().
-				addParam("q", term).
-				addParam("sort", "popular").
-				addParam("page", String.valueOf(page)).
+				add("q", term).
+				add("sort", "popular").
+				add("page", String.valueOf(page)).
 				build();
 			Document doc = Jsoup.parse(Requests.getInstance().get("http://sourceforge.net/directory/language:java/?" + paramsStr));
 			for (Element li : doc.select(".projects > li")) {

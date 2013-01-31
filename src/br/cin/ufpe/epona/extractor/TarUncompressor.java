@@ -7,7 +7,7 @@ import java.io.InputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 
-public class TarUncompressor {
+public class TarUncompressor implements Uncompressor {
 	
 	// Adapted from: http://java-classes.blogspot.com.br/2012/01/when-you-extract-tar-files-you-can-not.html
 	public static void extract(File tarFile, InputStream tarFileInputStream, File dir) throws IOException {

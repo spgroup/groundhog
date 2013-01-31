@@ -14,7 +14,7 @@ public class ParamBuilder {
 		params = new ArrayList<NameValuePair>();
 	}
 
-	public ParamBuilder addParam(String name, String value) {
+	public ParamBuilder add(String name, String value) {
 		params.add(new BasicNameValuePair(name, value));
 		return this;
 	}

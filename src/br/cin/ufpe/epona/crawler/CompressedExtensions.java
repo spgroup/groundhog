@@ -6,7 +6,7 @@ import java.util.HashSet;
 public class CompressedExtensions {
 	
 	private static CompressedExtensions instance;
-	private HashSet<String> extensions;
+	private HashSet<String> extensions = new HashSet<String>();
 	
 	public static CompressedExtensions getInstance() {
 		if (instance == null) {
@@ -108,7 +108,6 @@ public class CompressedExtensions {
 									".zipx",
 									".zoo",
 									".zz"};
-		extensions = new HashSet<String>();
 		extensions.addAll(Arrays.asList(extensionsStr)); 
 	}
 	

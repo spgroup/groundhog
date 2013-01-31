@@ -8,7 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import br.cin.ufpe.epona.config.ThreadsConfig;
+import br.cin.ufpe.epona.Config;
 import br.cin.ufpe.epona.entity.ForgeProject;
 
 /**
@@ -28,7 +28,7 @@ public abstract class ForgeCrawler {
 	 * @param destinationFolder folder into which projects will be downloaded
 	 */
 	protected ForgeCrawler(File destinationFolder) {
-		ex = Executors.newFixedThreadPool(ThreadsConfig.nThreads);
+		ex = Executors.newFixedThreadPool(Config.MAX_NUMBER_OF_THREADS);
 		this.destinationFolder = destinationFolder;
 	}
 	

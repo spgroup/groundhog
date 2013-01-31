@@ -10,7 +10,7 @@ import java.util.concurrent.Future;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import br.cin.ufpe.epona.config.ThreadsConfig;
+import br.cin.ufpe.epona.Config;
 import br.cin.ufpe.epona.util.FileUtil;
 
 /**
@@ -41,7 +41,7 @@ public class Extractor {
 	}
 	
 	private void recursiveExtract(final File root, File next, final File destinationFolder) {
-		ExecutorService executor = Executors.newFixedThreadPool(ThreadsConfig.nThreads);
+		ExecutorService executor = Executors.newFixedThreadPool(Config.MAX_NUMBER_OF_THREADS);
 		File[] subFiles = next.listFiles();
 		List<Future<?>> futures = new ArrayList<Future<?>>();
 		
@@ -93,13 +93,12 @@ public class Extractor {
 		if (file.isFile()) {
 			String fileName = file.getName();
 			boolean extracted = false;
-			for (String ext : CompatibleFormats.getInstance().asList()) {
-				if (fileName.endsWith(ext)) { 
-					Uncompressor.getInstance().uncompress(file, destinationFolder);
-					extracted = true;
-					break;
-				}
+			
+			if(Formats.getInstance().isCompatible(fileName)) {
+				DefaultUncompressor.getInstance().uncompress(file, destinationFolder);
+				extracted = true;
 			}
+			
 			if (!extracted) {
 				logger.warn("Unable to extract file (unkwown compression format): " + file.getAbsolutePath());
 			}

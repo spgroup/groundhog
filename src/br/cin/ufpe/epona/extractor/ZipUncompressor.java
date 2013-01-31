@@ -9,7 +9,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
-public class ZipUncompressor {
+public class ZipUncompressor implements Uncompressor {
 	
 	public static void extract(File zipFile, File dir) throws IOException {
 		ZipFile zip = null;

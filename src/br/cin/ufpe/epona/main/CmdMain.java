@@ -20,13 +20,13 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.cin.ufpe.epona.Config;
 import br.cin.ufpe.epona.codehistory.CheckoutException;
 import br.cin.ufpe.epona.codehistory.CodeHistory;
 import br.cin.ufpe.epona.codehistory.GitCodeHistory;
 import br.cin.ufpe.epona.codehistory.SFCodeHistory;
 import br.cin.ufpe.epona.codehistory.SvnCodeHistory;
 import br.cin.ufpe.epona.codehistory.UnsupportedSCMException;
-import br.cin.ufpe.epona.config.ThreadsConfig;
 import br.cin.ufpe.epona.crawler.CrawlGitHub;
 import br.cin.ufpe.epona.crawler.CrawlGoogleCode;
 import br.cin.ufpe.epona.crawler.CrawlSourceForge;
@@ -99,7 +99,7 @@ public class CmdMain {
 			codehistory = SvnCodeHistory.getInstance();
 			break;
 		default:
-			throw new UnsupportedSCMException(scm);
+			throw new UnsupportedSCMException(scm.toString());
 		}
 		return codehistory;
 	}
@@ -118,7 +118,7 @@ public class CmdMain {
 		try {
 			codehistory = defineCodeHistory(project.getSCM());
 		} catch (UnsupportedSCMException e) {
-			logger.warn(f("Project %s has an unsupported SCM: %s", name, e.getSCM()));
+			logger.warn(f("Project %s has an unsupported SCM: %s", name, e.getMessage()));
 			return null;
 		}
 		File checkedOutRepository = null;
@@ -229,7 +229,7 @@ public class CmdMain {
 		}
 		
 		// Set ThreadsConfig.nThreads
-		ThreadsConfig.nThreads = opt.getnThreads();
+		Config.MAX_NUMBER_OF_THREADS = opt.getnThreads();
 		
 		// Search for projects
 		logger.info("Searching for projects...");
@@ -249,7 +249,7 @@ public class CmdMain {
 		
 		// Download and analyze projects
 		logger.info("Downloading and processing projects...");
-		ExecutorService ex = Executors.newFixedThreadPool(ThreadsConfig.nThreads);
+		ExecutorService ex = Executors.newFixedThreadPool(Config.MAX_NUMBER_OF_THREADS);
 		List<Future<File>> downloadFutures = crawler.downloadProjects(projects);
 		List<Future<?>> analysisFutures = new ArrayList<Future<?>>();
 		for (int i = 0; i < downloadFutures.size(); i++) {
