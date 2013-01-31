@@ -2,6 +2,7 @@ package br.cin.ufpe.epona.scmclient;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -74,7 +75,7 @@ public class GitClient {
 		
 		if (commits.size() == 0) {
 			rep.close();
-			throw new EmptyProjectAtDateException(date);
+			throw new EmptyProjectAtDateException(new SimpleDateFormat().format(date));
 		}
 		RevCommit closest = Collections.max(commits, new Comparator<RevCommit>() {
 			public int compare(RevCommit c1, RevCommit c2) {

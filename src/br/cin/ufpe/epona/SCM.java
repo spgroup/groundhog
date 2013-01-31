@@ -1,4 +1,4 @@
-package br.cin.ufpe.epona.entity;
+package br.cin.ufpe.epona;
 
 public enum SCM {
 	SOURCE_FORGE, GIT, SVN, HG, UNKNOWN, NONE;

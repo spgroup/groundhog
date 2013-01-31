@@ -1,6 +1,6 @@
-package br.cin.ufpe.epona.entity;
+package br.cin.ufpe.epona;
 
-public class ForgeProject {
+public class Project {
 	private String name;
 	private String description;
 	private String creator;
@@ -8,21 +8,21 @@ public class ForgeProject {
 	private SCM scm;
 	private String scmURL;
 	
-	public ForgeProject() {
+	public Project() {
 
 	}
 	
-	public ForgeProject(String name, String description) {
+	public Project(String name, String description) {
 		this.name = name;
 		this.description = description;
 	}
 
-	public ForgeProject(String name, String description, String iconURL) {
+	public Project(String name, String description, String iconURL) {
 		this(name, description);
 		this.iconURL = iconURL;
 	}
 	
-	public ForgeProject(String name, String description, String iconURL, SCM scm, String scmURL) {
+	public Project(String name, String description, String iconURL, SCM scm, String scmURL) {
 		this(name, description, iconURL);
 		this.scm = scm;
 		this.scmURL = scmURL;
@@ -78,7 +78,7 @@ public class ForgeProject {
 	
 	@Override
 	public String toString() {
-		return String.format("ForgeProject(%s, %s, %s)", name, description, iconURL);
+		return String.format("Project(%s, %s, %s)", name, description, iconURL);
 	}
 	
 }

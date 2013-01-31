@@ -21,6 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.cin.ufpe.epona.Config;
+import br.cin.ufpe.epona.Project;
+import br.cin.ufpe.epona.SCM;
 import br.cin.ufpe.epona.codehistory.CheckoutException;
 import br.cin.ufpe.epona.codehistory.CodeHistory;
 import br.cin.ufpe.epona.codehistory.GitCodeHistory;
@@ -31,8 +33,6 @@ import br.cin.ufpe.epona.crawler.CrawlGitHub;
 import br.cin.ufpe.epona.crawler.CrawlGoogleCode;
 import br.cin.ufpe.epona.crawler.CrawlSourceForge;
 import br.cin.ufpe.epona.crawler.ForgeCrawler;
-import br.cin.ufpe.epona.entity.ForgeProject;
-import br.cin.ufpe.epona.entity.SCM;
 import br.cin.ufpe.epona.http.Requests;
 import br.cin.ufpe.epona.parser.JavaParser;
 import br.cin.ufpe.epona.scmclient.EmptyProjectAtDateException;
@@ -104,7 +104,7 @@ public class CmdMain {
 		return codehistory;
 	}
 	
-	public static File downloadAndCheckoutProject(ForgeProject project, Date datetime, Future<File> repositoryFolderFuture)
+	public static File downloadAndCheckoutProject(Project project, Date datetime, Future<File> repositoryFolderFuture)
 			throws InterruptedException, ExecutionException, CheckoutException {
 		// Wait for project download
 		String name = project.getName();
@@ -137,7 +137,7 @@ public class CmdMain {
 		return checkedOutRepository;
 	}
 	
-	public static void analyzeProject(ForgeProject project, File projectFolder, Date datetime, File metricsFolder)
+	public static void analyzeProject(Project project, File projectFolder, Date datetime, File metricsFolder)
 			throws IOException, JSONException {
 		String name = project.getName();
 		String datetimeStr = Options.getDateFormat().format(datetime);
@@ -235,8 +235,8 @@ public class CmdMain {
 		logger.info("Searching for projects...");
 		ForgeSearch search = defineForgeSearch(opt.getForge());
 		ForgeCrawler crawler = defineForgeCrawler(opt.getForge(), destinationFolder);
-		List<ForgeProject> allProjects = null;
-		List<ForgeProject> projects = new ArrayList<ForgeProject>();
+		List<Project> allProjects = null;
+		List<Project> projects = new ArrayList<Project>();
 		try {
 			allProjects = search.getProjects(term, 1);
 		} catch (SearchException e) {
@@ -253,7 +253,7 @@ public class CmdMain {
 		List<Future<File>> downloadFutures = crawler.downloadProjects(projects);
 		List<Future<?>> analysisFutures = new ArrayList<Future<?>>();
 		for (int i = 0; i < downloadFutures.size(); i++) {
-			final ForgeProject project = projects.get(i);
+			final Project project = projects.get(i);
 			final Date datetime_ = datetime;
 			final Future<File> repositoryFolderFuture = downloadFutures.get(i);
 			final File metricsFolder_ = metricsFolder;

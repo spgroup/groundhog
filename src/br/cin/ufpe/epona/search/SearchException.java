@@ -1,6 +1,8 @@
 package br.cin.ufpe.epona.search;
 
-public class SearchException extends Exception {
+import br.cin.ufpe.epona.EponaException;
+
+public class SearchException extends EponaException {
 
 	private static final long serialVersionUID = 1L;
 

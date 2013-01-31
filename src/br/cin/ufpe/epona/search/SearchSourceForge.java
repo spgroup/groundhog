@@ -8,8 +8,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import br.cin.ufpe.epona.entity.ForgeProject;
-import br.cin.ufpe.epona.entity.SCM;
+import br.cin.ufpe.epona.Project;
+import br.cin.ufpe.epona.SCM;
 import br.cin.ufpe.epona.http.ParamBuilder;
 import br.cin.ufpe.epona.http.Requests;
 
@@ -28,9 +28,9 @@ public class SearchSourceForge implements ForgeSearch {
 		
 	}
 	
-	public List<ForgeProject> getProjects(String term, int page) throws SearchException {
+	public List<Project> getProjects(String term, int page) throws SearchException {
 		try {
-			List<ForgeProject> projects = new ArrayList<ForgeProject>();
+			List<Project> projects = new ArrayList<Project>();
 			String paramsStr =
 				new ParamBuilder().
 				add("q", term).
@@ -48,7 +48,7 @@ public class SearchSourceForge implements ForgeSearch {
 						iconURL = "http:" + iconURL;
 					}
 					String projectURL = String.format("http://sourceforge.net/projects/%s/files/", projectName);
-					ForgeProject forgeProject = new ForgeProject(projectName, description, iconURL, SCM.SOURCE_FORGE, projectURL);
+					Project forgeProject = new Project(projectName, description, iconURL, SCM.SOURCE_FORGE, projectURL);
 					projects.add(forgeProject);
 				}
 			}

@@ -12,6 +12,8 @@ import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.cin.ufpe.epona.Project;
+import br.cin.ufpe.epona.SCM;
 import br.cin.ufpe.epona.codehistory.GitCodeHistory;
 import br.cin.ufpe.epona.codehistory.SFCodeHistory;
 import br.cin.ufpe.epona.codehistory.SvnCodeHistory;
@@ -19,8 +21,6 @@ import br.cin.ufpe.epona.crawler.CrawlGitHub;
 import br.cin.ufpe.epona.crawler.CrawlGoogleCode;
 import br.cin.ufpe.epona.crawler.CrawlSourceForge;
 import br.cin.ufpe.epona.crawler.ForgeCrawler;
-import br.cin.ufpe.epona.entity.ForgeProject;
-import br.cin.ufpe.epona.entity.SCM;
 import br.cin.ufpe.epona.http.Requests;
 import br.cin.ufpe.epona.parser.JavaParser;
 import br.cin.ufpe.epona.parser.MutableInt;
@@ -37,8 +37,8 @@ public class TestMain {
 		File downloadFolder = FileUtil.getInstance().createTempDir();
 		
 		System.out.println("1 - Search for projects according to term...");
-		List<ForgeProject> projects = SearchGitHub.getInstance().getProjects(term, 1);
-		ForgeProject project = projects.get(0);
+		List<Project> projects = SearchGitHub.getInstance().getProjects(term, 1);
+		Project project = projects.get(0);
 		projects = Arrays.asList(project); // analyze only the first project 
 		
 		System.out.println("2 - Download 1st result...");
@@ -70,12 +70,12 @@ public class TestMain {
 		File downloadFolder = FileUtil.getInstance().createTempDir();
 		
 		System.out.println("1 - Search for projects according to term...");
-		List<ForgeProject> projects = SearchSourceForge.getInstance().getProjects("facebook chat", 1);
+		List<Project> projects = SearchSourceForge.getInstance().getProjects("facebook chat", 1);
 		if (projects.size() == 0) {
 			System.out.println("Ooops, no projects found! Aborting.");
 			System.exit(0);
 		}
-		ForgeProject project = projects.get(0);
+		Project project = projects.get(0);
 		projects = Arrays.asList(project); // analyze only the first project 
 		
 		System.out.println("2 - Download 1st result...");
@@ -107,8 +107,8 @@ public class TestMain {
 		File downloadFolder = FileUtil.getInstance().createTempDir();
 		
 		System.out.println("1 - Search for projects according to term...");
-		List<ForgeProject> projects = SearchGoogleCode.getInstance().getProjects(term, 1);
-		ForgeProject project = projects.get(0);
+		List<Project> projects = SearchGoogleCode.getInstance().getProjects(term, 1);
+		Project project = projects.get(0);
 		projects = Arrays.asList(project); // analyze only the first project 
 		
 		System.out.println("2 - Download 1st result...");
