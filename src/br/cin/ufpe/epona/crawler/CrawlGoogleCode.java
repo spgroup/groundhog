@@ -13,8 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tmatesoft.svn.core.SVNException;
 
-import br.cin.ufpe.epona.entity.ForgeProject;
-import br.cin.ufpe.epona.entity.SCM;
+import br.cin.ufpe.epona.Project;
+import br.cin.ufpe.epona.SCM;
 import br.cin.ufpe.epona.scmclient.GitClient;
 
 public class CrawlGoogleCode extends ForgeCrawler {
@@ -26,7 +26,7 @@ public class CrawlGoogleCode extends ForgeCrawler {
 	}
 	
 	@Override
-	protected File downloadProject(ForgeProject project)
+	protected File downloadProject(Project project)
 			throws IOException, SVNException,
 			InvalidRemoteException, TransportException, GitAPIException {
 		String projectName = project.getName();
@@ -63,8 +63,8 @@ public class CrawlGoogleCode extends ForgeCrawler {
 	
 	public static void main(String[] args) throws Exception {
 		long time = System.nanoTime();
-		List<ForgeProject> projects = Arrays.asList(
-				new ForgeProject("epubcheck", ""));
+		List<Project> projects = Arrays.asList(
+				new Project("epubcheck", ""));
 		File dest = new File("C:\\Users\\fjsj\\Downloads\\EponaProjects\\");
 		CrawlGoogleCode crawl = new CrawlGoogleCode(dest);
 		List<Future<File>> fs = crawl.downloadProjects(projects);

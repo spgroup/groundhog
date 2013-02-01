@@ -11,8 +11,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import br.cin.ufpe.epona.entity.ForgeProject;
-import br.cin.ufpe.epona.entity.SCM;
+import br.cin.ufpe.epona.Project;
+import br.cin.ufpe.epona.SCM;
 import br.cin.ufpe.epona.http.ParamBuilder;
 import br.cin.ufpe.epona.http.Requests;
 
@@ -45,7 +45,7 @@ public class SearchGoogleCode implements ForgeSearch {
 		}
 	}
 	
-	private void setCheckoutCommandToProject(String command, ForgeProject project) {
+	private void setCheckoutCommandToProject(String command, Project project) {
 		if (command.startsWith("svn")) {
 			String url = command.split(" ")[2];
 			project.setSCM(SCM.SVN);
@@ -65,13 +65,13 @@ public class SearchGoogleCode implements ForgeSearch {
 		}
 	}
 	
-	public List<ForgeProject> getProjects(String term, int page) throws SearchException {
+	public List<Project> getProjects(String term, int page) throws SearchException {
 		try {
-			List<ForgeProject> projects = new ArrayList<ForgeProject>();
+			List<Project> projects = new ArrayList<Project>();
 			String paramsStr =
 				new ParamBuilder().
-				addParam("q", term + " label:Java").
-				addParam("start", String.valueOf((page - 1) * 10)).
+				add("q", term + " label:Java").
+				add("start", String.valueOf((page - 1) * 10)).
 				build();
 			
 			Document doc = Jsoup.parse(Requests.getInstance().get(root + "/hosting/search?" + paramsStr));
@@ -84,13 +84,13 @@ public class SearchGoogleCode implements ForgeSearch {
 				if (imgSrc.startsWith("/")) {
 					iconURL = root + iconURL;
 				}
-				ForgeProject forgeProject = new ForgeProject(projectName, description, iconURL);
+				Project forgeProject = new Project(projectName, description, iconURL);
 				projects.add(forgeProject);
 			}
 			
 			// get checkout commands for each project in parallel (asynchronously)
 			List<Future<Integer>> futures = new ArrayList<Future<Integer>>();
-			for (final ForgeProject forgeProject : projects) {
+			for (final Project forgeProject : projects) {
 				String projectName = forgeProject.getName();
 				String checkoutPageURL = String.format("http://code.google.com/p/%s/source/checkout", projectName);
 				Future<Integer> f = Requests.getInstance().getAsync(checkoutPageURL, new AsyncCompletionHandler<Integer>() {

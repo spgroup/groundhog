@@ -8,8 +8,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import br.cin.ufpe.epona.entity.ForgeProject;
-import br.cin.ufpe.epona.entity.SCM;
+import br.cin.ufpe.epona.Project;
+import br.cin.ufpe.epona.SCM;
 import br.cin.ufpe.epona.http.Requests;
 
 public class SearchGitHub implements ForgeSearch {
@@ -32,16 +32,16 @@ public class SearchGitHub implements ForgeSearch {
 		return new JSONObject(Requests.getInstance().get(urlStr));
 	}
 	
-	public List<ForgeProject> getProjects(String term, int page) throws SearchException {
+	public List<Project> getProjects(String term, int page) throws SearchException {
 		try {
-			List<ForgeProject> projects = new ArrayList<ForgeProject>();
+			List<Project> projects = new ArrayList<Project>();
 			String searchUrl = root + String.format("/legacy/repos/search/%s?start_page=%s&language=java",
 					Requests.getInstance().encodeURL(term), page);
 			JSONArray results = getJsonFromAPI(searchUrl).getJSONArray("repositories");
 			
 			for (int i = 0; i < results.length(); i++) {
 				JSONObject result = results.getJSONObject(i);
-				ForgeProject forgeProject = new ForgeProject();
+				Project forgeProject = new Project();
 				
 				String name = result.getString("name");
 				String username = result.getString("username");
@@ -58,9 +58,7 @@ public class SearchGitHub implements ForgeSearch {
 				projects.add(forgeProject);
 			}
 			return projects;
-		} catch (JSONException e) {
-			throw new SearchException(e);
-		} catch (IOException e) {
+		} catch (JSONException | IOException e) {
 			throw new SearchException(e);
 		}
 	}

@@ -11,7 +11,7 @@ import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.TransportException;
 import org.json.JSONException;
 
-import br.cin.ufpe.epona.entity.ForgeProject;
+import br.cin.ufpe.epona.Project;
 import br.cin.ufpe.epona.scmclient.GitClient;
 import br.cin.ufpe.epona.search.SearchGitHub;
 
@@ -23,7 +23,7 @@ public class CrawlGitHub extends ForgeCrawler {
 	
 	
 	@Override
-	protected File downloadProject(ForgeProject project)
+	protected File downloadProject(Project project)
 			throws JSONException, IOException, 
 			InvalidRemoteException, TransportException, GitAPIException {
 		String projectName = project.getName();
@@ -36,9 +36,9 @@ public class CrawlGitHub extends ForgeCrawler {
 	
 	public static void main(String[] args) throws Exception {
 		long time = System.nanoTime();
-		ForgeProject junit = SearchGitHub.getInstance().getProjects("junit", 1).get(0);
-		ForgeProject playframework = SearchGitHub.getInstance().getProjects("playframework", 1).get(0);
-		List<ForgeProject> projects = Arrays.asList(junit, playframework);
+		Project junit = SearchGitHub.getInstance().getProjects("junit", 1).get(0);
+		Project playframework = SearchGitHub.getInstance().getProjects("playframework", 1).get(0);
+		List<Project> projects = Arrays.asList(junit, playframework);
 		File dest = new File("C:\\Users\\fjsj\\Downloads\\EponaProjects\\");
 		CrawlGitHub crawl = new CrawlGitHub(dest);
 		List<Future<File>> fs = crawl.downloadProjects(projects);

@@ -1,19 +1,13 @@
 package br.cin.ufpe.epona.scmclient;
 
-import java.util.Date;
+import br.cin.ufpe.epona.EponaException;
 
-public class EmptyProjectAtDateException extends Exception {
+public class EmptyProjectAtDateException extends EponaException {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private Date date;
-	
-	public EmptyProjectAtDateException(Date date) {
-		this.date = date;
-	}
-	
-	public Date getDate() {
-		return date;
+	public EmptyProjectAtDateException(String msg) {
+		super(msg);
 	}
 	
 }

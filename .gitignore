@@ -1,1 +1,9 @@
+!.gitignore
+target
+bin
+
 *.class
+*~
+.classpath
+.settings/*/*
+.settings

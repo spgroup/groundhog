@@ -1,19 +1,13 @@
 package br.cin.ufpe.epona.codehistory;
 
-import br.cin.ufpe.epona.entity.SCM;
+import br.cin.ufpe.epona.EponaException;
 
-public class UnsupportedSCMException extends Exception {
+public class UnsupportedSCMException extends EponaException {
 
 	private static final long serialVersionUID = 1L;
-	
-	private SCM scm; 
-	
-	public UnsupportedSCMException(SCM scm) {
-		this.scm = scm;
+
+	public UnsupportedSCMException(String msg) {
+		super(msg);
 	}
 
-	public SCM getSCM() {
-		return scm;
-	}
-	
 }

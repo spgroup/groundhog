@@ -8,8 +8,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import br.cin.ufpe.epona.config.ThreadsConfig;
-import br.cin.ufpe.epona.entity.ForgeProject;
+import br.cin.ufpe.epona.Config;
+import br.cin.ufpe.epona.Project;
 
 /**
  * An abstract class that defines the forge crawl functionality.
@@ -28,7 +28,7 @@ public abstract class ForgeCrawler {
 	 * @param destinationFolder folder into which projects will be downloaded
 	 */
 	protected ForgeCrawler(File destinationFolder) {
-		ex = Executors.newFixedThreadPool(ThreadsConfig.nThreads);
+		ex = Executors.newFixedThreadPool(Config.MAX_NUMBER_OF_THREADS);
 		this.destinationFolder = destinationFolder;
 	}
 	
@@ -39,7 +39,7 @@ public abstract class ForgeCrawler {
 	 * @return a repository folder (if has SCM as Git or SVN) or a project folder (which contains archived/compressed files)
 	 * @throws Exception when something nasty happens
 	 */
-	protected abstract File downloadProject(ForgeProject project) throws Exception;
+	protected abstract File downloadProject(Project project) throws Exception;
 	
 	/**
 	 * Downloads the given list of projects, returning futures with files objects.
@@ -50,10 +50,10 @@ public abstract class ForgeCrawler {
 	 * @param projects list of ForgeProjects, usually given by a ForgeSearch subclass
 	 * @return list of futures with repository folders as File objects
 	 */
-	public List<Future<File>> downloadProjects(List<ForgeProject> projects) {
+	public List<Future<File>> downloadProjects(List<Project> projects) {
 		List<Future<File>> fs = new ArrayList<Future<File>>();
 		
-		for (final ForgeProject p : projects) {
+		for (final Project p : projects) {
 			Future<File> f = ex.submit(new Callable<File>() {
 				public File call() throws Exception {
 					return downloadProject(p);

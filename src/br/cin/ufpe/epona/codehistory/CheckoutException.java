@@ -1,11 +1,13 @@
 package br.cin.ufpe.epona.codehistory;
 
-public class CheckoutException extends Exception {
+import br.cin.ufpe.epona.EponaException;
+
+public class CheckoutException extends EponaException {
 
 	private static final long serialVersionUID = 1L;
-	
-	public CheckoutException(Exception e) {
+
+	public CheckoutException(Throwable e) {
 		super(e);
 	}
-	
+
 }

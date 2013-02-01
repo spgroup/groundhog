@@ -22,7 +22,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import br.cin.ufpe.epona.entity.ForgeProject;
+import br.cin.ufpe.epona.Project;
 import br.cin.ufpe.epona.http.Requests;
 
 import com.ning.http.client.AsyncCompletionHandler;
@@ -147,7 +147,7 @@ public class CrawlSourceForge extends ForgeCrawler {
 	}
 	
 	@Override
-	protected File downloadProject(ForgeProject project)
+	protected File downloadProject(Project project)
 			throws IOException, InterruptedException, ExecutionException {
 		String projectName = project.getName();
 		List<String> urls = getDownloadURLs(projectName);
@@ -172,7 +172,7 @@ public class CrawlSourceForge extends ForgeCrawler {
 	
 	public static void main(String[] args) throws Exception {
 		long time = System.nanoTime();
-		List<ForgeProject> projects = Arrays.asList(new ForgeProject("geom-java", ""), new ForgeProject("im4java", ""));
+		List<Project> projects = Arrays.asList(new Project("geom-java", ""), new Project("im4java", ""));
 		File dest = new File("C:\\Users\\fjsj\\Downloads\\EponaProjects\\");
 		CrawlSourceForge crawl = new CrawlSourceForge(dest);
 		List<Future<File>> fs = crawl.downloadProjects(projects);

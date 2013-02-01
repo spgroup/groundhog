@@ -1,13 +1,14 @@
 package br.cin.ufpe.epona.codehistory;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Deque;
 import java.util.GregorianCalendar;
 
-import br.cin.ufpe.epona.extractor.Extractor;
+import br.cin.ufpe.epona.extractor.DefaultExtractor;
 import br.cin.ufpe.epona.scmclient.EmptyProjectAtDateException;
 import br.cin.ufpe.epona.util.FileUtil;
 
@@ -60,10 +61,10 @@ public class SFCodeHistory implements CodeHistory {
 		}
 		if (closest != null) {
 			File projectFolder = new File(FileUtil.getInstance().createTempDir(), project);
-			Extractor.getInstance().extractFile(closest, projectFolder);
+			DefaultExtractor.getInstance().extractFile(closest, projectFolder);
 			return projectFolder;
 		} else {
-			throw new EmptyProjectAtDateException(date);
+			throw new EmptyProjectAtDateException(new SimpleDateFormat().format(date));
 		}
 	}
 	

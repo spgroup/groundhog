@@ -20,19 +20,19 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.cin.ufpe.epona.Config;
+import br.cin.ufpe.epona.Project;
+import br.cin.ufpe.epona.SCM;
 import br.cin.ufpe.epona.codehistory.CheckoutException;
 import br.cin.ufpe.epona.codehistory.CodeHistory;
 import br.cin.ufpe.epona.codehistory.GitCodeHistory;
 import br.cin.ufpe.epona.codehistory.SFCodeHistory;
 import br.cin.ufpe.epona.codehistory.SvnCodeHistory;
 import br.cin.ufpe.epona.codehistory.UnsupportedSCMException;
-import br.cin.ufpe.epona.config.ThreadsConfig;
 import br.cin.ufpe.epona.crawler.CrawlGitHub;
 import br.cin.ufpe.epona.crawler.CrawlGoogleCode;
 import br.cin.ufpe.epona.crawler.CrawlSourceForge;
 import br.cin.ufpe.epona.crawler.ForgeCrawler;
-import br.cin.ufpe.epona.entity.ForgeProject;
-import br.cin.ufpe.epona.entity.SCM;
 import br.cin.ufpe.epona.http.Requests;
 import br.cin.ufpe.epona.parser.JavaParser;
 import br.cin.ufpe.epona.scmclient.EmptyProjectAtDateException;
@@ -99,12 +99,12 @@ public class CmdMain {
 			codehistory = SvnCodeHistory.getInstance();
 			break;
 		default:
-			throw new UnsupportedSCMException(scm);
+			throw new UnsupportedSCMException(scm.toString());
 		}
 		return codehistory;
 	}
 	
-	public static File downloadAndCheckoutProject(ForgeProject project, Date datetime, Future<File> repositoryFolderFuture)
+	public static File downloadAndCheckoutProject(Project project, Date datetime, Future<File> repositoryFolderFuture)
 			throws InterruptedException, ExecutionException, CheckoutException {
 		// Wait for project download
 		String name = project.getName();
@@ -118,7 +118,7 @@ public class CmdMain {
 		try {
 			codehistory = defineCodeHistory(project.getSCM());
 		} catch (UnsupportedSCMException e) {
-			logger.warn(f("Project %s has an unsupported SCM: %s", name, e.getSCM()));
+			logger.warn(f("Project %s has an unsupported SCM: %s", name, e.getMessage()));
 			return null;
 		}
 		File checkedOutRepository = null;
@@ -137,7 +137,7 @@ public class CmdMain {
 		return checkedOutRepository;
 	}
 	
-	public static void analyzeProject(ForgeProject project, File projectFolder, Date datetime, File metricsFolder)
+	public static void analyzeProject(Project project, File projectFolder, Date datetime, File metricsFolder)
 			throws IOException, JSONException {
 		String name = project.getName();
 		String datetimeStr = Options.getDateFormat().format(datetime);
@@ -229,14 +229,14 @@ public class CmdMain {
 		}
 		
 		// Set ThreadsConfig.nThreads
-		ThreadsConfig.nThreads = opt.getnThreads();
+		Config.MAX_NUMBER_OF_THREADS = opt.getnThreads();
 		
 		// Search for projects
 		logger.info("Searching for projects...");
 		ForgeSearch search = defineForgeSearch(opt.getForge());
 		ForgeCrawler crawler = defineForgeCrawler(opt.getForge(), destinationFolder);
-		List<ForgeProject> allProjects = null;
-		List<ForgeProject> projects = new ArrayList<ForgeProject>();
+		List<Project> allProjects = null;
+		List<Project> projects = new ArrayList<Project>();
 		try {
 			allProjects = search.getProjects(term, 1);
 		} catch (SearchException e) {
@@ -249,11 +249,11 @@ public class CmdMain {
 		
 		// Download and analyze projects
 		logger.info("Downloading and processing projects...");
-		ExecutorService ex = Executors.newFixedThreadPool(ThreadsConfig.nThreads);
+		ExecutorService ex = Executors.newFixedThreadPool(Config.MAX_NUMBER_OF_THREADS);
 		List<Future<File>> downloadFutures = crawler.downloadProjects(projects);
 		List<Future<?>> analysisFutures = new ArrayList<Future<?>>();
 		for (int i = 0; i < downloadFutures.size(); i++) {
-			final ForgeProject project = projects.get(i);
+			final Project project = projects.get(i);
 			final Date datetime_ = datetime;
 			final Future<File> repositoryFolderFuture = downloadFutures.get(i);
 			final File metricsFolder_ = metricsFolder;
