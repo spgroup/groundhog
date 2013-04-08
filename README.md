@@ -20,13 +20,23 @@ Epona was built using Maven. In order for it to behave like an Eclipse project, 
 
 ### Forge Search
 
+* **GitHub**:
+Epona uses the [GitHub API v3] to search for repositories on GitHub
 
+* **Google Code**:
+to be written
 
-# How to contribute
+* **SourceForge**:
+to be written
+
+## How to contribute
 
 Want to contribute with code, documentation or bug report?
 
 Just add an issue and fix them! :)
 Try the [existing ones](https://github.com/fjsj/epona/issues)
 
-[1]: Consider installing the m2e plugin for Eclipse
+[1]: Consider installing the [m2e] plugin for Eclipse
+
+[GitHub API v3]: http://developer.github.com/
+[m2e]: http://eclipse.org/m2e/
