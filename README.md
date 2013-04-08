@@ -4,7 +4,11 @@ A simple pure Java tool to crawl Java projects from popular forges and to extrac
 
 ## Usage
 
-More info to come soon
+### Building in your machine
+
+Epona was built using Maven. In order for it to behave like an Eclipse project, you'll need to install [1] Maven, and then run:
+
+	mvn eclipse:eclipse
 
 ### Supported Forges
 
@@ -16,12 +20,6 @@ More info to come soon
 
 ### Forge Search
 
-
-## Building in your machine
-
-Epona was built using Maven. In order for it to behave like an Eclipse project, you'll need to install [1] Maven, and then run:
-
-	mvn eclipse:eclipse
 
 
 # How to contribute
