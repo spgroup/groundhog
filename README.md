@@ -8,7 +8,23 @@ A simple pure Java tool to crawl Java projects from popular forges and to extrac
 
 Epona was built using Maven. In order for it to behave like an Eclipse project, you'll need to install [1] Maven, and then run:
 
-	mvn eclipse:eclipse
+```
+$ mvn eclipse:eclipse
+```
+
+### Generating the JAR
+
+Generate the JAR file for the Epona project. Eclipse users can go to `File > Export > Runnable Jar File` and enter the `CmdMain` class for the option "Launch Configuration".
+
+### Running Epona
+
+Search GitHub for projects matching "phonegap-facebook-plugin" and place the results (if any) in a folder called metrics:
+
+```shell
+$ java -jar epona.jar -forge github -out metrics phonegap-facebook-plugin
+```
+
+## Info
 
 ### Supported Forges
 
@@ -28,6 +44,17 @@ to be written
 
 * **SourceForge**:
 to be written
+
+
+## Core team
+
+* Flávio Junior {fjsj@cin.ufpe.br}
+
+* Gustavo Pinto {ghlp@cin.ufpe.br}
+
+* Rodrigo Alves Vieira {rav2@cin.ufpe.br}
+
+* Danilo Neves Ribeiro {dnr2@cin.ufpe.br}
 
 ## How to contribute
 
