@@ -4,6 +4,8 @@ A simple pure Java tool to crawl Java projects from popular forges and to extrac
 
 ## Usage
 
+Groundhog uses Java 7 features, so you must have it installed before build.
+
 ### Building in your machine
 
 Groundhog was built using Maven. In order for it to behave like an Eclipse project, you'll need to install [1] Maven, and then run:
@@ -14,7 +16,13 @@ $ mvn eclipse:eclipse
 
 ### Generating the JAR
 
-Generate the JAR file for the Groundhog project. Eclipse users can go to `File > Export > Runnable Jar File` and enter the `CmdMain` class for the option "Launch Configuration".
+Generate the JAR file for the Groundhog project.
+
+```
+$ mvn package
+```
+
+Eclipse users can go to `File > Export > Runnable Jar File` and enter the `CmdMain` class for the option "Launch Configuration".
 
 ### Running Groundhog
 
@@ -82,3 +90,4 @@ Groundhog is released under GPL 2.
 [GitHub API v3]: http://developer.github.com/
 [m2e]: http://eclipse.org/m2e/
 [Wiki]: https://github.com/spgroup/groundhog/wiki
+=======
