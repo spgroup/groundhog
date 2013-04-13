@@ -99,5 +99,4 @@ public class Options {
 	public static SimpleDateFormat getDateFormat() {
 		return dateFormat;
 	}
-
 }

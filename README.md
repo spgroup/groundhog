@@ -1,4 +1,4 @@
-# Epona
+# Groundhog
 
 A simple pure Java tool to crawl Java projects from popular forges and to extract metrics from them.
 
@@ -6,7 +6,7 @@ A simple pure Java tool to crawl Java projects from popular forges and to extrac
 
 ### Building in your machine
 
-Epona was built using Maven. In order for it to behave like an Eclipse project, you'll need to install [1] Maven, and then run:
+Groundhog was built using Maven. In order for it to behave like an Eclipse project, you'll need to install [1] Maven, and then run:
 
 ```
 $ mvn eclipse:eclipse
@@ -14,14 +14,14 @@ $ mvn eclipse:eclipse
 
 ### Generating the JAR
 
-Generate the JAR file for the Epona project. Eclipse users can go to `File > Export > Runnable Jar File` and enter the `CmdMain` class for the option "Launch Configuration".
+Generate the JAR file for the Groundhog project. Eclipse users can go to `File > Export > Runnable Jar File` and enter the `CmdMain` class for the option "Launch Configuration".
 
-### Running Epona
+### Running Groundhog
 
 Search GitHub for projects matching "phonegap-facebook-plugin" and place the results (if any) in a folder called metrics:
 
 ```shell
-$ java -jar epona.jar -forge github -out metrics phonegap-facebook-plugin
+$ java -jar groundhog.jar -forge github -out metrics phonegap-facebook-plugin
 ```
 
 ## Info
@@ -37,7 +37,7 @@ $ java -jar epona.jar -forge github -out metrics phonegap-facebook-plugin
 ### Forge Search
 
 * **GitHub**:
-Epona uses the [GitHub API v3] to search for repositories on GitHub
+Groundhog uses the [GitHub API v3] to search for repositories on GitHub
 
 * **Google Code**:
 to be written
@@ -61,7 +61,7 @@ to be written
 Want to contribute with code, documentation or bug report?
 
 Just add an issue and fix them! :)
-Try the [existing ones](https://github.com/fjsj/epona/issues)
+Try the [existing ones](https://github.com/spgroup/groundhog/issues)
 
 [1]: Consider installing the [m2e] plugin for Eclipse
 
