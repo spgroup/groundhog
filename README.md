@@ -63,6 +63,10 @@ Want to contribute with code, documentation or bug report?
 Just add an issue and fix them! :)
 Try the [existing ones](https://github.com/spgroup/groundhog/issues)
 
+## License
+
+Groundhog is released under GPL 2.
+
 [1]: Consider installing the [m2e] plugin for Eclipse
 
 [GitHub API v3]: http://developer.github.com/
