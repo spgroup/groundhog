@@ -45,6 +45,16 @@ to be written
 * **SourceForge**:
 to be written
 
+## Documentation
+
+Groundhog features a [Wiki], where you can browse for more information.
+
+You can generate the Javadoc files with the following command:
+
+```
+$ cd src/
+$ javadoc -d src/src/groundhog br.cin.ufpe.groundhog
+```
 
 ## Core team
 
@@ -71,3 +81,4 @@ Groundhog is released under GPL 2.
 
 [GitHub API v3]: http://developer.github.com/
 [m2e]: http://eclipse.org/m2e/
+[Wiki]: https://github.com/spgroup/groundhog/wiki
