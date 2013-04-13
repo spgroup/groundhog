@@ -9,3 +9,6 @@ bin
 .settings
 .DS_Store
 *.log
+
+groundhog.jar
+metrics/
