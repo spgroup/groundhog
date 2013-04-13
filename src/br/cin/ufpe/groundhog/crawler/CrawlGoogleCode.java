@@ -18,7 +18,6 @@ import br.cin.ufpe.groundhog.SCM;
 import br.cin.ufpe.groundhog.scmclient.GitClient;
 
 public class CrawlGoogleCode extends ForgeCrawler {
-	
 	private static Logger logger = LoggerFactory.getLogger(CrawlGoogleCode.class);
 	
 	public CrawlGoogleCode(File destinationFolder) {

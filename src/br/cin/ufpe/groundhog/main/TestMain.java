@@ -30,7 +30,6 @@ import br.cin.ufpe.groundhog.search.SearchSourceForge;
 import br.cin.ufpe.groundhog.util.FileUtil;
 
 public class TestMain {
-	
 	private static Logger logger = LoggerFactory.getLogger(TestMain.class);
 	
 	public static void gitHubExample(String term) throws Exception {

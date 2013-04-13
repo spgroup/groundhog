@@ -20,7 +20,6 @@ import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.Response;
 
 public class SearchGoogleCode implements ForgeSearch {
-	
 	private static String root = "http://code.google.com";
 	private static SearchGoogleCode instance;
 	

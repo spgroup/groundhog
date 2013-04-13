@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class CompressedExtensions {
-	
 	private static CompressedExtensions instance;
 	private HashSet<String> extensions = new HashSet<String>();
 	

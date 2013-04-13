@@ -9,7 +9,6 @@ import lzma.streams.LzmaInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 
 public class DefaultUncompressor {
-	
 	private static DefaultUncompressor instance;
 	
 	public static DefaultUncompressor getInstance() {

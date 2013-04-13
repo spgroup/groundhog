@@ -19,7 +19,6 @@ import br.cin.ufpe.groundhog.Project;
  *
  */
 public abstract class ForgeCrawler {
-	
 	protected ExecutorService ex;
 	protected File destinationFolder;
 	

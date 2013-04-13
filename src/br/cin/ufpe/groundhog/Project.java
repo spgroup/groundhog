@@ -1,5 +1,8 @@
 package br.cin.ufpe.groundhog;
 
+/*
+ * Represents a software project in Groundhog
+ */
 public class Project {
 	private String name;
 	private String description;
@@ -79,6 +82,5 @@ public class Project {
 	@Override
 	public String toString() {
 		return String.format("Project(%s, %s, %s)", name, description, iconURL);
-	}
-	
+	}	
 }

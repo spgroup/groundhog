@@ -11,7 +11,6 @@ import br.cin.ufpe.groundhog.scmclient.SVNClient;
 import br.cin.ufpe.groundhog.util.FileUtil;
 
 public class SvnCodeHistory implements CodeHistory {
-	
 	private static SvnCodeHistory instance;
 	
 	public static SvnCodeHistory getInstance() {

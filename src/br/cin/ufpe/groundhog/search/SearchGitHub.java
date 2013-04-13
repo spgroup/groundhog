@@ -13,7 +13,6 @@ import br.cin.ufpe.groundhog.SCM;
 import br.cin.ufpe.groundhog.http.Requests;
 
 public class SearchGitHub implements ForgeSearch {
-	
 	private static String root = "https://api.github.com";
 	private static SearchGitHub instance;
 	

@@ -27,7 +27,6 @@ import org.gitective.core.filter.commit.AllCommitFilter;
 import org.gitective.core.filter.commit.CommitterDateFilter;
 
 public class GitClient {
-
 	private static GitClient instance;
 
 	public static GitClient getInstance() {

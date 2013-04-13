@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Formats {
-
 	private static Formats instance;
 	private List<String> extensions;
 

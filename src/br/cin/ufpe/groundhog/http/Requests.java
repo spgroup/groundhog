@@ -12,7 +12,6 @@ import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.ListenableFuture;
 
 public class Requests {
-
 	private static Requests instance;
 	
 	public static Requests getInstance() {

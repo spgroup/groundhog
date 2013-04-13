@@ -8,9 +8,7 @@ import org.apache.commons.io.FileUtils;
 
 import com.google.common.io.Files;
 
-
 public class FileUtil {
-	
 	private static FileUtil instance;
 	
 	public static FileUtil getInstance() {

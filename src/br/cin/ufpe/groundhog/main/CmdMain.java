@@ -47,7 +47,6 @@ import br.cin.ufpe.groundhog.util.FileUtil;
 import com.google.common.base.Joiner;
 
 public class CmdMain {
-
 	private static Logger logger = LoggerFactory.getLogger(CrawlGoogleCode.class);
 	
 	private static String f(String s, Object... args) {
@@ -295,5 +294,4 @@ public class CmdMain {
 		freeResources(crawler, errorStream);
 		logger.info("Done!");
 	}
-
 }

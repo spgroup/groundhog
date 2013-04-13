@@ -20,9 +20,7 @@ import br.cin.ufpe.groundhog.util.FileUtil;
  *
  */
 public class DefaultExtractor implements Extractor {
-	
 	private static Log logger = LogFactory.getLog(DefaultExtractor.class.getName());
-	
 	private static DefaultExtractor instance;
 	
 	/**

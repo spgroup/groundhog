@@ -16,7 +16,6 @@ import br.cin.ufpe.groundhog.scmclient.GitClient;
 import br.cin.ufpe.groundhog.util.FileUtil;
 
 public class GitCodeHistory implements CodeHistory {
-	
 	private static GitCodeHistory instance;
 	
 	public static GitCodeHistory getInstance() {

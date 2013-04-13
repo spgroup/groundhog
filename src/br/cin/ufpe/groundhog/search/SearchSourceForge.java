@@ -14,7 +14,6 @@ import br.cin.ufpe.groundhog.http.ParamBuilder;
 import br.cin.ufpe.groundhog.http.Requests;
 
 public class SearchSourceForge implements ForgeSearch {
-	
 	private static SearchSourceForge instance;
 	
 	public static SearchSourceForge getInstance() {

@@ -15,7 +15,7 @@ import br.cin.ufpe.groundhog.scmclient.EmptyProjectAtDateException;
 public interface CodeHistory {
 	
 	/**
-	 * Checkouts the given project according to the given date. Returns a new temporary folder
+	 * Checkos out the given project according to the given date. Returns a new temporary folder
 	 * with the project source code version at or before date. This variation of this method should
 	 * be used when the SCM revision history is centralized within a URL (like SVN). 
 	 * @param project project name
@@ -28,7 +28,7 @@ public interface CodeHistory {
 			throws CheckoutException, EmptyProjectAtDateException;
 	
 	/**
-	 * Checkouts the given project according to the given date. Returns a new temporary folder
+	 * Checks out the given project according to the given date. Returns a new temporary folder
 	 * with the project source code version at or before date. This variation of this method should
 	 * be used when the SCM revision history is available locally (like Git)
 	 * or when project is composed by compressed files (like SourceForge).

@@ -30,7 +30,6 @@ import com.ning.http.client.ListenableFuture;
 import com.ning.http.client.Response;
 
 public class CrawlSourceForge extends ForgeCrawler {
-
 	private static String rootUrl = "http://sourceforge.net";
 	
 	private ConcurrentHashMap<String, Date> mapModifiedDate;

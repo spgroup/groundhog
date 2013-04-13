@@ -15,7 +15,6 @@ enum SupportedForge {
 }
 
 public class Options {
-	
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH_mm");
 	
 	@Option(name="-forge", usage="forge to be used in search and crawling process")

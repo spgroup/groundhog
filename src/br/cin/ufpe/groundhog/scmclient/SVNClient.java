@@ -10,7 +10,6 @@ import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNUpdateClient;
 
 public class SVNClient {
-
 	private static SVNClient instance;
 	
 	public static SVNClient getInstance() {

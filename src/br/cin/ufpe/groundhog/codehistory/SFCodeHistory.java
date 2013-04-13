@@ -13,7 +13,6 @@ import br.cin.ufpe.groundhog.scmclient.EmptyProjectAtDateException;
 import br.cin.ufpe.groundhog.util.FileUtil;
 
 public class SFCodeHistory implements CodeHistory {
-	
 	private static SFCodeHistory instance;
 	
 	public static SFCodeHistory getInstance() {
