@@ -77,14 +77,14 @@ public class CodeAnalyzerProcessor extends AbstractProcessor {
         	while (mC.find()) {
         		--lines;
         	}
-        }	    	
+        }
     	
 		Matcher newLineMatches = patternNewLine.matcher(code);
 	    while (newLineMatches.find()) {
 	    	++lines;
 	    }
 	    return lines;
-    }    
+    }
     
     public HashMap<String, HashMap<String, MutableInt>> getCounters() {
 		return counters;
