@@ -12,9 +12,17 @@ Groundhog was built using Maven. In order for it to behave like an Eclipse proje
 $ mvn eclipse:eclipse
 ```
 
+Groundhog uses Java7 features, so you must have it installed before build.
+
 ### Generating the JAR
 
-Generate the JAR file for the Groundhog project. Eclipse users can go to `File > Export > Runnable Jar File` and enter the `CmdMain` class for the option "Launch Configuration".
+Generate the JAR file for the Groundhog project. 
+
+```
+$ mvn package
+```
+
+Eclipse users can go to `File > Export > Runnable Jar File` and enter the `CmdMain` class for the option "Launch Configuration".
 
 ### Running Groundhog
 

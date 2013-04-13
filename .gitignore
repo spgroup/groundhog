@@ -4,6 +4,7 @@ bin
 
 *.class
 *~
+.project
 .classpath
 .settings/*/*
 .settings
