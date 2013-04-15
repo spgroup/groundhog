@@ -35,12 +35,12 @@ public class TestMain {
 	public static void gitHubExample(String term) throws Exception {
 		File downloadFolder = FileUtil.getInstance().createTempDir();
 		
-		System.out.println("1 - Search for projects according to term...");
+		logger.info("1 - Search for projects according to term...");
 		List<Project> projects = SearchGitHub.getInstance().getProjects(term, 1);
 		Project project = projects.get(0);
 		projects = Arrays.asList(project); // analyze only the first project 
 		
-		System.out.println("2 - Download 1st result...");
+		logger.info("2 - Download 1st result...");
 		ForgeCrawler crawler = new CrawlGitHub(downloadFolder);
 		List<Future<File>> futures = crawler.downloadProjects(projects);
 		crawler.shutdown();
@@ -49,11 +49,11 @@ public class TestMain {
 			repositoryFolder = f.get();
 		}
 		
-		System.out.println("3 - Checkout repository to a given date...");
+		logger.info("3 - Checkout repository to a given date...");
 		Date date = new GregorianCalendar(2012, 6, 1).getTime();
 		File temp = GitCodeHistory.getInstance().checkoutToDate(project.getName(), repositoryFolder, date);
 		
-		System.out.println("4 - Parse...");
+		logger.info("4 - Parse...");
 		JavaParser parser = new JavaParser(temp);
 		HashMap<String, HashMap<String, MutableInt>> counters = parser.parse();
 		JavaParser.printResult(counters);
@@ -68,16 +68,16 @@ public class TestMain {
 	public static void sourceForgeExample() throws Exception {
 		File downloadFolder = FileUtil.getInstance().createTempDir();
 		
-		System.out.println("1 - Search for projects according to term...");
+		logger.info("1 - Search for projects according to term...");
 		List<Project> projects = SearchSourceForge.getInstance().getProjects("facebook chat", 1);
 		if (projects.size() == 0) {
-			System.out.println("Ooops, no projects found! Aborting.");
+			logger.info("Ooops, no projects found! Aborting.");
 			System.exit(0);
 		}
 		Project project = projects.get(0);
 		projects = Arrays.asList(project); // analyze only the first project 
 		
-		System.out.println("2 - Download 1st result...");
+		logger.info("2 - Download 1st result...");
 		ForgeCrawler crawler = new CrawlSourceForge(downloadFolder);
 		List<Future<File>> futures = crawler.downloadProjects(projects);
 		crawler.shutdown();
@@ -86,11 +86,11 @@ public class TestMain {
 			repositoryFolder = f.get();
 		}
 		
-		System.out.println("3 - Checkout repository to a given date...");
+		logger.info("3 - Checkout repository to a given date...");
 		Date date = new GregorianCalendar(2012, 2, 21).getTime();
 		File temp = SFCodeHistory.getInstance().checkoutToDate(project.getName(), repositoryFolder, date);
 		
-		System.out.println("4 - Parse...");
+		logger.info("4 - Parse...");
 		JavaParser parser = new JavaParser(temp);
 		HashMap<String, HashMap<String, MutableInt>> counters = parser.parse();
 		JavaParser.printResult(counters);
@@ -105,12 +105,12 @@ public class TestMain {
 	public static void googleCodeExample(String term) throws Exception {
 		File downloadFolder = FileUtil.getInstance().createTempDir();
 		
-		System.out.println("1 - Search for projects according to term...");
+		logger.info("1 - Search for projects according to term...");
 		List<Project> projects = SearchGoogleCode.getInstance().getProjects(term, 1);
 		Project project = projects.get(0);
 		projects = Arrays.asList(project); // analyze only the first project 
 		
-		System.out.println("2 - Download 1st result...");
+		logger.info("2 - Download 1st result...");
 		ForgeCrawler crawler = new CrawlGoogleCode(downloadFolder);
 		List<Future<File>> futures = crawler.downloadProjects(projects);
 		crawler.shutdown();
@@ -119,7 +119,7 @@ public class TestMain {
 			repositoryFolder = f.get();
 		}
 		
-		System.out.println("3 - Checkout repository to a given date...");
+		logger.info("3 - Checkout repository to a given date...");
 		Date date = new GregorianCalendar(2011, 0, 2).getTime();
 		File temp = null;
 		if (project.getSCM() == SCM.SVN) {
@@ -131,7 +131,7 @@ public class TestMain {
 			System.exit(0);
 		}
 		
-		System.out.println("4 - Parse...");
+		logger.info("4 - Parse...");
 		JavaParser parser = new JavaParser(temp);
 		HashMap<String, HashMap<String, MutableInt>> counters = parser.parse();
 		JavaParser.printResult(counters);

@@ -46,12 +46,10 @@ import br.cin.ufpe.groundhog.util.FileUtil;
 
 import com.google.common.base.Joiner;
 
+import static java.lang.String.format;
+
 public class CmdMain {
 	private static Logger logger = LoggerFactory.getLogger(CrawlGoogleCode.class);
-	
-	private static String f(String s, Object... args) {
-		return String.format(s, args);
-	}
 	
 	public static ForgeSearch defineForgeSearch(SupportedForge f) {
 		ForgeSearch search = null;
@@ -108,16 +106,16 @@ public class CmdMain {
 		// Wait for project download
 		String name = project.getName();
 		File repositoryFolder = repositoryFolderFuture.get();
-		logger.info(f("Project %s was downloaded", name));
+		logger.info(format("Project %s was downloaded", name));
 		
 		// Checkout project to date
 		String datetimeStr = Options.getDateFormat().format(datetime);
-		logger.info(f("Checking out project %s to %s...", name, datetimeStr));
+		logger.info(format("Checking out project %s to %s...", name, datetimeStr));
 		CodeHistory codehistory = null;
 		try {
 			codehistory = defineCodeHistory(project.getSCM());
 		} catch (UnsupportedSCMException e) {
-			logger.warn(f("Project %s has an unsupported SCM: %s", name, e.getMessage()));
+			logger.warn(format("Project %s has an unsupported SCM: %s", name, e.getMessage()));
 			return null;
 		}
 		File checkedOutRepository = null;
@@ -128,10 +126,10 @@ public class CmdMain {
 				checkedOutRepository = codehistory.checkoutToDate(project.getName(), project.getScmURL(), datetime);
 			}
 		} catch (EmptyProjectAtDateException e) {
-			logger.warn(f("Project %s was empty at specified date: %s", name, datetimeStr));
+			logger.warn(format("Project %s was empty at specified date: %s", name, datetimeStr));
 			return null;
 		}
-		logger.info(f("Project %s successfully checked out to %s", name, datetimeStr));	
+		logger.info(format("Project %s successfully checked out to %s", name, datetimeStr));	
 		
 		return checkedOutRepository;
 	}
@@ -142,20 +140,20 @@ public class CmdMain {
 		String datetimeStr = Options.getDateFormat().format(datetime);
 		
 		// Parse project
-		logger.info(f("Parsing project %s...", name));
+		logger.info(format("Parsing project %s...", name));
 		JavaParser parser = new JavaParser(projectFolder);
 		JSONObject metrics = null;
 		metrics = parser.parseToJSON();
 		
 		if (metrics != null) {
 			// Save metrics to file
-			String metricsFilename = f("%s-%s.json", name, datetimeStr);
-			logger.info(f("Project %s parsed, metrics extracted! Writing result to file %s...", name, metricsFilename));
+			String metricsFilename = format("%s-%s.json", name, datetimeStr);
+			logger.info(format("Project %s parsed, metrics extracted! Writing result to file %s...", name, metricsFilename));
 			File metricsFile = new File(metricsFolder, metricsFilename);
 			FileUtil.getInstance().writeStringToFile(metricsFile, metrics.toString());
-			logger.info(f("Metrics of project %s written to file %s", name, metricsFile.getAbsolutePath()));
+			logger.info(format("Metrics of project %s written to file %s", name, metricsFile.getAbsolutePath()));
 		} else {
-			logger.warn(f("Project %s has no Java source files! Metrics couldn't be extracted...", name));
+			logger.warn(format("Project %s has no Java source files! Metrics couldn't be extracted...", name));
 		}
 	}
 	
@@ -264,16 +262,16 @@ public class CmdMain {
 					try {
 						checkedOutRepository = downloadAndCheckoutProject(project, datetime_, repositoryFolderFuture);
 					} catch (Exception e) {
-						logger.error(f("Error while downloading project %s", project.getName()), e);
+						logger.error(format("Error while downloading project %s", project.getName()), e);
 					}
 					if (checkedOutRepository != null) {
 						try {
 							analyzeProject(project, checkedOutRepository, datetime_, metricsFolder_);
 						} catch (Exception e) {
-							logger.error(f("Error while analyzing project %s", project.getName()), e);
+							logger.error(format("Error while analyzing project %s", project.getName()), e);
 						}
 					} else {
-						logger.warn(f("Project %s can't be analyzed", project.getName()));
+						logger.warn(format("Project %s can't be analyzed", project.getName()));
 					}
 				}
 			}));
@@ -283,9 +281,9 @@ public class CmdMain {
 			try {
 				analysisFutures.get(i).get();
 			} catch (InterruptedException e) {
-				logger.error(f("Error while analyzing project %s", projects.get(i).getName()), e);
+				logger.error(format("Error while analyzing project %s", projects.get(i).getName()), e);
 			} catch (ExecutionException e) {
-				logger.error(f("Error while analyzing project %s", projects.get(i).getName()), e);
+				logger.error(format("Error while analyzing project %s", projects.get(i).getName()), e);
 			}
 		}
 		
