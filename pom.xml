@@ -113,20 +113,37 @@
 			<version>2.0.16</version>
 		</dependency>
 		<dependency>
-			<groupId>com.sun</groupId>
-			<artifactId>source</artifactId>
-			<version>1.6</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/tools.jar</systemPath>
+			<groupId>net.java.loci</groupId>
+			<artifactId>jsr308-all</artifactId>
+			<version>1.1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
 		</dependency>
 	</dependencies>
 	<build>
-		<sourceDirectory>src</sourceDirectory>
+		<sourceDirectory>
+      ${project.basedir}/src/java/main
+    </sourceDirectory>
+		<testSourceDirectory>
+      ${project.basedir}/src/java/test
+    </testSourceDirectory>
 		<resources>
 			<resource>
-				<directory>resources</directory>
+				<directory>
+                   ${project.basedir}/src/resources/main
+                 </directory>
 			</resource>
 		</resources>
+		<testResources>
+			<testResource>
+				<directory>
+                   ${project.basedir}/src/resources/test
+                 </directory>
+			</testResource>
+		</testResources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
