@@ -1,6 +1,6 @@
 # Groundhog
 
-A simple pure Java tool to crawl Java projects from popular forges and to extract metrics from them.
+A simple pure Java tool to crawl software development projects from popular forges and to extract metrics from them.
 
 ## Usage
 
@@ -42,6 +42,10 @@ $ java -jar groundhog.jar -forge github -out metrics phonegap-facebook-plugin
 
 ### Crawlers
 
+### Supported Programming Languages
+
+* Java, parsing only (more to be added later)
+
 ### Forge Search
 
 * **GitHub**:
@@ -73,6 +77,8 @@ $ javadoc -d src/src/groundhog br.cin.ufpe.groundhog
 * Rodrigo Alves Vieira {rav2@cin.ufpe.br}
 
 * Danilo Neves Ribeiro {dnr2@cin.ufpe.br}
+ 
+* Fernando Castor {myfamilyname@cin.ufpe.br}
 
 ## How to contribute
 
