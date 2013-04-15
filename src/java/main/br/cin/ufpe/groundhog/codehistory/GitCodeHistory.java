@@ -3,7 +3,6 @@ package br.cin.ufpe.groundhog.codehistory;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 import org.eclipse.jgit.api.errors.CheckoutConflictException;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -56,11 +55,4 @@ public class GitCodeHistory implements CodeHistory {
 			throw new CheckoutException(e);
 		}
 	}
-
-	public static void main(String[] args) throws Exception {
-		new GitCodeHistory().checkoutToDate("javacv",
-				new File("C:\\Users\\fjsj\\Downloads\\EponaProjects\\playframework"),
-				new GregorianCalendar(2012, 5, 23).getTime());
-	}
-	
 }

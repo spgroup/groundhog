@@ -1,5 +1,7 @@
 package br.cin.ufpe.groundhog.main;
 
+import static java.lang.String.format;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -45,8 +47,6 @@ import br.cin.ufpe.groundhog.search.SearchSourceForge;
 import br.cin.ufpe.groundhog.util.FileUtil;
 
 import com.google.common.base.Joiner;
-
-import static java.lang.String.format;
 
 public class CmdMain {
 	private static Logger logger = LoggerFactory.getLogger(CrawlGoogleCode.class);

@@ -6,7 +6,6 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Deque;
-import java.util.GregorianCalendar;
 
 import br.cin.ufpe.groundhog.extractor.DefaultExtractor;
 import br.cin.ufpe.groundhog.scmclient.EmptyProjectAtDateException;
@@ -65,11 +64,5 @@ public class SFCodeHistory implements CodeHistory {
 		} else {
 			throw new EmptyProjectAtDateException(new SimpleDateFormat().format(date));
 		}
-	}
-	
-	public static void main(String[] args) throws Exception {
-		new SFCodeHistory().checkoutToDate("geom-java",
-				new File("C:\\Users\\fjsj\\Downloads\\EponaProjects\\geom-java"),
-				new GregorianCalendar(2010, 10, 7).getTime());
 	}
 }
