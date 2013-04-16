@@ -162,7 +162,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>br.cin.ufpe.groundhog.main.CmdMain</mainClass>
+							<mainClass>br.ufpe.cin.groundhog.main.CmdMain</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
