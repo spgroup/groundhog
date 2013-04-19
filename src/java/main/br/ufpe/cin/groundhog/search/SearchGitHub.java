@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import br.ufpe.cin.groundhog.GroundhogException;
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.SCM;
 import br.ufpe.cin.groundhog.http.Requests;
@@ -57,7 +58,7 @@ public class SearchGitHub implements ForgeSearch {
 				projects.add(forgeProject);
 			}
 			return projects;
-		} catch (JSONException | IOException e) {
+		} catch (JSONException | IOException | GroundhogException e) {
 			throw new SearchException(e);
 		}
 	}

@@ -3,7 +3,6 @@ package br.ufpe.cin.groundhog.search;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.jsoup.Jsoup;
@@ -108,11 +107,7 @@ public class SearchGoogleCode implements ForgeSearch {
 				f.get();
 			}
 			return projects;
-		} catch (ExecutionException e) {
-			throw new SearchException(e);
-		} catch (InterruptedException e) {
-			throw new SearchException(e);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			throw new SearchException(e);
 		}
 	}

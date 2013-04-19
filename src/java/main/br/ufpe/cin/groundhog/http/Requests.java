@@ -32,10 +32,10 @@ public class Requests {
 			return asyncClient.prepareGet(urlStr).execute().get().getResponseBody();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-			throw new RuntimeException(e);
+			throw new HttpException(e);
 		} catch (ExecutionException e) {
 			e.printStackTrace();
-			throw new RuntimeException(e);
+			throw new HttpException(e);
 		}
 	}
 	
@@ -44,10 +44,10 @@ public class Requests {
 			return asyncClient.prepareGet(urlStr).setFollowRedirects(true).execute().get().getResponseBodyAsStream();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-			throw new RuntimeException(e);
+			throw new HttpException(e);
 		} catch (ExecutionException e) {
 			e.printStackTrace();
-			throw new RuntimeException(e);
+			throw new HttpException(e);
 		}
 	}
 	
@@ -60,9 +60,8 @@ public class Requests {
 			return URLEncoder.encode(s, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
-			new RuntimeException(e);
+			throw new HttpException(e);
 		}
-		return null;
 	}
 	
 	public String decodeURL(String s) {
@@ -70,9 +69,8 @@ public class Requests {
 			return URLDecoder.decode(s, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
-			new RuntimeException(e);
+			throw new HttpException(e);
 		}
-		return null;
 	}
 
 	public void close() {

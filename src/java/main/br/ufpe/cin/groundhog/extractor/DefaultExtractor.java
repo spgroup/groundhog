@@ -63,9 +63,8 @@ public class DefaultExtractor implements Extractor {
 		for (Future<?> f : futures) {
 			try {
 				f.get();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (ExecutionException e) {
+			} catch (InterruptedException | ExecutionException e) {
+				logger.warn("Unable to extract file");
 				e.printStackTrace();
 			}
 		}
