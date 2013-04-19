@@ -12,6 +12,11 @@ import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
+import br.ufpe.cin.groundhog.Project;
+import br.ufpe.cin.groundhog.SCM;
 import br.ufpe.cin.groundhog.codehistory.GitCodeHistory;
 import br.ufpe.cin.groundhog.codehistory.SFCodeHistory;
 import br.ufpe.cin.groundhog.codehistory.SvnCodeHistory;
@@ -19,6 +24,7 @@ import br.ufpe.cin.groundhog.crawler.CrawlGitHub;
 import br.ufpe.cin.groundhog.crawler.CrawlGoogleCode;
 import br.ufpe.cin.groundhog.crawler.CrawlSourceForge;
 import br.ufpe.cin.groundhog.crawler.ForgeCrawler;
+import br.ufpe.cin.groundhog.http.HttpModule;
 import br.ufpe.cin.groundhog.http.Requests;
 import br.ufpe.cin.groundhog.parser.JavaParser;
 import br.ufpe.cin.groundhog.parser.MutableInt;
@@ -26,8 +32,6 @@ import br.ufpe.cin.groundhog.search.SearchGitHub;
 import br.ufpe.cin.groundhog.search.SearchGoogleCode;
 import br.ufpe.cin.groundhog.search.SearchSourceForge;
 import br.ufpe.cin.groundhog.util.FileUtil;
-import br.ufpe.cin.groundhog.Project;
-import br.ufpe.cin.groundhog.SCM;
 
 public class TestMain {
 	private static Logger logger = LoggerFactory.getLogger(TestMain.class);
@@ -78,7 +82,9 @@ public class TestMain {
 		projects = Arrays.asList(project); // analyze only the first project 
 		
 		logger.info("2 - Download 1st result...");
-		ForgeCrawler crawler = new CrawlSourceForge(downloadFolder);
+		Injector injector = Guice.createInjector(new HttpModule());
+		Requests requests = injector.getInstance(Requests.class);
+		ForgeCrawler crawler = new CrawlSourceForge(downloadFolder, requests);
 		List<Future<File>> futures = crawler.downloadProjects(projects);
 		crawler.shutdown();
 		File repositoryFolder = null;
@@ -144,10 +150,9 @@ public class TestMain {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		//gitHubExample("jsoup");
-		//sourceForgeExample();
-		googleCodeExample("facebook-java-api"); // Google Code SVN
+		gitHubExample("jsoup");
+//		sourceForgeExample();
+//		googleCodeExample("facebook-java-api"); // Google Code SVN
 		//googleCodeExample("guava-libraries"); // Google Code Git
-		Requests.getInstance().close();
 	}
 }

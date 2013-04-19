@@ -13,9 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tmatesoft.svn.core.SVNException;
 
-import br.ufpe.cin.groundhog.scmclient.GitClient;
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.SCM;
+import br.ufpe.cin.groundhog.scmclient.GitClient;
 
 public class CrawlGoogleCode extends ForgeCrawler {
 	private static Logger logger = LoggerFactory.getLogger(CrawlGoogleCode.class);

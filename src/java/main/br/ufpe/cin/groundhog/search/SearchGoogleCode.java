@@ -5,32 +5,41 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
 
+import javax.inject.Inject;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import br.ufpe.cin.groundhog.http.ParamBuilder;
-import br.ufpe.cin.groundhog.http.Requests;
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.SCM;
+import br.ufpe.cin.groundhog.http.HttpModule;
+import br.ufpe.cin.groundhog.http.ParamBuilder;
+import br.ufpe.cin.groundhog.http.Requests;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.Response;
 
 public class SearchGoogleCode implements ForgeSearch {
 	private static String root = "http://code.google.com";
 	private static SearchGoogleCode instance;
+	private Requests requests;
 	
 	public static SearchGoogleCode getInstance() {
 		if (instance == null) {
-			instance = new SearchGoogleCode();
+			Injector injector = Guice.createInjector(new HttpModule());
+			Requests requests = injector.getInstance(Requests.class);
+			instance = new SearchGoogleCode(requests);
 		}
 		return instance;
 	}
 	
-	private SearchGoogleCode() {
-		
+	@Inject
+	public SearchGoogleCode(Requests requests) {	
+		this.requests = requests;
 	}
 	
 	private String parseCheckoutCommand(String html) throws IOException {
@@ -72,7 +81,7 @@ public class SearchGoogleCode implements ForgeSearch {
 				add("start", String.valueOf((page - 1) * 10)).
 				build();
 			
-			Document doc = Jsoup.parse(Requests.getInstance().get(root + "/hosting/search?" + paramsStr));
+			Document doc = Jsoup.parse(requests.get(root + "/hosting/search?" + paramsStr));
 			for (Element tr : doc.select("#serp table tbody tr")) {
 				Element a = tr.child(0).child(0);
 				String projectName = a.attr("href").split("/")[2];
@@ -91,7 +100,7 @@ public class SearchGoogleCode implements ForgeSearch {
 			for (final Project forgeProject : projects) {
 				String projectName = forgeProject.getName();
 				String checkoutPageURL = String.format("http://code.google.com/p/%s/source/checkout", projectName);
-				Future<Integer> f = Requests.getInstance().getAsync(checkoutPageURL, new AsyncCompletionHandler<Integer>() {
+				Future<Integer> f = requests.getAsync(checkoutPageURL, new AsyncCompletionHandler<Integer>() {
 					@Override
 					public Integer onCompleted(Response response) throws Exception {
 						String command = parseCheckoutCommand(response.getResponseBody());

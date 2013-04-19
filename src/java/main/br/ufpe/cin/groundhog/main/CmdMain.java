@@ -22,6 +22,9 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.ufpe.cin.groundhog.Config;
+import br.ufpe.cin.groundhog.Project;
+import br.ufpe.cin.groundhog.SCM;
 import br.ufpe.cin.groundhog.codehistory.CheckoutException;
 import br.ufpe.cin.groundhog.codehistory.CodeHistory;
 import br.ufpe.cin.groundhog.codehistory.GitCodeHistory;
@@ -32,6 +35,7 @@ import br.ufpe.cin.groundhog.crawler.CrawlGitHub;
 import br.ufpe.cin.groundhog.crawler.CrawlGoogleCode;
 import br.ufpe.cin.groundhog.crawler.CrawlSourceForge;
 import br.ufpe.cin.groundhog.crawler.ForgeCrawler;
+import br.ufpe.cin.groundhog.http.HttpModule;
 import br.ufpe.cin.groundhog.http.Requests;
 import br.ufpe.cin.groundhog.parser.JavaParser;
 import br.ufpe.cin.groundhog.scmclient.EmptyProjectAtDateException;
@@ -42,11 +46,10 @@ import br.ufpe.cin.groundhog.search.SearchGitHub;
 import br.ufpe.cin.groundhog.search.SearchGoogleCode;
 import br.ufpe.cin.groundhog.search.SearchSourceForge;
 import br.ufpe.cin.groundhog.util.FileUtil;
-import br.ufpe.cin.groundhog.Config;
-import br.ufpe.cin.groundhog.Project;
-import br.ufpe.cin.groundhog.SCM;
 
 import com.google.common.base.Joiner;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 public class CmdMain {
 	private static Logger logger = LoggerFactory.getLogger(CrawlGoogleCode.class);
@@ -74,7 +77,9 @@ public class CmdMain {
 			crawler = new CrawlGitHub(destinationFolder);
 			break;
 		case SOURCEFORGE:
-			crawler = new CrawlSourceForge(destinationFolder); 
+			Injector injector = Guice.createInjector(new HttpModule());
+			Requests requests = injector.getInstance(Requests.class);
+			crawler = new CrawlSourceForge(destinationFolder, requests); 
 			break;
 		case GOOGLECODE:
 			crawler = new CrawlGoogleCode(destinationFolder);
@@ -160,7 +165,6 @@ public class CmdMain {
 	public static void freeResources(ForgeCrawler crawler, OutputStream errorStream) {
 		crawler.shutdown();
 		SVNClient.getInstance().close();
-		Requests.getInstance().close();
 		try {
 			FileUtil.getInstance().deleteTempDirs();
 		} catch (IOException e) {

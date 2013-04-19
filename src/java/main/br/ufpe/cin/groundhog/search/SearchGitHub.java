@@ -11,32 +11,44 @@ import org.json.JSONObject;
 import br.ufpe.cin.groundhog.GroundhogException;
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.SCM;
+import br.ufpe.cin.groundhog.http.HttpModule;
 import br.ufpe.cin.groundhog.http.Requests;
+
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 
 public class SearchGitHub implements ForgeSearch {
 	private static String root = "https://api.github.com";
 	private static SearchGitHub instance;
 	
+	
+	private Requests requests;
+	
 	public static SearchGitHub getInstance() {
 		if (instance == null) {
-			instance = new SearchGitHub();
+			Injector injector = Guice.createInjector(new HttpModule());
+			Requests requests = injector.getInstance(Requests.class);
+			instance = new SearchGitHub(requests);
 		}
 		return instance;
 	}
 	
-	private SearchGitHub() {	
+	@Inject
+	public SearchGitHub(Requests requests) {	
+		this.requests = requests;
 	
 	}
 	
 	private JSONObject getJsonFromAPI(String urlStr) throws IOException, JSONException {
-		return new JSONObject(Requests.getInstance().get(urlStr));
+		return new JSONObject(requests.get(urlStr));
 	}
 	
 	public List<Project> getProjects(String term, int page) throws SearchException {
 		try {
 			List<Project> projects = new ArrayList<Project>();
 			String searchUrl = root + String.format("/legacy/repos/search/%s?start_page=%s&language=java",
-					Requests.getInstance().encodeURL(term), page);
+					requests.encodeURL(term), page);
 			JSONArray results = getJsonFromAPI(searchUrl).getJSONArray("repositories");
 			
 			for (int i = 0; i < results.length(); i++) {

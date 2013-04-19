@@ -8,23 +8,32 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import br.ufpe.cin.groundhog.http.ParamBuilder;
-import br.ufpe.cin.groundhog.http.Requests;
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.SCM;
+import br.ufpe.cin.groundhog.http.HttpModule;
+import br.ufpe.cin.groundhog.http.ParamBuilder;
+import br.ufpe.cin.groundhog.http.Requests;
+
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 
 public class SearchSourceForge implements ForgeSearch {
 	private static SearchSourceForge instance;
+	private Requests requests;
 	
 	public static SearchSourceForge getInstance() {
 		if (instance == null) {
-			instance = new SearchSourceForge();
+			Injector injector = Guice.createInjector(new HttpModule());
+			Requests requests = injector.getInstance(Requests.class);
+			instance = new SearchSourceForge(requests);
 		}
 		return instance;
 	}
 	
-	private SearchSourceForge() {
-		
+	@Inject
+	public SearchSourceForge(Requests requests) {	
+		this.requests = requests;
 	}
 	
 	public List<Project> getProjects(String term, int page) throws SearchException {
@@ -36,7 +45,7 @@ public class SearchSourceForge implements ForgeSearch {
 				add("sort", "popular").
 				add("page", String.valueOf(page)).
 				build();
-			Document doc = Jsoup.parse(Requests.getInstance().get("http://sourceforge.net/directory/language:java/?" + paramsStr));
+			Document doc = Jsoup.parse(requests.get("http://sourceforge.net/directory/language:java/?" + paramsStr));
 			for (Element li : doc.select(".projects > li")) {
 				Element a = li.select("[itemprop=url]").first();
 				if (a != null) {
