@@ -11,9 +11,9 @@ import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.TransportException;
 import org.json.JSONException;
 
+import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.scmclient.GitClient;
 import br.ufpe.cin.groundhog.search.SearchGitHub;
-import br.ufpe.cin.groundhog.Project;
 
 public class CrawlGitHub extends ForgeCrawler {
 

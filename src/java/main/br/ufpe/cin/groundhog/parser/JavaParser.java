@@ -12,10 +12,10 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import javax.tools.JavaCompiler;
+import javax.tools.JavaCompiler.CompilationTask;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
-import javax.tools.JavaCompiler.CompilationTask;
 
 import org.json.JSONException;
 import org.json.JSONObject;

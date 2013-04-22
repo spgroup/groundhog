@@ -12,18 +12,10 @@ import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.ListenableFuture;
 
 public class Requests {
-	private static Requests instance;
-	
-	public static Requests getInstance() {
-		if (instance == null) {
-			instance = new Requests();
-		}
-		return instance;
-	}
 	
 	private AsyncHttpClient asyncClient;
 	
-	private Requests() {
+	public Requests() {
 		asyncClient = new AsyncHttpClient();
 	}
 	
@@ -75,7 +67,6 @@ public class Requests {
 
 	public void close() {
 		asyncClient.close();
-		instance = null;
 	}
 	
 }

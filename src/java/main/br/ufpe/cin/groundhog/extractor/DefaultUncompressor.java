@@ -1,6 +1,8 @@
 package br.ufpe.cin.groundhog.extractor;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.zip.GZIPInputStream;
 
 import lzma.sdk.lzma.Decoder;

@@ -22,9 +22,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import br.ufpe.cin.groundhog.http.Requests;
 import br.ufpe.cin.groundhog.Project;
+import br.ufpe.cin.groundhog.http.HttpModule;
+import br.ufpe.cin.groundhog.http.Requests;
 
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.ListenableFuture;
 import com.ning.http.client.Response;
@@ -34,11 +38,13 @@ public class CrawlSourceForge extends ForgeCrawler {
 	
 	private ConcurrentHashMap<String, Date> mapModifiedDate;
 	private SimpleDateFormat dateFormat;
+	private Requests requests;
 	
-	public CrawlSourceForge(File destinationFolder) {
+	@Inject
+	public CrawlSourceForge(File destinationFolder, Requests requests) {
 		super(destinationFolder);
-		mapModifiedDate = new ConcurrentHashMap<String, Date>();
-		dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+		this.mapModifiedDate = new ConcurrentHashMap<String, Date>();
+		this.dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
 	}
 	
 	private void parseURLsFromPage(String project, String html, Stack<String> dirURLs, List<String> fileURLs) throws IOException, InterruptedException {
@@ -58,7 +64,7 @@ public class CrawlSourceForge extends ForgeCrawler {
 			if (href.endsWith("/download")) { // file
 				if (filename.toLowerCase().contains("src") || filename.toLowerCase().contains("source") &&
 					CompressedExtensions.getInstance().contains(extension)) {
-					String filePath = Requests.getInstance().decodeURL(href.substring(href.indexOf("/files/") + "/files/".length(), href.indexOf("/download")));
+					String filePath = requests.decodeURL(href.substring(href.indexOf("/files/") + "/files/".length(), href.indexOf("/download")));
 					try {
 						mapModifiedDate.put("/" + project + "/" + filePath, dateFormat.parse(modified));
 					} catch (ParseException e) {
@@ -67,7 +73,7 @@ public class CrawlSourceForge extends ForgeCrawler {
 					fileURLs.add(href);
 				}
 			} else { // folder
-				String folderPath = Requests.getInstance().decodeURL(href.substring(href.indexOf("/files/") + "/files/".length(), href.lastIndexOf('/')));
+				String folderPath = requests.decodeURL(href.substring(href.indexOf("/files/") + "/files/".length(), href.lastIndexOf('/')));
 				try {
 					mapModifiedDate.put("/" + project + "/" + folderPath, dateFormat.parse(modified));
 				} catch (ParseException e) {
@@ -86,7 +92,7 @@ public class CrawlSourceForge extends ForgeCrawler {
 		
 		while (!dirURLs.isEmpty()) {
 			final String pageURL = dirURLs.pop();
-			ListenableFuture<Integer> future = Requests.getInstance().getAsync(pageURL, new AsyncCompletionHandler<Integer>() {
+			ListenableFuture<Integer> future = requests.getAsync(pageURL, new AsyncCompletionHandler<Integer>() {
 				@Override
 				public Integer onCompleted(Response r) throws Exception {
 					String html = r.getResponseBody();
@@ -108,7 +114,7 @@ public class CrawlSourceForge extends ForgeCrawler {
 	}
 	
 	private void downloadAndSaveFile(String projectName, String url, InputStream is, File destination) throws IOException {
-		url = Requests.getInstance().decodeURL(url);
+		url = requests.decodeURL(url);
 		String fileSeparator = File.separator;
 		String[] folders = url.substring(url.indexOf("/files/") + "/files/".length(), url.indexOf("/download")).split("/");
 		String filename = folders[folders.length - 1];
@@ -152,7 +158,7 @@ public class CrawlSourceForge extends ForgeCrawler {
 		List<String> urls = getDownloadURLs(projectName);
 		
 		for (String url : urls) {
-			InputStream is = Requests.getInstance().download(url);
+			InputStream is = requests.download(url);
 			downloadAndSaveFile(projectName, url, is, destinationFolder);
 		}
 		return new File(destinationFolder, projectName);
@@ -173,7 +179,10 @@ public class CrawlSourceForge extends ForgeCrawler {
 		long time = System.nanoTime();
 		List<Project> projects = Arrays.asList(new Project("geom-java", ""), new Project("im4java", ""));
 		File dest = new File("C:\\Users\\fjsj\\Downloads\\EponaProjects\\");
-		CrawlSourceForge crawl = new CrawlSourceForge(dest);
+		Injector injector = Guice.createInjector(new HttpModule());
+		Requests requests = injector.getInstance(Requests.class);
+		
+		CrawlSourceForge crawl = new CrawlSourceForge(dest, requests);
 		List<Future<File>> fs = crawl.downloadProjects(projects);
 		crawl.shutdown();
 		for (Future<File> f : fs) f.get();

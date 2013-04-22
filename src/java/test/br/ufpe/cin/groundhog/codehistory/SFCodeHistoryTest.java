@@ -10,8 +10,6 @@ import java.util.GregorianCalendar;
 import org.junit.Before;
 import org.junit.Test;
 
-import br.ufpe.cin.groundhog.codehistory.GitCodeHistory;
-
 public class SFCodeHistoryTest {
 	
 	private GitCodeHistory gitCodeHistory;
