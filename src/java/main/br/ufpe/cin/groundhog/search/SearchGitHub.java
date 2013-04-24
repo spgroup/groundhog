@@ -11,28 +11,13 @@ import org.json.JSONObject;
 import br.ufpe.cin.groundhog.GroundhogException;
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.SCM;
-import br.ufpe.cin.groundhog.http.HttpModule;
 import br.ufpe.cin.groundhog.http.Requests;
 
-import com.google.inject.Guice;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 
 public class SearchGitHub implements ForgeSearch {
 	private static String root = "https://api.github.com";
-	private static SearchGitHub instance;
-	
-	
 	private Requests requests;
-	
-	public static SearchGitHub getInstance() {
-		if (instance == null) {
-			Injector injector = Guice.createInjector(new HttpModule());
-			Requests requests = injector.getInstance(Requests.class);
-			instance = new SearchGitHub(requests);
-		}
-		return instance;
-	}
 	
 	@Inject
 	public SearchGitHub(Requests requests) {	
@@ -73,11 +58,5 @@ public class SearchGitHub implements ForgeSearch {
 		} catch (JSONException | IOException | GroundhogException e) {
 			throw new SearchException(e);
 		}
-	}
-	
-	public static void main(String[] args) throws Exception {
-		long time = System.nanoTime();
-		System.out.println(SearchGitHub.getInstance().getProjects("github api", 1));
-		System.out.printf("Elapsed: %.2f", (System.nanoTime() - time) / 1000000000.0);
 	}
 }

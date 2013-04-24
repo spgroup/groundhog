@@ -30,6 +30,7 @@ import br.ufpe.cin.groundhog.parser.JavaParser;
 import br.ufpe.cin.groundhog.parser.MutableInt;
 import br.ufpe.cin.groundhog.search.SearchGitHub;
 import br.ufpe.cin.groundhog.search.SearchGoogleCode;
+import br.ufpe.cin.groundhog.search.SearchModule;
 import br.ufpe.cin.groundhog.search.SearchSourceForge;
 import br.ufpe.cin.groundhog.util.FileUtil;
 
@@ -40,7 +41,10 @@ public class TestMain {
 		File downloadFolder = FileUtil.getInstance().createTempDir();
 		
 		logger.info("1 - Search for projects according to term...");
-		List<Project> projects = SearchGitHub.getInstance().getProjects(term, 1);
+		Injector injector = Guice.createInjector(new SearchModule());
+		SearchGitHub search = injector.getInstance(SearchGitHub.class);
+		
+		List<Project> projects = search.getProjects(term, 1);
 		Project project = projects.get(0);
 		projects = Arrays.asList(project); // analyze only the first project 
 		

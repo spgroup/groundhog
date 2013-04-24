@@ -2,9 +2,6 @@ package br.ufpe.cin.groundhog.crawler;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.Future;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
@@ -13,14 +10,15 @@ import org.json.JSONException;
 
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.scmclient.GitClient;
-import br.ufpe.cin.groundhog.search.SearchGitHub;
+
+import com.google.inject.Inject;
 
 public class CrawlGitHub extends ForgeCrawler {
 
+	@Inject
 	public CrawlGitHub(File destinationFolder) {
 		super(destinationFolder);
 	}
-	
 	
 	@Override
 	protected File downloadProject(Project project)
@@ -32,18 +30,5 @@ public class CrawlGitHub extends ForgeCrawler {
 		
 		GitClient.getInstance().clone(cloneUrl, projectFolder);
 		return projectFolder;
-	}
-	
-	public static void main(String[] args) throws Exception {
-		long time = System.nanoTime();
-		Project junit = SearchGitHub.getInstance().getProjects("junit", 1).get(0);
-		Project playframework = SearchGitHub.getInstance().getProjects("playframework", 1).get(0);
-		List<Project> projects = Arrays.asList(junit, playframework);
-		File dest = new File("C:\\Users\\fjsj\\Downloads\\EponaProjects\\");
-		CrawlGitHub crawl = new CrawlGitHub(dest);
-		List<Future<File>> fs = crawl.downloadProjects(projects);
-		crawl.shutdown();
-		for (Future<File> f : fs) f.get();
-		System.out.printf("Elapsed: %.2f", (System.nanoTime() - time) / 1000000000.0);
 	}
 }

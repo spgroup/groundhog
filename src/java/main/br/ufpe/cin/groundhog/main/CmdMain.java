@@ -44,6 +44,7 @@ import br.ufpe.cin.groundhog.search.ForgeSearch;
 import br.ufpe.cin.groundhog.search.SearchException;
 import br.ufpe.cin.groundhog.search.SearchGitHub;
 import br.ufpe.cin.groundhog.search.SearchGoogleCode;
+import br.ufpe.cin.groundhog.search.SearchModule;
 import br.ufpe.cin.groundhog.search.SearchSourceForge;
 import br.ufpe.cin.groundhog.util.FileUtil;
 
@@ -58,7 +59,8 @@ public class CmdMain {
 		ForgeSearch search = null;
 		switch (f) {
 		case GITHUB:
-			search = SearchGitHub.getInstance();
+			Injector injector = Guice.createInjector(new SearchModule());
+			search = injector.getInstance(SearchGitHub.class);
 			break;
 		case SOURCEFORGE:
 			search = SearchSourceForge.getInstance();
