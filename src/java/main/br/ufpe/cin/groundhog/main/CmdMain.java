@@ -27,6 +27,7 @@ import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.SCM;
 import br.ufpe.cin.groundhog.codehistory.CheckoutException;
 import br.ufpe.cin.groundhog.codehistory.CodeHistory;
+import br.ufpe.cin.groundhog.codehistory.CodeHistoryModule;
 import br.ufpe.cin.groundhog.codehistory.GitCodeHistory;
 import br.ufpe.cin.groundhog.codehistory.SFCodeHistory;
 import br.ufpe.cin.groundhog.codehistory.SvnCodeHistory;
@@ -81,7 +82,7 @@ public class CmdMain {
 		case SOURCEFORGE:
 			Injector injector = Guice.createInjector(new HttpModule());
 			Requests requests = injector.getInstance(Requests.class);
-			crawler = new CrawlSourceForge(destinationFolder, requests); 
+			crawler = new CrawlSourceForge(requests, destinationFolder); 
 			break;
 		case GOOGLECODE:
 			crawler = new CrawlGoogleCode(destinationFolder);
@@ -91,16 +92,17 @@ public class CmdMain {
 	}
 	
 	public static CodeHistory defineCodeHistory(SCM scm) throws UnsupportedSCMException {
+		Injector injector = Guice.createInjector(new CodeHistoryModule());
 		CodeHistory codehistory = null;
 		switch (scm) {
 		case GIT:
-			codehistory = GitCodeHistory.getInstance();
+			codehistory = injector.getInstance(GitCodeHistory.class);
 			break;
 		case SOURCE_FORGE:
-			codehistory = SFCodeHistory.getInstance(); 
+			codehistory = injector.getInstance(SFCodeHistory.class); 
 			break;
 		case SVN:
-			codehistory = SvnCodeHistory.getInstance();
+			codehistory = injector.getInstance(SvnCodeHistory.class);
 			break;
 		default:
 			throw new UnsupportedSCMException(scm.toString());

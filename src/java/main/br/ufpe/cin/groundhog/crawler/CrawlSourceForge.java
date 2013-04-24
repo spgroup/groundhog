@@ -41,10 +41,11 @@ public class CrawlSourceForge extends ForgeCrawler {
 	private Requests requests;
 	
 	@Inject
-	public CrawlSourceForge(File destinationFolder, Requests requests) {
+	public CrawlSourceForge(Requests requests, File destinationFolder) {
 		super(destinationFolder);
 		this.mapModifiedDate = new ConcurrentHashMap<String, Date>();
 		this.dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+		this.requests = requests;
 	}
 	
 	private void parseURLsFromPage(String project, String html, Stack<String> dirURLs, List<String> fileURLs) throws IOException, InterruptedException {
@@ -182,7 +183,7 @@ public class CrawlSourceForge extends ForgeCrawler {
 		Injector injector = Guice.createInjector(new HttpModule());
 		Requests requests = injector.getInstance(Requests.class);
 		
-		CrawlSourceForge crawl = new CrawlSourceForge(dest, requests);
+		CrawlSourceForge crawl = new CrawlSourceForge(requests, dest);
 		List<Future<File>> fs = crawl.downloadProjects(projects);
 		crawl.shutdown();
 		for (Future<File> f : fs) f.get();

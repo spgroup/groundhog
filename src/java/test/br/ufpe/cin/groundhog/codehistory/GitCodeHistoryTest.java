@@ -18,7 +18,6 @@ public class GitCodeHistoryTest {
 	
 	@Before
 	public void setup(){
-		codeHistory = SFCodeHistory.getInstance();
 		file = new File("C:\\Users\\fjsj\\Downloads\\EponaProjects\\playframework");
 		calendar = new GregorianCalendar(2012, 5, 23).getTime();
 	}

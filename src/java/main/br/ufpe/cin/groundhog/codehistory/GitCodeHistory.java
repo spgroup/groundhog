@@ -8,19 +8,6 @@ import br.ufpe.cin.groundhog.scmclient.GitClient;
 import br.ufpe.cin.groundhog.util.FileUtil;
 
 public class GitCodeHistory implements CodeHistory {
-	private static GitCodeHistory instance;
-
-	public static GitCodeHistory getInstance() {
-		if (instance == null) {
-			instance = new GitCodeHistory();
-		}
-		return instance;
-	}
-
-	private GitCodeHistory() {
-
-	}
-
 	@Override
 	public File checkoutToDate(String project, String url, Date date) {
 		throw new NoSuchMethodError("Not implemented");

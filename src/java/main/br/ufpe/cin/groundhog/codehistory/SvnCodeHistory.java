@@ -11,18 +11,6 @@ import br.ufpe.cin.groundhog.scmclient.SVNClient;
 import br.ufpe.cin.groundhog.util.FileUtil;
 
 public class SvnCodeHistory implements CodeHistory {
-	private static SvnCodeHistory instance;
-	
-	public static SvnCodeHistory getInstance() {
-		if (instance == null) {
-			instance = new SvnCodeHistory();
-		}
-		return instance;
-	}
-	
-	private SvnCodeHistory() {	
-	
-	}
 	
 	@Override
 	public File checkoutToDate(String project, String url, Date date) throws CheckoutException {
@@ -47,5 +35,4 @@ public class SvnCodeHistory implements CodeHistory {
 				"http://wkhtmltopdf.googlecode.com/svn/",
 				d);
 	}
-	
 }

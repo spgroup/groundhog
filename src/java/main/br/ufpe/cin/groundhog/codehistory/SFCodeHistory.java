@@ -12,18 +12,6 @@ import br.ufpe.cin.groundhog.scmclient.EmptyProjectAtDateException;
 import br.ufpe.cin.groundhog.util.FileUtil;
 
 public class SFCodeHistory implements CodeHistory {
-	private static SFCodeHistory instance;
-	
-	public static SFCodeHistory getInstance() {
-		if (instance == null) {
-			instance = new SFCodeHistory();
-		}
-		return instance;
-	}
-	
-	private SFCodeHistory() {	
-	
-	}
 	
 	@Override
 	public File checkoutToDate(String project, String url, Date date) {

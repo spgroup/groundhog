@@ -12,11 +12,9 @@ import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.SCM;
+import br.ufpe.cin.groundhog.codehistory.CodeHistoryModule;
 import br.ufpe.cin.groundhog.codehistory.GitCodeHistory;
 import br.ufpe.cin.groundhog.codehistory.SFCodeHistory;
 import br.ufpe.cin.groundhog.codehistory.SvnCodeHistory;
@@ -34,6 +32,9 @@ import br.ufpe.cin.groundhog.search.SearchModule;
 import br.ufpe.cin.groundhog.search.SearchSourceForge;
 import br.ufpe.cin.groundhog.util.FileUtil;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
 public class TestMain {
 	private static Logger logger = LoggerFactory.getLogger(TestMain.class);
 	
@@ -41,7 +42,7 @@ public class TestMain {
 		File downloadFolder = FileUtil.getInstance().createTempDir();
 		
 		logger.info("1 - Search for projects according to term...");
-		Injector injector = Guice.createInjector(new SearchModule());
+		Injector injector = Guice.createInjector(new SearchModule(), new CodeHistoryModule(), new CodeHistoryModule());
 		SearchGitHub search = injector.getInstance(SearchGitHub.class);
 		
 		List<Project> projects = search.getProjects(term, 1);
@@ -59,7 +60,8 @@ public class TestMain {
 		
 		logger.info("3 - Checkout repository to a given date...");
 		Date date = new GregorianCalendar(2012, 6, 1).getTime();
-		File temp = GitCodeHistory.getInstance().checkoutToDate(project.getName(), repositoryFolder, date);
+		GitCodeHistory codeHistory = injector.getInstance(GitCodeHistory.class);
+		File temp = codeHistory.checkoutToDate(project.getName(), repositoryFolder, date);
 		
 		logger.info("4 - Parse...");
 		JavaParser parser = new JavaParser(temp);
@@ -77,8 +79,8 @@ public class TestMain {
 		File downloadFolder = FileUtil.getInstance().createTempDir();
 		
 		logger.info("1 - Search for projects according to term...");
-		Injector searchInjector = Guice.createInjector(new SearchModule());
-		SearchSourceForge search = searchInjector.getInstance(SearchSourceForge.class);
+		Injector injector = Guice.createInjector(new SearchModule(), new HttpModule(), new CodeHistoryModule());
+		SearchSourceForge search = injector.getInstance(SearchSourceForge.class);
 		
 		List<Project> projects = search.getProjects("facebook chat", 1);
 		if (projects.size() == 0) {
@@ -89,10 +91,9 @@ public class TestMain {
 		projects = Arrays.asList(project); // analyze only the first project 
 		
 		logger.info("2 - Download 1st result...");
-		Injector httpInjector = Guice.createInjector(new HttpModule());
-		Requests requests = httpInjector.getInstance(Requests.class);
+		Requests requests = injector.getInstance(Requests.class);
 		
-		ForgeCrawler crawler = new CrawlSourceForge(downloadFolder, requests);
+		ForgeCrawler crawler = new CrawlSourceForge(requests, downloadFolder);
 		List<Future<File>> futures = crawler.downloadProjects(projects);
 		crawler.shutdown();
 		File repositoryFolder = null;
@@ -102,7 +103,8 @@ public class TestMain {
 		
 		logger.info("3 - Checkout repository to a given date...");
 		Date date = new GregorianCalendar(2012, 2, 21).getTime();
-		File temp = SFCodeHistory.getInstance().checkoutToDate(project.getName(), repositoryFolder, date);
+		SFCodeHistory codeHistory = injector.getInstance(SFCodeHistory.class);
+		File temp = codeHistory.checkoutToDate(project.getName(), repositoryFolder, date);
 		
 		logger.info("4 - Parse...");
 		JavaParser parser = new JavaParser(temp);
@@ -120,7 +122,7 @@ public class TestMain {
 		File downloadFolder = FileUtil.getInstance().createTempDir();
 		
 		logger.info("1 - Search for projects according to term...");
-		Injector injector = Guice.createInjector(new SearchModule());
+		Injector injector = Guice.createInjector(new SearchModule(), new CodeHistoryModule());
 		SearchGoogleCode search = injector.getInstance(SearchGoogleCode.class);
 		
 		List<Project> projects = search.getProjects(term, 1);
@@ -140,9 +142,9 @@ public class TestMain {
 		Date date = new GregorianCalendar(2011, 0, 2).getTime();
 		File temp = null;
 		if (project.getSCM() == SCM.SVN) {
-			temp = SvnCodeHistory.getInstance().checkoutToDate(project.getName(), project.getScmURL(), date);
+			temp = injector.getInstance(SvnCodeHistory.class).checkoutToDate(project.getName(), project.getScmURL(), date);
 		} else if (project.getSCM() == SCM.GIT) {
-			temp = GitCodeHistory.getInstance().checkoutToDate(project.getName(), repositoryFolder, date);
+			temp = injector.getInstance(GitCodeHistory.class).checkoutToDate(project.getName(), repositoryFolder, date);
 		} else {
 			logger.error("Can't continue with parsing step. Unwkown SCM.");
 			System.exit(0);
@@ -161,9 +163,9 @@ public class TestMain {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		gitHubExample("jsoup");
-//		sourceForgeExample();
+//		gitHubExample("jsoup");
+		sourceForgeExample();
 //		googleCodeExample("facebook-java-api"); // Google Code SVN
-		//googleCodeExample("guava-libraries"); // Google Code Git
+//		googleCodeExample("guava-libraries"); // Google Code Git
 	}
 }
