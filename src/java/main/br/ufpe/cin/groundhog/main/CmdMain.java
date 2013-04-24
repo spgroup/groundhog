@@ -56,17 +56,17 @@ public class CmdMain {
 	private static Logger logger = LoggerFactory.getLogger(CrawlGoogleCode.class);
 	
 	public static ForgeSearch defineForgeSearch(SupportedForge f) {
+		Injector injector = Guice.createInjector(new SearchModule());
 		ForgeSearch search = null;
 		switch (f) {
 		case GITHUB:
-			Injector injector = Guice.createInjector(new SearchModule());
 			search = injector.getInstance(SearchGitHub.class);
 			break;
 		case SOURCEFORGE:
 			search = SearchSourceForge.getInstance();
 			break;
 		case GOOGLECODE:
-			search = SearchGoogleCode.getInstance();
+			search = injector.getInstance(SearchGoogleCode.class);
 			break;
 		}
 		return search;

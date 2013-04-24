@@ -14,28 +14,15 @@ import org.jsoup.select.Elements;
 
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.SCM;
-import br.ufpe.cin.groundhog.http.HttpModule;
 import br.ufpe.cin.groundhog.http.ParamBuilder;
 import br.ufpe.cin.groundhog.http.Requests;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.Response;
 
 public class SearchGoogleCode implements ForgeSearch {
 	private static String root = "http://code.google.com";
-	private static SearchGoogleCode instance;
-	private Requests requests;
-	
-	public static SearchGoogleCode getInstance() {
-		if (instance == null) {
-			Injector injector = Guice.createInjector(new HttpModule());
-			Requests requests = injector.getInstance(Requests.class);
-			instance = new SearchGoogleCode(requests);
-		}
-		return instance;
-	}
+	private final Requests requests;
 	
 	@Inject
 	public SearchGoogleCode(Requests requests) {	
@@ -120,9 +107,4 @@ public class SearchGoogleCode implements ForgeSearch {
 			throw new SearchException(e);
 		}
 	}
-	
-	public static void main(String[] args) throws Exception {
-		System.out.println(SearchGoogleCode.getInstance().getProjects("", 1));
-	}
-	
 }

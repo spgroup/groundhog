@@ -116,7 +116,10 @@ public class TestMain {
 		File downloadFolder = FileUtil.getInstance().createTempDir();
 		
 		logger.info("1 - Search for projects according to term...");
-		List<Project> projects = SearchGoogleCode.getInstance().getProjects(term, 1);
+		Injector injector = Guice.createInjector(new SearchModule());
+		SearchGoogleCode search = injector.getInstance(SearchGoogleCode.class);
+		
+		List<Project> projects = search.getProjects(term, 1);
 		Project project = projects.get(0);
 		projects = Arrays.asList(project); // analyze only the first project 
 		
