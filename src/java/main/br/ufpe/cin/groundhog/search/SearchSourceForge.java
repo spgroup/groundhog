@@ -10,26 +10,13 @@ import org.jsoup.nodes.Element;
 
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.SCM;
-import br.ufpe.cin.groundhog.http.HttpModule;
 import br.ufpe.cin.groundhog.http.ParamBuilder;
 import br.ufpe.cin.groundhog.http.Requests;
 
-import com.google.inject.Guice;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 
 public class SearchSourceForge implements ForgeSearch {
-	private static SearchSourceForge instance;
-	private Requests requests;
-	
-	public static SearchSourceForge getInstance() {
-		if (instance == null) {
-			Injector injector = Guice.createInjector(new HttpModule());
-			Requests requests = injector.getInstance(Requests.class);
-			instance = new SearchSourceForge(requests);
-		}
-		return instance;
-	}
+	private final Requests requests;
 	
 	@Inject
 	public SearchSourceForge(Requests requests) {	
@@ -65,9 +52,4 @@ public class SearchSourceForge implements ForgeSearch {
 			throw new SearchException(e);
 		}
 	}
-	
-	public static void main(String[] args) throws Exception {
-		System.out.println(SearchSourceForge.getInstance().getProjects("", 1));
-	}
-	
 }

@@ -63,7 +63,7 @@ public class CmdMain {
 			search = injector.getInstance(SearchGitHub.class);
 			break;
 		case SOURCEFORGE:
-			search = SearchSourceForge.getInstance();
+			search = injector.getInstance(SearchSourceForge.class);
 			break;
 		case GOOGLECODE:
 			search = injector.getInstance(SearchGoogleCode.class);

@@ -77,7 +77,10 @@ public class TestMain {
 		File downloadFolder = FileUtil.getInstance().createTempDir();
 		
 		logger.info("1 - Search for projects according to term...");
-		List<Project> projects = SearchSourceForge.getInstance().getProjects("facebook chat", 1);
+		Injector searchInjector = Guice.createInjector(new SearchModule());
+		SearchSourceForge search = searchInjector.getInstance(SearchSourceForge.class);
+		
+		List<Project> projects = search.getProjects("facebook chat", 1);
 		if (projects.size() == 0) {
 			logger.info("Ooops, no projects found! Aborting.");
 			System.exit(0);
@@ -86,8 +89,9 @@ public class TestMain {
 		projects = Arrays.asList(project); // analyze only the first project 
 		
 		logger.info("2 - Download 1st result...");
-		Injector injector = Guice.createInjector(new HttpModule());
-		Requests requests = injector.getInstance(Requests.class);
+		Injector httpInjector = Guice.createInjector(new HttpModule());
+		Requests requests = httpInjector.getInstance(Requests.class);
+		
 		ForgeCrawler crawler = new CrawlSourceForge(downloadFolder, requests);
 		List<Future<File>> futures = crawler.downloadProjects(projects);
 		crawler.shutdown();
