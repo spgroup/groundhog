@@ -2,6 +2,7 @@ package br.ufpe.cin.groundhog.parser;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,6 +20,7 @@ import javax.tools.ToolProvider;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import au.com.bytecode.opencsv.*;
 
 /**
  * Class that implements the metrics extraction functionality of this project.
@@ -29,7 +31,9 @@ import org.json.JSONObject;
 public class JavaParser {
 	private static String fileSeparator = File.separator;
 	
-	private File folder;
+	
+	
+	private File folder;  // this folder means the root folder of the downloaded project
 	private List<File> filesList;
 
 	/**
@@ -87,6 +91,7 @@ public class JavaParser {
 	 * @throws IOException if something wrong happens when closing source file manager
 	 */
 	public HashMap<String, HashMap<String, MutableInt>> parse() throws IOException {
+
 		recursiveSearch(folder);
 		if (!filesList.isEmpty()) {
 			return invokeProcessor();
@@ -104,8 +109,24 @@ public class JavaParser {
 			}
 			return json;
 		} else {
-			return null;
+			return null; //TODO returning null is not a good option, it should throw an exception
 		}
+	}
+	
+	public StringWriter parseToCSV() throws IOException {
+		StringWriter result = new StringWriter();
+		CSVWriter writer = new CSVWriter(result, ';');
+		HashMap<String, HashMap<String, MutableInt>> counters = parse();		
+		if( counters != null ){
+			for (Entry<String, HashMap<String, MutableInt>> entry : counters.entrySet()) {
+				writer.writeNext( new String[] { entry.getKey(), entry.getValue().toString() } );
+			}
+			writer.flush();
+			writer.close();
+			return result;
+		}
+		writer.close();
+		return null;
 	}
 	
 	/**
