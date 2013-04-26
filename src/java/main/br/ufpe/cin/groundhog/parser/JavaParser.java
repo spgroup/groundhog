@@ -100,6 +100,12 @@ public class JavaParser {
 		}
 	}
 	
+	/**
+	 * Creates an object that represents the JSON result of the metrics.
+	 * @return JSONObject that embodies the result
+	 * @throws IOException throwed from use of the parse method
+	 * @throws JSONException
+	 */
 	public JSONObject parseToJSON() throws IOException, JSONException {
 		JSONObject json = new JSONObject();
 		HashMap<String, HashMap<String, MutableInt>> counters = parse();
@@ -113,20 +119,25 @@ public class JavaParser {
 		}
 	}
 	
+	
+	/**
+	 * Creates the CSV representation of the extracted metrics
+	 * @return StringWriter that represents the CSV document
+	 * @throws IOException
+	 */
 	public StringWriter parseToCSV() throws IOException {
-		StringWriter result = new StringWriter();
-		CSVWriter writer = new CSVWriter(result, ';');
+		StringWriter result = null;
 		HashMap<String, HashMap<String, MutableInt>> counters = parse();		
 		if( counters != null ){
+			result = new StringWriter();
+			CSVWriter writer = new CSVWriter(result, ';');
 			for (Entry<String, HashMap<String, MutableInt>> entry : counters.entrySet()) {
 				writer.writeNext( new String[] { entry.getKey(), entry.getValue().toString() } );
 			}
 			writer.flush();
-			writer.close();
-			return result;
+			writer.close();	
 		}
-		writer.close();
-		return null;
+		return result;
 	}
 	
 	/**
