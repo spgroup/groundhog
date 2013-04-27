@@ -8,7 +8,15 @@ Groundhog uses Java 7 features, so you must have it installed before build.
 
 ### Building in your machine
 
-Groundhog was built using Maven. In order for it to behave like an Eclipse project, you'll need to install [1] Maven, and then run:
+Groundhog was built using Maven, so to build the project you will need to run the tool and let it fetch all the dependencies:
+
+```
+$ mvn package
+```
+
+### Bulding for Eclipse
+
+In order for it to behave like an Eclipse project, you'll need to install the Maven plugin and then run:
 
 ```
 $ mvn eclipse:eclipse
@@ -17,10 +25,6 @@ $ mvn eclipse:eclipse
 ### Generating the JAR
 
 Generate the JAR file for the Groundhog project.
-
-```
-$ mvn package
-```
 
 Eclipse users can go to `File > Export > Runnable Jar File` and enter the `CmdMain` class for the option "Launch Configuration".
 
@@ -77,23 +81,21 @@ $ javadoc -d src/src/groundhog br.cin.ufpe.groundhog
 * Rodrigo Alves Vieira {rav2@cin.ufpe.br}
 
 * Danilo Neves Ribeiro {dnr2@cin.ufpe.br}
- 
+
 * Fernando Castor {myfamilyname@cin.ufpe.br}
 
 ## How to contribute
 
-Want to contribute with code, documentation or bug report?
+Want to contribute with code, documentation or bug report? That's great, check out the [Issues] page.
 
-Just add an issue and fix them! :)
-Try the [existing ones](https://github.com/spgroup/groundhog/issues)
+Preferably, your contribution is followed by JUnit tests and the submitted code is in agreement
+
+Stability and maintainability are important goals of the Groundhog project. Well-written, tested code and proper documentation are very welcome.
 
 ## License
 
 Groundhog is released under GPL 2.
 
-[1]: Consider installing the [m2e] plugin for Eclipse
-
 [GitHub API v3]: http://developer.github.com/
-[m2e]: http://eclipse.org/m2e/
 [Wiki]: https://github.com/spgroup/groundhog/wiki
-=======
+[Issues]: https://github.com/spgroup/groundhog/issues
