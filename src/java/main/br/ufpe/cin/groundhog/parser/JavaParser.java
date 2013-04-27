@@ -109,7 +109,7 @@ public class JavaParser {
 	}
 	
 	/**
-	 * Pretty print metrics. 
+	 * Pretty print metrics
 	 * @param counters parse method result 
 	 */
 	public static void printResult(HashMap<String, HashMap<String, MutableInt>> counters) {
