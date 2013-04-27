@@ -12,6 +12,11 @@ import java.util.zip.ZipFile;
 
 public class ZipUncompressor {
 
+	/**
+	 * Extracts a zip file to a directory
+	 * @param zipFile a File object representing the zip file to be extracted
+	 * @param dir a File object representing the path to which the zip file will be extracted
+	 */
 	public static void extract(File zipFile, File dir) throws IOException {
 		ZipFile zip = null;
 		File currentFile = null;
@@ -24,9 +29,9 @@ public class ZipUncompressor {
 				dir.mkdirs();
 			}
 			if (!dir.exists() || !dir.isDirectory()) {
-				throw new IOException("The directory is no a valid one: "
+				throw new IOException("The directory is not a valid one: "
 						+ dir.getName()
-						+ ". Check if it exists and it is really a directory.");
+						+ ". Check if it both exists and is really a directory.");
 			}
 
 			zip = new ZipFile(zipFile);
@@ -45,7 +50,7 @@ public class ZipUncompressor {
 					continue;
 				}
 
-				// if the directory is inexistent, create
+				// if the directory is inexistent, create it
 				if (!currentFile.getParentFile().exists()) {
 					currentFile.getParentFile().mkdirs();
 				}

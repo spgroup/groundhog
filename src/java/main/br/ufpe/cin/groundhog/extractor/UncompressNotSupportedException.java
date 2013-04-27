@@ -7,6 +7,5 @@ public class UncompressNotSupportedException extends GroundhogException {
 
 	public UncompressNotSupportedException(String msg) {
 		super(msg);
-	}
-	
+	}	
 }
