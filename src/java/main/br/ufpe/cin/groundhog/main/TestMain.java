@@ -26,6 +26,8 @@ import br.ufpe.cin.groundhog.http.HttpModule;
 import br.ufpe.cin.groundhog.http.Requests;
 import br.ufpe.cin.groundhog.parser.JavaParser;
 import br.ufpe.cin.groundhog.parser.MutableInt;
+import br.ufpe.cin.groundhog.scmclient.GitClient;
+import br.ufpe.cin.groundhog.scmclient.ScmModule;
 import br.ufpe.cin.groundhog.search.SearchGitHub;
 import br.ufpe.cin.groundhog.search.SearchGoogleCode;
 import br.ufpe.cin.groundhog.search.SearchModule;
@@ -42,7 +44,7 @@ public class TestMain {
 		File downloadFolder = FileUtil.getInstance().createTempDir();
 		
 		logger.info("1 - Search for projects according to term...");
-		Injector injector = Guice.createInjector(new SearchModule(), new CodeHistoryModule(), new CodeHistoryModule());
+		Injector injector = Guice.createInjector(new SearchModule(), new CodeHistoryModule(), new CodeHistoryModule(), new ScmModule());
 		SearchGitHub search = injector.getInstance(SearchGitHub.class);
 		
 		List<Project> projects = search.getProjects(term, 1);
@@ -50,7 +52,7 @@ public class TestMain {
 		projects = Arrays.asList(project); // analyze only the first project 
 		
 		logger.info("2 - Download 1st result...");
-		ForgeCrawler crawler = new CrawlGitHub(downloadFolder);
+		ForgeCrawler crawler = new CrawlGitHub(injector.getInstance(GitClient.class), downloadFolder);
 		List<Future<File>> futures = crawler.downloadProjects(projects);
 		crawler.shutdown();
 		File repositoryFolder = null;
@@ -122,7 +124,7 @@ public class TestMain {
 		File downloadFolder = FileUtil.getInstance().createTempDir();
 		
 		logger.info("1 - Search for projects according to term...");
-		Injector injector = Guice.createInjector(new SearchModule(), new CodeHistoryModule());
+		Injector injector = Guice.createInjector(new SearchModule(), new CodeHistoryModule(), new ScmModule());
 		SearchGoogleCode search = injector.getInstance(SearchGoogleCode.class);
 		
 		List<Project> projects = search.getProjects(term, 1);
@@ -130,7 +132,7 @@ public class TestMain {
 		projects = Arrays.asList(project); // analyze only the first project 
 		
 		logger.info("2 - Download 1st result...");
-		ForgeCrawler crawler = new CrawlGoogleCode(downloadFolder);
+		ForgeCrawler crawler = new CrawlGoogleCode(injector.getInstance(GitClient.class), downloadFolder);
 		List<Future<File>> futures = crawler.downloadProjects(projects);
 		crawler.shutdown();
 		File repositoryFolder = null;
@@ -163,8 +165,8 @@ public class TestMain {
 	}
 	
 	public static void main(String[] args) throws Exception {
-//		gitHubExample("jsoup");
-		sourceForgeExample();
+		gitHubExample("jsoup");
+//		sourceForgeExample();
 //		googleCodeExample("facebook-java-api"); // Google Code SVN
 //		googleCodeExample("guava-libraries"); // Google Code Git
 	}

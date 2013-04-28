@@ -27,19 +27,7 @@ import org.gitective.core.filter.commit.AllCommitFilter;
 import org.gitective.core.filter.commit.CommitterDateFilter;
 
 public class GitClient {
-	private static GitClient instance;
-
-	public static GitClient getInstance() {
-		if (instance == null) {
-			instance = new GitClient();
-		}
-		return instance;
-	}
-
-	private GitClient() {
-
-	}
-
+	
 	public void clone(String url, File destination)
 			throws InvalidRemoteException, TransportException, GitAPIException {
 		Repository rep = Git.cloneRepository().

@@ -13,22 +13,30 @@ import br.ufpe.cin.groundhog.scmclient.GitClient;
 
 import com.google.inject.Inject;
 
+/**
+ * A concrete class to crawl GitHub.
+ * 
+ * @author fjsj
+ */
 public class CrawlGitHub extends ForgeCrawler {
 
+	private final GitClient gitClient;
+
 	@Inject
-	public CrawlGitHub(File destinationFolder) {
+	public CrawlGitHub(GitClient gitClient, File destinationFolder) {
 		super(destinationFolder);
+		this.gitClient = gitClient;
 	}
-	
+
 	@Override
-	protected File downloadProject(Project project)
-			throws JSONException, IOException, 
-			InvalidRemoteException, TransportException, GitAPIException {
+	protected File downloadProject(Project project) throws JSONException,
+			IOException, InvalidRemoteException, TransportException,
+			GitAPIException {
 		String projectName = project.getName();
 		String cloneUrl = project.getScmURL();
 		File projectFolder = new File(destinationFolder, projectName);
-		
-		GitClient.getInstance().clone(cloneUrl, projectFolder);
+
+		gitClient.clone(cloneUrl, projectFolder);
 		return projectFolder;
 	}
 }

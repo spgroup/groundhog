@@ -10,19 +10,10 @@ import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNUpdateClient;
 
 public class SVNClient {
-	private static SVNClient instance;
-	
-	public static SVNClient getInstance() {
-		if (instance == null) {
-			instance = new SVNClient();
-		}
-		return instance;
-	}
-	
 	private SVNClientManager svn;
 	
-	private SVNClient() {
-		svn = SVNClientManager.newInstance();
+	public SVNClient() {
+		this.svn = SVNClientManager.newInstance();
 	}
 	
 	public void checkout(String url, File destination) throws SVNException {
@@ -47,6 +38,5 @@ public class SVNClient {
 	
 	public void close() {
 		svn.dispose();
-		instance = null;
 	}
 }

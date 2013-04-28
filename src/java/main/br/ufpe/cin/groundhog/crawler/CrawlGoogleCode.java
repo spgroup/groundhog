@@ -16,12 +16,24 @@ import org.tmatesoft.svn.core.SVNException;
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.SCM;
 import br.ufpe.cin.groundhog.scmclient.GitClient;
+import br.ufpe.cin.groundhog.scmclient.ScmModule;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
+/**
+ * A concrete class to crawl GitHub.
+ * 
+ * @author fjsj
+ */
 public class CrawlGoogleCode extends ForgeCrawler {
 	private static Logger logger = LoggerFactory.getLogger(CrawlGoogleCode.class);
 	
-	public CrawlGoogleCode(File destinationFolder) {
+	private final GitClient gitClient;
+	
+	public CrawlGoogleCode(GitClient gitClient, File destinationFolder) {
 		super(destinationFolder);
+		this.gitClient = gitClient;
 	}
 	
 	@Override
@@ -39,7 +51,7 @@ public class CrawlGoogleCode extends ForgeCrawler {
 			break;
 		case GIT:
 			String url = project.getScmURL();
-			GitClient.getInstance().clone(url, projectFolder);
+			gitClient.clone(url, projectFolder);
 			break;
 		case NONE:
 			logger.warn(String.format("Project %s has no SCM.", projectName));
@@ -65,7 +77,11 @@ public class CrawlGoogleCode extends ForgeCrawler {
 		List<Project> projects = Arrays.asList(
 				new Project("epubcheck", ""));
 		File dest = new File("C:\\Users\\fjsj\\Downloads\\EponaProjects\\");
-		CrawlGoogleCode crawl = new CrawlGoogleCode(dest);
+		
+		Injector injector = Guice.createInjector(new ScmModule());
+		GitClient gitClient = injector.getInstance(GitClient.class);
+		
+		CrawlGoogleCode crawl = new CrawlGoogleCode(gitClient, dest);
 		List<Future<File>> fs = crawl.downloadProjects(projects);
 		crawl.shutdown();
 		for (Future<File> f : fs) f.get();

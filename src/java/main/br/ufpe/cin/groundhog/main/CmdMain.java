@@ -40,7 +40,8 @@ import br.ufpe.cin.groundhog.http.HttpModule;
 import br.ufpe.cin.groundhog.http.Requests;
 import br.ufpe.cin.groundhog.parser.JavaParser;
 import br.ufpe.cin.groundhog.scmclient.EmptyProjectAtDateException;
-import br.ufpe.cin.groundhog.scmclient.SVNClient;
+import br.ufpe.cin.groundhog.scmclient.GitClient;
+import br.ufpe.cin.groundhog.scmclient.ScmModule;
 import br.ufpe.cin.groundhog.search.ForgeSearch;
 import br.ufpe.cin.groundhog.search.SearchException;
 import br.ufpe.cin.groundhog.search.SearchGitHub;
@@ -75,17 +76,19 @@ public class CmdMain {
 	
 	public static ForgeCrawler defineForgeCrawler(SupportedForge f, File destinationFolder) {
 		ForgeCrawler crawler = null;
+		Injector injector = Guice.createInjector(new HttpModule(), new ScmModule());
 		switch (f) {
 		case GITHUB:
-			crawler = new CrawlGitHub(destinationFolder);
+			GitClient client = injector.getInstance(GitClient.class);
+			crawler = new CrawlGitHub(client, destinationFolder);
 			break;
 		case SOURCEFORGE:
-			Injector injector = Guice.createInjector(new HttpModule());
 			Requests requests = injector.getInstance(Requests.class);
 			crawler = new CrawlSourceForge(requests, destinationFolder); 
 			break;
 		case GOOGLECODE:
-			crawler = new CrawlGoogleCode(destinationFolder);
+			GitClient gitClient = injector.getInstance(GitClient.class);
+			crawler = new CrawlGoogleCode(gitClient, destinationFolder);
 			break;
 		}
 		return crawler;
@@ -168,7 +171,6 @@ public class CmdMain {
 	
 	public static void freeResources(ForgeCrawler crawler, OutputStream errorStream) {
 		crawler.shutdown();
-		SVNClient.getInstance().close();
 		try {
 			FileUtil.getInstance().deleteTempDirs();
 		} catch (IOException e) {
