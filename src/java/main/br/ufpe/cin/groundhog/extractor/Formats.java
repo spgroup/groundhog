@@ -17,9 +17,13 @@ public class Formats {
 	private Formats() {
 		String[] extensionsStr = { ".zip", ".tar.gz", ".tgz", ".tar.bz2",
 				".tar.bzip2", ".tar.lzma", ".tlzma", ".rar", ".tar" };
-		extensions = Arrays.asList(extensionsStr);
+		this.extensions = Arrays.asList(extensionsStr);
 	}
 
+	/**
+	 * Tell if the given extension is supported
+	 * @param extension the given extension (e.g. zip, rar)
+	 */
 	public boolean isCompatible(String extension) {
 		for (String ext : extensions) {
 			if (extension.endsWith(ext)) {
