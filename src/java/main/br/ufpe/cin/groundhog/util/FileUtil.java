@@ -3,14 +3,17 @@ package br.ufpe.cin.groundhog.util;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+
+import br.ufpe.cin.groundhog.GroundhogException;
 
 import com.google.common.io.Files;
 
 public class FileUtil {
 	private static FileUtil instance;
-	private ArrayList<File> createdTempDirs;
+	private List<File> createdTempDirs;
 	
 	public static FileUtil getInstance() {
 		if (instance == null) {
@@ -28,9 +31,14 @@ public class FileUtil {
 	 * @return the created temporary directory
 	 */
 	public synchronized File createTempDir() {
-		File tempDir = Files.createTempDir();
-		this.createdTempDirs.add(tempDir);
-		return tempDir;
+		try {
+			File tempDir = Files.createTempDir();
+			this.createdTempDirs.add(tempDir);
+			return tempDir;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new GroundhogException("Unable to create temporary directory. Are you running groundhog with admin privileges?");
+		}
 	}
 	
 	/**

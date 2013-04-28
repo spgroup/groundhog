@@ -3,6 +3,11 @@ package br.ufpe.cin.groundhog.extractor;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * This class verifies if a given file format is supported to extraction
+ * 
+ * @author ghlp
+ */
 public class Formats {
 	private static Formats instance;
 	private List<String> extensions;
@@ -22,7 +27,9 @@ public class Formats {
 
 	/**
 	 * Tell if the given extension is supported
-	 * @param extension the given extension (e.g. zip, rar)
+	 * 
+	 * @param extension
+	 *            the given extension (e.g. zip, rar)
 	 */
 	public boolean isCompatible(String extension) {
 		for (String ext : extensions) {
