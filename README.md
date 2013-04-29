@@ -1,6 +1,5 @@
-[![Build Status](https://travis-ci.org/spgroup/groundhog.png?branch=master)](https://travis-ci.org/spgroup/groundhog)
-
 # Groundhog
+[![Build Status](https://travis-ci.org/spgroup/groundhog.png?branch=master)](https://travis-ci.org/spgroup/groundhog)
 
 A simple pure Java tool to crawl software development projects from popular forges and to extract metrics from them.
 
@@ -30,6 +29,12 @@ Generate the JAR file for the Groundhog project.
 
 Eclipse users can go to `File > Export > Runnable Jar File` and enter the `CmdMain` class for the option "Launch Configuration".
 
+
+### Running tests
+
+```
+$ mvn test
+```
 ### Running Groundhog
 
 Search GitHub for projects matching "phonegap-facebook-plugin" and place the results (if any) in a folder called metrics:
