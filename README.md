@@ -29,18 +29,18 @@ Generate the JAR file for the Groundhog project.
 
 Eclipse users can go to `File > Export > Runnable Jar File` and enter the `CmdMain` class for the option "Launch Configuration".
 
-
-### Running tests
-
-```
-$ mvn test
-```
 ### Running Groundhog
 
 Search GitHub for projects matching "phonegap-facebook-plugin" and place the results (if any) in a folder called metrics:
 
 ```shell
 $ java -jar groundhog.jar -forge github -out metrics phonegap-facebook-plugin
+```
+
+### Running tests
+
+```
+$ mvn test
 ```
 
 ## Info
