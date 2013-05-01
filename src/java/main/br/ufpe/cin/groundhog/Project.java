@@ -12,7 +12,6 @@ public class Project {
 	private String scmURL;
 	
 	public Project() {
-
 	}
 	
 	public Project(String name, String description) {
@@ -32,7 +31,7 @@ public class Project {
 	}
 
 	public String getName() {
-		return name;
+		return this.name;
 	}
 	
 	public void setName(String name) {
@@ -40,7 +39,7 @@ public class Project {
 	}
 
 	public String getDescription() {
-		return description;
+		return this.description;
 	}
 
 	public void setDescription(String description) {
@@ -48,7 +47,7 @@ public class Project {
 	}
 
 	public String getCreator() {
-		return creator;
+		return this.creator;
 	}
 
 	public void setCreator(String creator) {
@@ -56,7 +55,7 @@ public class Project {
 	}
 	
 	public String getIconURL() {
-		return iconURL;
+		return this.iconURL;
 	}
 
 	public void setIconURL(String iconURL) {
@@ -64,7 +63,7 @@ public class Project {
 	}
 	
 	public SCM getSCM() {
-		return scm;
+		return this.scm;
 	}
 	
 	public void setSCM(SCM scm) {
@@ -72,7 +71,7 @@ public class Project {
 	}
 	
 	public String getScmURL() {
-		return scmURL;
+		return this.scmURL;
 	}
 	
 	public void setScmURL(String scmURL) {
@@ -82,5 +81,5 @@ public class Project {
 	@Override
 	public String toString() {
 		return String.format("Project(%s, %s, %s)", name, description, iconURL);
-	}	
+	}
 }
