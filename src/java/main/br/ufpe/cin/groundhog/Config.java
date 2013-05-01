@@ -1,7 +1,7 @@
 package br.ufpe.cin.groundhog;
 
 /**
- * All runtime configs must be delcared here
+ * All runtime configs must be declared here
  * 
  */
 public class Config {
