@@ -1,5 +1,7 @@
 package br.ufpe.cin.groundhog.search;
 
+import japa.parser.ParseException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +24,6 @@ public class SearchGitHub implements ForgeSearch {
 	@Inject
 	public SearchGitHub(Requests requests) {	
 		this.requests = requests;
-	
 	}
 	
 	private JSONObject getJsonFromAPI(String urlStr) throws IOException, JSONException {
@@ -40,17 +41,59 @@ public class SearchGitHub implements ForgeSearch {
 				JSONObject result = results.getJSONObject(i);
 				Project forgeProject = new Project();
 				
-				String name = result.getString("name");
-				String username = result.getString("username");
-				String description = null;
+				String name, username, sourceCodeURL, description, lastPushedAt, createdAt;
+				int watchersCount, followersCount, forksCount;
+				boolean hasDownloads, hasIssues, hasWiki;
+				
+				name = result.getString("name");
+				username = result.getString("username");
+				sourceCodeURL = result.getString("url");
+				
+				lastPushedAt = result.getString("pushed_at");
+				createdAt = result.getString("created_at");
+								
+				description = null;
+				
 				if (result.has("description")) {
 					description = result.getString("description");
 				}
+				
+				watchersCount = Integer.parseInt(result.getString("watchers"));
+				followersCount = Integer.parseInt(result.getString("followers"));
+				forksCount = Integer.parseInt(result.getString("forks"));
+				
+				hasDownloads = Boolean.parseBoolean(result.getString("has_downloads"));
+				hasIssues = Boolean.parseBoolean(result.getString("has_issues"));
+				hasWiki = Boolean.parseBoolean(result.getString("has_wiki"));
+				
 				forgeProject.setName(name);
 				forgeProject.setCreator(username);
 				forgeProject.setSCM(SCM.GIT);
 				forgeProject.setScmURL(String.format("git://github.com/%s/%s.git", username, name));
 				forgeProject.setDescription(description);
+				
+				forgeProject.setSourceCodeURL(sourceCodeURL);
+				forgeProject.setFollowersCount(followersCount);
+				
+				try {
+					forgeProject.setLastPushedAt(lastPushedAt);
+				} catch (java.text.ParseException e) {
+					e.printStackTrace();
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+				
+				forgeProject.setHasDownloads(hasDownloads);
+				forgeProject.setHasIssues(hasIssues);
+				forgeProject.setHasWiki(hasWiki);
+				
+				System.out.println(
+						forgeProject.getSourceCodeURL() + " - " + 
+						forgeProject.getFollowersCount() + " - " +  
+						forgeProject.hasDownloads() + " - " + 
+						forgeProject.hasWiki() + " - " +
+						forgeProject.getLastPushedAt() + " - " +
+						createdAt);
 				
 				projects.add(forgeProject);
 			}

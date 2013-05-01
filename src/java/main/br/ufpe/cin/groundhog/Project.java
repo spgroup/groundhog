@@ -1,5 +1,11 @@
 package br.ufpe.cin.groundhog;
 
+import japa.parser.ParseException;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /*
  * Represents a software project in Groundhog
  */
@@ -10,6 +16,20 @@ public class Project {
 	private String iconURL;
 	private SCM scm;
 	private String scmURL;
+	private String sourceCodeURL;
+	
+	private Date createdAt; // Stores when was the project created
+	private Date lastPushedAt; // Stores the when the last push occurred
+
+	private boolean isFork; // Stores a boolean value for whether the project is a fork or not
+	private boolean hasDownloads;
+	private boolean hasIssues;
+	private boolean hasWiki;
+
+	private int watchersCount;
+	private int followersCount;
+	private int forksCount;
+	private int issuesCount; // Stores the number of open issues
 	
 	public Project() {
 	}
@@ -28,6 +48,12 @@ public class Project {
 		this(name, description, iconURL);
 		this.scm = scm;
 		this.scmURL = scmURL;
+	}
+	
+	public Project(String name, String description, String iconURL, SCM scm, String scmURL,
+			String sourceCodeURL) {
+		this(name, description, iconURL, scm, scmURL);
+		this.sourceCodeURL = sourceCodeURL;
 	}
 
 	public String getName() {
@@ -78,8 +104,143 @@ public class Project {
 		this.scmURL = scmURL;
 	}
 	
+	public String getSourceCodeURL() {
+		return this.sourceCodeURL;
+	}
+
+	public void setSourceCodeURL(String sourceCodeURL) {
+		this.sourceCodeURL = sourceCodeURL;
+	}
+
+	/**
+	 * 
+	 * @return true if the project allows source code download. Returns false otherwise.
+	 */
+	public boolean hasDownloads() {
+		return this.hasDownloads;
+	}
+
+	public void setHasDownloads(boolean hasDownloads) {
+		this.hasDownloads = hasDownloads;
+	}
+
+	public boolean hasIssues() {
+		return this.hasIssues;
+	}
+
+	public void setHasIssues(boolean hasIssues) {
+		this.hasIssues = hasIssues;
+	}
+
+	/**
+	 * 
+	 * @return true if the project has a Wiki. Returns false otherwise. 
+	 */
+	public boolean hasWiki() {
+		return this.hasWiki;
+	}
+
+	public void setHasWiki(boolean hasWiki) {
+		this.hasWiki = hasWiki;
+	}
+
+	public int getWatchersCount() {
+		return this.watchersCount;
+	}
+
+	public void setWatchersCount(int watchersCount) {
+		this.watchersCount = watchersCount;
+	}
+
+	public int getFollowersCount() {
+		return this.followersCount;
+	}
+
+	public void setFollowersCount(int followersCount) {
+		this.followersCount = followersCount;
+	}
+
+	public int getForksCount() {
+		return this.forksCount;
+	}
+
+	public void setForksCount(int forksCount) {
+		this.forksCount = forksCount;
+	}
+	
+	public int getIssuesCount() {
+		return this.issuesCount;
+	}
+
+	public void setIssuesCount(int issuesCount) {
+		this.issuesCount = issuesCount;
+	}
+
+	public boolean isFork() {
+		return this.isFork;
+	}
+	
+	public void isFork(boolean value) {
+		this.isFork = value;
+	}
+	
+	/**
+	 * Methods that deal with dates below.
+	 * Notice that each setter method is overloaded to support Date and String parameters.
+	 * When the parameter is provided as a String object, the setter method will perform the
+	 * conversion to a date object.
+	 */
+	
+	public Date getCreatedAt() {
+		return this.createdAt;
+	}
+
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
+	}
+	
+	/**
+	 * 
+	 * @param createdAtParam the String correspondent to the creation date of the project in question. e.g: 2012-04-28T15:40:35Z
+	 * @throws java.text.ParseException
+	 */
+	public void setCreatedAt(String createdAtParam) throws java.text.ParseException {
+		SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss"); // first example
+		Date createAtDate = format.parse(createdAtParam);
+		
+		this.createdAt = createAtDate;
+	}
+
+	public Date getLastPushedAt() {
+		return this.lastPushedAt;
+	}
+
+	/**
+	 * 
+	 * @param lastPushedAtParam the Date object correspondent to the date of the last push to the project
+	 * in question
+	 */
+	public void setLastPushedAt(Date lastPushedAtParam) {
+		this.lastPushedAt = lastPushedAtParam;
+	}
+	
+	/**
+	 * 
+	 * @param lastPushedAtParam the String correspondent to the date of the last push to the project
+	 * in question. e.g: 2012-04-28T15:40:35Z
+	 * @throws ParseException
+	 * @throws java.text.ParseException
+	 */
+	public void setLastPushedAt(String lastPushedAtParam) throws ParseException, java.text.ParseException {		
+		SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss"); // first example
+		Date lastPushDate = format.parse(lastPushedAtParam);
+		
+		this.lastPushedAt = lastPushDate;
+	}
+
 	@Override
 	public String toString() {
-		return String.format("Project(%s, %s, %s)", name, description, iconURL);
+		return String.format("Project(%s, %s, %s, %s)",
+				this.name, this.description, this.sourceCodeURL, this.iconURL);
 	}
 }
