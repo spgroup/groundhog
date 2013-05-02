@@ -243,7 +243,7 @@ public class Project {
 	 * @throws java.text.ParseException
 	 */
 	public void setCreatedAt(String createdAtParam) throws java.text.ParseException {
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); // first example
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date createAtDate = format.parse(createdAtParam.replace('T', ' ').replace("Z", ""));
 		
 		this.createdAt = createAtDate;
@@ -274,9 +274,9 @@ public class Project {
 	 * @throws java.text.ParseException
 	 */
 	public void setLastPushedAt(String lastPushedAtParam) throws ParseException, java.text.ParseException {		
-		SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");
-		Date lastPushDate = format.parse(lastPushedAtParam);
-		
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date lastPushDate = format.parse(lastPushedAtParam.replace('T', ' ').replace("Z", ""));
+
 		this.lastPushedAt = lastPushDate;
 	}
 
