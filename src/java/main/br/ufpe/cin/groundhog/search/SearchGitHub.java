@@ -17,6 +17,11 @@ import br.ufpe.cin.groundhog.http.Requests;
 
 import com.google.inject.Inject;
 
+/**
+ * Responsible for searching projects on GitHub via its official API
+ * @author fjsj, gustavopinto, rodrigoalvesvieira
+ *
+ */
 public class SearchGitHub implements ForgeSearch {
 	private static String root = "https://api.github.com";
 	private Requests requests;

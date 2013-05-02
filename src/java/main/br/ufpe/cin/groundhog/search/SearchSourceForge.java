@@ -16,6 +16,11 @@ import br.ufpe.cin.groundhog.http.Requests;
 
 import com.google.inject.Inject;
 
+/**
+ * Performs the search for projects on SourceForge
+ * @author fjsj, gustavopinto, rodrigoalvesvieira
+ *
+ */
 public class SearchSourceForge implements ForgeSearch {
 	private final Requests requests;
 	

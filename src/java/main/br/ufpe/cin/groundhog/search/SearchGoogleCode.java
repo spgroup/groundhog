@@ -20,6 +20,11 @@ import br.ufpe.cin.groundhog.http.Requests;
 import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.Response;
 
+/**
+ * Responsible for performing the project searches on Google Code
+ * @author fjsj, gustavopinto, rodrigoalvesvieira
+ *
+ */
 public class SearchGoogleCode implements ForgeSearch {
 	private static String root = "http://code.google.com";
 	private final Requests requests;

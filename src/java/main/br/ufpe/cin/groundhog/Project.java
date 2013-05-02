@@ -6,7 +6,7 @@ import java.util.Date;
 
 /**
  * Represents a software project in Groundhog
- * @author fjsj, gustavopinto, rodrigovieira
+ * @author fjsj, gustavopinto, rodrigoalvesvieira
  *
  */
 public class Project {
