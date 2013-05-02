@@ -44,6 +44,12 @@ public class Project {
 		this.iconURL = iconURL;
 	}
 	
+	public Project(String name, String description, String iconURL, String sourceCodeURL) {
+		this(name, description);
+		this.iconURL = iconURL;
+		this.sourceCodeURL = sourceCodeURL;
+	}
+	
 	public Project(String name, String description, String iconURL, SCM scm, String scmURL) {
 		this(name, description, iconURL);
 		this.scm = scm;
@@ -72,6 +78,10 @@ public class Project {
 		this.description = description;
 	}
 
+	/**
+	 * 
+	 * @return a String correspondent to the name of the author of the project
+	 */
 	public String getCreator() {
 		return this.creator;
 	}
@@ -104,6 +114,10 @@ public class Project {
 		this.scmURL = scmURL;
 	}
 	
+	/**
+	 * 
+	 * @return a String correspondent to the source code URL of the project in question
+	 */
 	public String getSourceCodeURL() {
 		return this.sourceCodeURL;
 	}
@@ -123,7 +137,11 @@ public class Project {
 	public void setHasDownloads(boolean hasDownloads) {
 		this.hasDownloads = hasDownloads;
 	}
-
+	
+	/**
+	 * 
+	 * @return true if the project has issues. Returns false otherwise.
+	 */
 	public boolean hasIssues() {
 		return this.hasIssues;
 	}
@@ -159,7 +177,11 @@ public class Project {
 	public void setFollowersCount(int followersCount) {
 		this.followersCount = followersCount;
 	}
-
+	
+	/**
+	 * 
+	 * @return an integer correspondent to the number of forks the project in question has
+	 */
 	public int getForksCount() {
 		return this.forksCount;
 	}
@@ -168,6 +190,10 @@ public class Project {
 		this.forksCount = forksCount;
 	}
 	
+	/**
+	 * 
+	 * @return an integer correspondent to the number of open issues of the project in question
+	 */
 	public int getIssuesCount() {
 		return this.issuesCount;
 	}
@@ -175,11 +201,19 @@ public class Project {
 	public void setIssuesCount(int issuesCount) {
 		this.issuesCount = issuesCount;
 	}
-
+	
+	/**
+	 * 
+	 * @return a boolean value informing whether the project is a fork of another or not
+	 */
 	public boolean isFork() {
 		return this.isFork;
 	}
 	
+	/**
+	 * 
+	 * @param value a boolean value for informing whether the project is a fork of another or not
+	 */
 	public void isFork(boolean value) {
 		this.isFork = value;
 	}
@@ -191,6 +225,10 @@ public class Project {
 	 * conversion to a date object.
 	 */
 	
+	/**
+	 * 
+	 * @return the creation date of the project in question
+	 */
 	public Date getCreatedAt() {
 		return this.createdAt;
 	}
@@ -211,6 +249,10 @@ public class Project {
 		this.createdAt = createAtDate;
 	}
 
+	/**
+	 * 
+	 * @return the date of the latest push to the project in question
+	 */
 	public Date getLastPushedAt() {
 		return this.lastPushedAt;
 	}
@@ -232,7 +274,7 @@ public class Project {
 	 * @throws java.text.ParseException
 	 */
 	public void setLastPushedAt(String lastPushedAtParam) throws ParseException, java.text.ParseException {		
-		SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss"); // first example
+		SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");
 		Date lastPushDate = format.parse(lastPushedAtParam);
 		
 		this.lastPushedAt = lastPushDate;
