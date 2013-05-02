@@ -12,8 +12,13 @@ import com.github.junrar.Archive;
 import com.github.junrar.exception.RarException;
 import com.github.junrar.rarfile.FileHeader;
 
-// Adapted from: https://github.com/edmund-wagner/junrar/blob/6f32323c983015d96c64084418793853f514b519/testutil/src/main/java/de/innosystec/unrar/testutil/ExtractArchive.java
-// Original author: edmund wagner 
+/**
+ * 
+ * @author gustavopinto, rodrigoalvesvieira
+ * Adapted from: https://github.com/edmund-wagner/junrar/blob/6f32323c983015d96c64084418793853f514b519/testutil/src/main/java/de/innosystec/unrar/testutil/ExtractArchive.java
+ * Original author: Edmund Wagner
+ *
+ */
 public class RarUncompressor {
 	private static Log logger = LogFactory.getLog(RarUncompressor.class
 			.getName());

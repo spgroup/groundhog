@@ -56,6 +56,11 @@ public class Requests {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param s a String representing an URL
+	 * @return an UTF-8 decoded String derivated from the given URL
+	 */
 	public String decodeURL(String s) {
 		try {
 			return URLDecoder.decode(s, "UTF-8");
