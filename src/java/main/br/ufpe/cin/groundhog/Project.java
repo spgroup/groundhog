@@ -1,13 +1,13 @@
 package br.ufpe.cin.groundhog;
 
 import japa.parser.ParseException;
-
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/*
+/**
  * Represents a software project in Groundhog
+ * @author fjsj, gustavopinto, rodrigovieira
+ *
  */
 public class Project {
 	private String name;
@@ -62,6 +62,10 @@ public class Project {
 		this.sourceCodeURL = sourceCodeURL;
 	}
 
+	/**
+	 * 
+	 * @return the name of the project
+	 */
 	public String getName() {
 		return this.name;
 	}
@@ -70,10 +74,18 @@ public class Project {
 		this.name = name;
 	}
 
+	/**
+	 * 
+	 * @return the String description of the project
+	 */
 	public String getDescription() {
 		return this.description;
 	}
 
+	/**
+	 * 
+	 * @param description a String for setting the description of the project
+	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
@@ -122,6 +134,10 @@ public class Project {
 		return this.sourceCodeURL;
 	}
 
+	/**
+	 * 
+	 * @param sourceCodeURL sets the URL String of the project's source code
+	 */
 	public void setSourceCodeURL(String sourceCodeURL) {
 		this.sourceCodeURL = sourceCodeURL;
 	}
@@ -134,6 +150,10 @@ public class Project {
 		return this.hasDownloads;
 	}
 
+	/**
+	 * 
+	 * @param hasDownloads a boolean for setting whether the project enables downloads or not
+	 */
 	public void setHasDownloads(boolean hasDownloads) {
 		this.hasDownloads = hasDownloads;
 	}
@@ -146,6 +166,10 @@ public class Project {
 		return this.hasIssues;
 	}
 
+	/**
+	 * 
+	 * @param hasIssues a boolean value for setting if the project has Issues or not
+	 */
 	public void setHasIssues(boolean hasIssues) {
 		this.hasIssues = hasIssues;
 	}
@@ -158,22 +182,42 @@ public class Project {
 		return this.hasWiki;
 	}
 
+	/**
+	 * 
+	 * @param hasWiki a boolean for setting whether the project has a Wiki or not.
+	 */
 	public void setHasWiki(boolean hasWiki) {
 		this.hasWiki = hasWiki;
 	}
 
+	/**
+	 * 
+	 * @return an integer informing how many people are currently watching the project on its forge
+	 */
 	public int getWatchersCount() {
 		return this.watchersCount;
 	}
-
+	
+	/**
+	 * 
+	 * @param watchersCount an integer for setting the number of people watching the project on its forge
+	 */
 	public void setWatchersCount(int watchersCount) {
 		this.watchersCount = watchersCount;
 	}
 
+	/**
+	 * 
+	 * @return an integer informing the number of people following the project on its forge
+	 */
 	public int getFollowersCount() {
 		return this.followersCount;
 	}
 
+	/**
+	 * 
+	 * @param followersCount an integer for setting the number of people following the project on its forge
+	 */
 	public void setFollowersCount(int followersCount) {
 		this.followersCount = followersCount;
 	}
@@ -186,18 +230,27 @@ public class Project {
 		return this.forksCount;
 	}
 
+	/**
+	 * 
+	 * @param forksCount an integer for setting the number of forks the project has.
+	 * In order words, an indicator of how many times the project has been forked.
+	 */
 	public void setForksCount(int forksCount) {
 		this.forksCount = forksCount;
 	}
 	
 	/**
 	 * 
-	 * @return an integer correspondent to the number of open issues of the project in question
+	 * @return an integer correspondent to the number of open issues of the project
 	 */
 	public int getIssuesCount() {
 		return this.issuesCount;
 	}
 
+	/**
+	 * 
+	 * @param issuesCount an integer for setting the number of Issues of the project
+	 */
 	public void setIssuesCount(int issuesCount) {
 		this.issuesCount = issuesCount;
 	}
@@ -214,15 +267,15 @@ public class Project {
 	 * 
 	 * @param value a boolean value for informing whether the project is a fork of another or not
 	 */
-	public void isFork(boolean value) {
+	public void setIsFork(boolean value) {
 		this.isFork = value;
 	}
 	
 	/**
-	 * Methods that deal with dates below.
+	 * Methods that deal with dates are below
 	 * Notice that each setter method is overloaded to support Date and String parameters.
 	 * When the parameter is provided as a String object, the setter method will perform the
-	 * conversion to a date object.
+	 * conversion to a date object
 	 */
 	
 	/**
@@ -233,6 +286,10 @@ public class Project {
 		return this.createdAt;
 	}
 
+	/**
+	 * 
+	 * @param createdAt a Date object for setting the creation date of the project
+	 */
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
 	}

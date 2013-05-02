@@ -42,40 +42,40 @@ public class SearchGitHub implements ForgeSearch {
 				Project forgeProject = new Project();
 				
 				String name, username, sourceCodeURL, description, lastPushedAt, createdAt;
+				boolean isFork, hasDownloads, hasIssues, hasWiki;
 				int watchersCount, followersCount, forksCount;
-				boolean hasDownloads, hasIssues, hasWiki;
 				
 				name = result.getString("name");
 				username = result.getString("username");
 				sourceCodeURL = result.getString("url");
 				
-				lastPushedAt = result.getString("pushed_at");
-				createdAt = result.getString("created_at");
-								
 				description = null;
 				
 				if (result.has("description")) {
 					description = result.getString("description");
 				}
 				
-				watchersCount = Integer.parseInt(result.getString("watchers"));
-				followersCount = Integer.parseInt(result.getString("followers"));
-				forksCount = Integer.parseInt(result.getString("forks"));
+				lastPushedAt = result.getString("pushed_at");
+				createdAt = result.getString("created_at");
 				
+				isFork = Boolean.parseBoolean(result.getString("fork"));
 				hasDownloads = Boolean.parseBoolean(result.getString("has_downloads"));
 				hasIssues = Boolean.parseBoolean(result.getString("has_issues"));
 				hasWiki = Boolean.parseBoolean(result.getString("has_wiki"));
+				
+				watchersCount = Integer.parseInt(result.getString("watchers"));
+				followersCount = Integer.parseInt(result.getString("followers"));
+				forksCount = Integer.parseInt(result.getString("forks"));
 				
 				forgeProject.setName(name);
 				forgeProject.setCreator(username);
 				forgeProject.setSCM(SCM.GIT);
 				forgeProject.setScmURL(String.format("git://github.com/%s/%s.git", username, name));
 				forgeProject.setDescription(description);
-				
 				forgeProject.setSourceCodeURL(sourceCodeURL);
-				forgeProject.setFollowersCount(followersCount);
 				
 				try {
+					forgeProject.setCreatedAt(createdAt);
 					forgeProject.setLastPushedAt(lastPushedAt);
 				} catch (java.text.ParseException e) {
 					e.printStackTrace();
@@ -86,14 +86,16 @@ public class SearchGitHub implements ForgeSearch {
 				forgeProject.setHasDownloads(hasDownloads);
 				forgeProject.setHasIssues(hasIssues);
 				forgeProject.setHasWiki(hasWiki);
+				forgeProject.setIsFork(isFork);
 				
-				System.out.println(
-						forgeProject.getSourceCodeURL() + " - " + 
-						forgeProject.getFollowersCount() + " - " +  
-						forgeProject.hasDownloads() + " - " + 
-						forgeProject.hasWiki() + " - " +
-						forgeProject.getLastPushedAt() + " - " +
-						createdAt);
+				forgeProject.setWatchersCount(watchersCount);
+				forgeProject.setFollowersCount(followersCount);
+				forgeProject.setForksCount(forksCount);
+				
+				forgeProject.setHasDownloads(hasDownloads);
+				forgeProject.setHasIssues(hasIssues);
+				forgeProject.setHasWiki(hasWiki);
+				forgeProject.setIsFork(isFork);
 				
 				projects.add(forgeProject);
 			}
