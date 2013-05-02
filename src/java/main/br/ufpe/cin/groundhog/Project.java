@@ -243,8 +243,8 @@ public class Project {
 	 * @throws java.text.ParseException
 	 */
 	public void setCreatedAt(String createdAtParam) throws java.text.ParseException {
-		SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss"); // first example
-		Date createAtDate = format.parse(createdAtParam);
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); // first example
+		Date createAtDate = format.parse(createdAtParam.replace('T', ' ').replace("Z", ""));
 		
 		this.createdAt = createAtDate;
 	}
