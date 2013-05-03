@@ -18,9 +18,8 @@ import br.ufpe.cin.groundhog.http.Requests;
 import com.google.inject.Inject;
 
 /**
- * Responsible for searching projects on GitHub via its official API
+ * Performs the project search on GitHub, via its official JSON API
  * @author fjsj, gustavopinto, rodrigoalvesvieira
- *
  */
 public class SearchGitHub implements ForgeSearch {
 	private static String root = "https://api.github.com";
@@ -31,6 +30,13 @@ public class SearchGitHub implements ForgeSearch {
 		this.requests = requests;
 	}
 	
+	/**
+	 * 
+	 * @param urlStr the URL of the JSON document
+	 * @return a JSON object created filled with the content of the given JSON document
+	 * @throws IOException
+	 * @throws JSONException
+	 */
 	private JSONObject getJsonFromAPI(String urlStr) throws IOException, JSONException {
 		return new JSONObject(requests.get(urlStr));
 	}

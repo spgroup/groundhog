@@ -87,12 +87,18 @@ public class SearchGoogleCode implements ForgeSearch {
 			for (Element tr : doc.select("#serp table tbody tr")) {
 				Element el = tr.child(0).child(0);
 				
+				// The span element within the main search result that contains the number
+				// of people watching the project on Google Code
+				Element span = tr.child(1).child(2).child(0);
+				
 				String projectName, description, imgSrc, iconURL, sourceCodeUrl;
+				int stars;
 				
 				projectName = el.attr("href").split("/")[2];
 				description = tr.child(1).ownText();
 				imgSrc = el.child(0).attr("src");
 				iconURL = imgSrc;
+				stars = Integer.parseInt(span.text());
 				
 				if (imgSrc.startsWith("/")) {
 					iconURL = root + iconURL;
@@ -101,6 +107,8 @@ public class SearchGoogleCode implements ForgeSearch {
 				sourceCodeUrl = "https://code.google.com/p/" + projectName + "/source/browse/";
 				
 				Project forgeProject = new Project(projectName, description, iconURL, sourceCodeUrl);
+				forgeProject.setWatchersCount(stars);
+				forgeProject.setFollowersCount(stars);
 				projects.add(forgeProject);
 			}
 			
