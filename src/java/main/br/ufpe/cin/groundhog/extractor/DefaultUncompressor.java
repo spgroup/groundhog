@@ -21,9 +21,15 @@ public class DefaultUncompressor {
 	}
 	
 	private DefaultUncompressor() {
-		
 	}
 	
+	/**
+	 * The compressed file extractor method that takes a compressed file and a destination folder
+	 * and extracts the given file according to its compression format. The supported formats are declared
+	 * in the formats class.
+	 * @param file the compressed file to be extracted
+	 * @param destinationFolder the folder to which the extracted file will be moved to
+	 */
 	public void uncompress(File file, File destinationFolder) {
 		String name = file.getName();
 		try {

@@ -20,6 +20,11 @@ import br.ufpe.cin.groundhog.http.Requests;
 import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.Response;
 
+/**
+ * Responsible for performing the project searches on Google Code
+ * @author fjsj, gustavopinto, rodrigoalvesvieira
+ *
+ */
 public class SearchGoogleCode implements ForgeSearch {
 	private static String root = "http://code.google.com";
 	private final Requests requests;
@@ -29,9 +34,16 @@ public class SearchGoogleCode implements ForgeSearch {
 		this.requests = requests;
 	}
 	
+	/**
+	 * 
+	 * @param html the HTML content of the page to be parsed
+	 * @return the checkout command within the given HTML page
+	 * @throws IOException
+	 */
 	private String parseCheckoutCommand(String html) throws IOException {
 		Document doc = Jsoup.parse(html);
 		Elements es = doc.select("#checkoutcmd");
+		
 		if (es.isEmpty()) {
 			return "";
 		} else {
@@ -59,6 +71,9 @@ public class SearchGoogleCode implements ForgeSearch {
 		}
 	}
 	
+	/**
+	 * Performs the search in the Google Code forge
+	 */
 	public List<Project> getProjects(String term, int page) throws SearchException {
 		try {
 			List<Project> projects = new ArrayList<Project>();
@@ -70,15 +85,30 @@ public class SearchGoogleCode implements ForgeSearch {
 			
 			Document doc = Jsoup.parse(requests.get(root + "/hosting/search?" + paramsStr));
 			for (Element tr : doc.select("#serp table tbody tr")) {
-				Element a = tr.child(0).child(0);
-				String projectName = a.attr("href").split("/")[2];
-				String description = tr.child(1).ownText();
-				String imgSrc = a.child(0).attr("src");
-				String iconURL = imgSrc;
+				Element el = tr.child(0).child(0);
+				
+				// The span element within the main search result that contains the number
+				// of people watching the project on Google Code
+				Element span = tr.child(1).child(2).child(0);
+				
+				String projectName, description, imgSrc, iconURL, sourceCodeUrl;
+				int stars;
+				
+				projectName = el.attr("href").split("/")[2];
+				description = tr.child(1).ownText();
+				imgSrc = el.child(0).attr("src");
+				iconURL = imgSrc;
+				stars = Integer.parseInt(span.text());
+				
 				if (imgSrc.startsWith("/")) {
 					iconURL = root + iconURL;
 				}
-				Project forgeProject = new Project(projectName, description, iconURL);
+				
+				sourceCodeUrl = "https://code.google.com/p/" + projectName + "/source/browse/";
+				
+				Project forgeProject = new Project(projectName, description, iconURL, sourceCodeUrl);
+				forgeProject.setWatchersCount(stars);
+				forgeProject.setFollowersCount(stars);
 				projects.add(forgeProject);
 			}
 			
@@ -95,6 +125,7 @@ public class SearchGoogleCode implements ForgeSearch {
 						return response.getStatusCode();
 					}
 				});
+				
 				futures.add(f);
 			}
 			
