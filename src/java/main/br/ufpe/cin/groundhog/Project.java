@@ -39,6 +39,12 @@ public class Project {
 		this.description = description;
 	}
 
+	/**
+	 * The 3-parameter constructor
+	 * @param name the project name
+	 * @param description the project description
+	 * @param iconURL the project's icon URL
+	 */
 	public Project(String name, String description, String iconURL) {
 		this(name, description);
 		this.iconURL = iconURL;
@@ -215,25 +221,24 @@ public class Project {
 	}
 
 	/**
-	 * 
-	 * @param followersCount an integer for setting the number of people following the project on its forge
+	 * Sets how many followers the project has on its forge
+	 * @param followersCount an integer, the number of people following the project
 	 */
 	public void setFollowersCount(int followersCount) {
 		this.followersCount = followersCount;
 	}
 	
 	/**
-	 * 
-	 * @return an integer correspondent to the number of forks the project in question has
+	 * Informs the number of forks the project has
+	 * @return an integer correspondent to the number of forks
 	 */
 	public int getForksCount() {
 		return this.forksCount;
 	}
 
 	/**
-	 * 
+	 * An indicator of how many times the project has been forked.
 	 * @param forksCount an integer for setting the number of forks the project has.
-	 * In order words, an indicator of how many times the project has been forked.
 	 */
 	public void setForksCount(int forksCount) {
 		this.forksCount = forksCount;
@@ -241,14 +246,15 @@ public class Project {
 	
 	/**
 	 * 
-	 * @return an integer correspondent to the number of open issues of the project
+	 * Informs the number of open issues of the project
+	 * @return an integer value correspondent to the amount of open issues
 	 */
 	public int getIssuesCount() {
 		return this.issuesCount;
 	}
 
 	/**
-	 * 
+	 * Sets the number of issues of a project
 	 * @param issuesCount an integer for setting the number of Issues of the project
 	 */
 	public void setIssuesCount(int issuesCount) {
@@ -256,15 +262,15 @@ public class Project {
 	}
 	
 	/**
-	 * 
-	 * @return a boolean value informing whether the project is a fork of another or not
+	 * Tells whether a project is a fork of another or not
+	 * @return a boolean value: true if it's a fork, false otherwise
 	 */
 	public boolean isFork() {
 		return this.isFork;
 	}
 	
 	/**
-	 * 
+	 * Sets if the project is a fork of another or not
 	 * @param value a boolean value for informing whether the project is a fork of another or not
 	 */
 	public void setIsFork(boolean value) {
@@ -279,15 +285,15 @@ public class Project {
 	 */
 	
 	/**
-	 * 
-	 * @return the creation date of the project in question
+	 * Informs the creation date of the project
+	 * @return a Date object correspondent to the project's creation date
 	 */
 	public Date getCreatedAt() {
 		return this.createdAt;
 	}
 
 	/**
-	 * 
+	 * Sets the creation date of the project
 	 * @param createdAt a Date object for setting the creation date of the project
 	 */
 	public void setCreatedAt(Date createdAt) {
@@ -307,15 +313,15 @@ public class Project {
 	}
 
 	/**
-	 * 
-	 * @return the date of the latest push to the project in question
+	 * Returns the date of the latest push to the project
+	 * @return a Date object of the latest push
 	 */
 	public Date getLastPushedAt() {
 		return this.lastPushedAt;
 	}
 
 	/**
-	 * 
+	 * Sets the date on which the last push has been submitted to the project's source code
 	 * @param lastPushedAtParam the Date object correspondent to the date of the last push to the project
 	 * in question
 	 */

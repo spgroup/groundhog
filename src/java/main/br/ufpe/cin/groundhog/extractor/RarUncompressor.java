@@ -106,10 +106,12 @@ public class RarUncompressor {
 	private static File makeFile(File destination, String name)
 			throws IOException {
 		String[] dirs = name.split("\\\\");
+		String path = "";
+
 		if (dirs == null) {
 			return null;
 		}
-		String path = "";
+
 		int size = dirs.length;
 		if (size == 1) {
 			return new File(destination, name);
