@@ -36,9 +36,14 @@ public class DefaultExtractor implements Extractor {
 	}
 	
 	private DefaultExtractor() {
-		
 	}
 	
+	/**
+	 * Recursively extract files within a root file to a specified destination folder
+	 * @param root the main file containing all the files to be extracted
+	 * @param next
+	 * @param destinationFolder the destination folder to which the extracted files will be moved to
+	 */
 	private void recursiveExtract(final File root, File next, final File destinationFolder) {
 		ExecutorService executor = Executors.newFixedThreadPool(Config.MAX_NUMBER_OF_THREADS);
 		File[] subFiles = next.listFiles();

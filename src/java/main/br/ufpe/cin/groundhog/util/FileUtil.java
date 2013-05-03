@@ -11,6 +11,10 @@ import br.ufpe.cin.groundhog.GroundhogException;
 
 import com.google.common.io.Files;
 
+/**
+ * General utilities class for file operations
+ * @author fjsj, gustavopinto, rodrigoalvesvieira
+ */
 public class FileUtil {
 	private static FileUtil instance;
 	private List<File> createdTempDirs;
@@ -28,7 +32,7 @@ public class FileUtil {
 	
 	/**
 	 * 
-	 * @return the created temporary directory
+	 * @return A File object representing the created temporary directory
 	 */
 	public synchronized File createTempDir() {
 		try {
@@ -74,6 +78,6 @@ public class FileUtil {
 	 */
 	public void copyDirectory(File srcDir, File destDir) throws IOException {
 		FileUtils.copyDirectory(srcDir, destDir);
-		// TODO: add tests 
+		// TODO: add tests
 	}
 }

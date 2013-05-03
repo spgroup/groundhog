@@ -1,9 +1,10 @@
 package br.ufpe.cin.groundhog;
 
 /**
- * The base {@link Exception} type for Groundhog. All Groundhog exceptions must be extends this.
+ * The base {@link Exception} type for Groundhog. All Groundhog exceptions must extend this class.
+ * @author fjsj, gustavopinto, rodrigoalvesvieira
+ *
  */
-
 public class GroundhogException extends RuntimeException {
 	private static final long serialVersionUID = -3563928567447310893L;
 

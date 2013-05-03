@@ -12,12 +12,20 @@ import com.github.junrar.Archive;
 import com.github.junrar.exception.RarException;
 import com.github.junrar.rarfile.FileHeader;
 
-// Adapted from: https://github.com/edmund-wagner/junrar/blob/6f32323c983015d96c64084418793853f514b519/testutil/src/main/java/de/innosystec/unrar/testutil/ExtractArchive.java
-// Original author: edmund wagner 
+/**
+ * @author fjsj, gustavopinto, rodrigoalvesvieira
+ * Adapted from: https://github.com/edmund-wagner/junrar/blob/6f32323c983015d96c64084418793853f514b519/testutil/src/main/java/de/innosystec/unrar/testutil/ExtractArchive.java
+ * Original author: Edmund Wagner
+ */
 public class RarUncompressor {
 	private static Log logger = LogFactory.getLog(RarUncompressor.class
 			.getName());
 
+	/**
+	 * Extracts an archive file to a specified destination directory
+	 * @param archive the archive file to be extracted
+	 * @param destination the directory to which the extracted file will be moved to
+	 */
 	public static void extract(File archive, File destination) {
 		destination.mkdirs();
 		Archive arch = null;
@@ -30,7 +38,7 @@ public class RarUncompressor {
 		}
 		if (arch != null) {
 			if (arch.isEncrypted()) {
-				logger.warn("archive is encrypted cannot extreact");
+				logger.warn("archive is encrypted, cannot perform extraction");
 				return;
 			}
 			FileHeader fh = null;
@@ -40,7 +48,7 @@ public class RarUncompressor {
 					break;
 				}
 				if (fh.isEncrypted()) {
-					logger.warn("file is encrypted cannot extract: "
+					logger.warn("file is encrypted cannot be extracted: "
 							+ fh.getFileNameString());
 					continue;
 				}
@@ -63,6 +71,12 @@ public class RarUncompressor {
 		}
 	}
 
+	/**
+	 * Creates a file in a specified destination directory
+	 * @param fh the file to be created
+	 * @param destination the destination to which the newly created file will be moved to
+	 * @return
+	 */
 	private static File createFile(FileHeader fh, File destination) {
 		File f = null;
 		String name = null;
@@ -82,13 +96,22 @@ public class RarUncompressor {
 		return f;
 	}
 
+	/**
+	 * Creates a file in a specified destination folder
+	 * @param destination the destination folder
+	 * @param name a String indicating the name of the file to be created
+	 * @return
+	 * @throws IOException thrown when file creation cannot be performed
+	 */
 	private static File makeFile(File destination, String name)
 			throws IOException {
 		String[] dirs = name.split("\\\\");
+		String path = "";
+
 		if (dirs == null) {
 			return null;
 		}
-		String path = "";
+
 		int size = dirs.length;
 		if (size == 1) {
 			return new File(destination, name);
@@ -106,6 +129,11 @@ public class RarUncompressor {
 		}
 	}
 
+	/**
+	 * Creates a directory within another specified directory
+	 * @param fh 
+	 * @param destination the directory where the new directory will be placed
+	 */
 	private static void createDirectory(FileHeader fh, File destination) {
 		File f = null;
 		if (fh.isDirectory() && fh.isUnicode()) {
@@ -121,16 +149,23 @@ public class RarUncompressor {
 		}
 	}
 
+	/**
+	 * Creates a directory in an specified destination for every directory within the fileName parameter.
+	 * This is done in order to the uncompressed directory to preserve its original file/directory hierarchy.
+	 * @param destination the directory that will become the root directory containing the newly created directory.
+	 * @param fileName the name of the directory to be created.
+	 */
 	private static void makeDirectory(File destination, String fileName) {
 		String[] dirs = fileName.split("\\\\");
+		String path = "";
+
 		if (dirs == null) {
 			return;
 		}
-		String path = "";
-		for (String dir : dirs) {
+		
+		for (String dir: dirs) {
 			path = path + File.separator + dir;
 			new File(destination, path).mkdir();
 		}
-
 	}
 }

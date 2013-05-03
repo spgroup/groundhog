@@ -15,6 +15,11 @@ import br.ufpe.cin.groundhog.http.Requests;
 
 import com.google.inject.Inject;
 
+/**
+ * Performs the search for projects on SourceForge
+ * @author fjsj, gustavopinto, rodrigoalvesvieira
+ *
+ */
 public class SearchSourceForge implements ForgeSearch {
 	private final Requests requests;
 	
@@ -32,17 +37,25 @@ public class SearchSourceForge implements ForgeSearch {
 				add("sort", "popular").
 				add("page", String.valueOf(page)).
 				build();
+			
 			Document doc = Jsoup.parse(requests.get("http://sourceforge.net/directory/language:java/?" + paramsStr));
-			for (Element li : doc.select(".projects > li")) {
+			
+			for (Element li: doc.select(".projects > li")) {
 				Element a = li.select("[itemprop=url]").first();
+			    
 				if (a != null) {
-					String projectName = a.attr("href").split("/")[2];
-					String description = li.select("[itemprop=description]").first().text();
-					String iconURL = li.select("[itemprop=image]").first().attr("src");
+					String projectName, description, iconURL, projectURL;
+					
+					projectName = a.attr("href").split("/")[2];
+					description = li.select("[itemprop=description]").first().text();
+					iconURL = li.select("[itemprop=image]").first().attr("src");
+					
 					if (iconURL.startsWith("//")) {
 						iconURL = "http:" + iconURL;
 					}
-					String projectURL = String.format("http://sourceforge.net/projects/%s/files/", projectName);
+					
+					projectURL = String.format("http://sourceforge.net/projects/%s/files/", projectName);
+					
 					Project forgeProject = new Project(projectName, description, iconURL, SCM.SOURCE_FORGE, projectURL);
 					projects.add(forgeProject);
 				}

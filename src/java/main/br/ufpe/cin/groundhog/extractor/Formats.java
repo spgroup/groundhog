@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * This class verifies if a given file format is supported to extraction
  * 
- * @author ghlp
+ * @author gustavopinto
  */
 public class Formats {
 	private static Formats instance;
@@ -27,9 +27,7 @@ public class Formats {
 
 	/**
 	 * Tell if the given extension is supported
-	 * 
-	 * @param extension
-	 *            the given extension (e.g. zip, rar)
+	 * @param extension the given extension String (e.g. zip, rar)
 	 */
 	public boolean isCompatible(String extension) {
 		for (String ext : extensions) {
