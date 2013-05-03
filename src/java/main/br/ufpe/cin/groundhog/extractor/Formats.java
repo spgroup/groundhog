@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * This class verifies if a given file format is supported to extraction
  * 
- * @author ghlp
+ * @author gustavopinto
  */
 public class Formats {
 	private static Formats instance;
