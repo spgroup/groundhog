@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -57,6 +58,12 @@ import com.google.inject.Injector;
 public class CmdMain {
 	private static Logger logger = LoggerFactory.getLogger(CrawlGoogleCode.class);
 	
+	/**
+	 * Defines the code forge where the search will be performed.
+	 * Valid options are GITHUB, SOURCEFORGE and GOOGLECODE, as listed in the {@link SupportedForge} enumerator.
+	 * @param f the forge name
+	 * @return the search object of the chosen forge
+	 */
 	public static ForgeSearch defineForgeSearch(SupportedForge f) {
 		Injector injector = Guice.createInjector(new SearchModule());
 		ForgeSearch search = null;
@@ -74,6 +81,13 @@ public class CmdMain {
 		return search;
 	}
 	
+	
+	/**
+	 * Defines the forge crawler - that is - how the search will actually be performed on the chosen forge
+	 * @param f the supported forge. Valid options are GITHUB, SOURCEFORGE and GOOGLECODE
+	 * @param destinationFolder the destination directory
+	 * @return the {@link ForgeCrawler} object for the chosen forge
+	 */
 	public static ForgeCrawler defineForgeCrawler(SupportedForge f, File destinationFolder) {
 		ForgeCrawler crawler = null;
 		Injector injector = Guice.createInjector(new HttpModule(), new ScmModule());
@@ -176,6 +190,7 @@ public class CmdMain {
 		} catch (IOException e) {
 			logger.warn("Could not delete temp folders (but they will be eventually deleted)");
 		}
+		
 		try {
 			if (errorStream != null) {
 				errorStream.close();
@@ -187,15 +202,9 @@ public class CmdMain {
 	
 	public static void main(String[] args) {
 		Options opt = new Options();
-		/*CmdLineParser cmd = new CmdLineParser(opt);
-		try {
-			cmd.parseArgument(args);
-		} catch (CmdLineException e) {
-			System.err.println(e.getMessage());
-			cmd.printUsage(System.err);
-			return;
-		}*/
-		opt.setDatetime("2012-07-01_12_00");
+		String date = new SimpleDateFormat("yyyy-MM-dd_HH_mm").format(new Date()); // Current datetime String
+		
+		opt.setDatetime(date);
 		//opt.setDestinationFolder(new File("download"));
 		opt.setForge(SupportedForge.GITHUB);
 		opt.setMetricsFolder(new File("metrics"));
