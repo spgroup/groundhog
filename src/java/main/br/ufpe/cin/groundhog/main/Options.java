@@ -14,6 +14,10 @@ enum SupportedForge {
 	GITHUB, SOURCEFORGE, GOOGLECODE
 }
 
+/**
+ * The command-line options parsing class
+ * @author fjsj, gustavopinto, rodrigoalvesvieira
+ */
 public class Options {
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH_mm");
 	
@@ -38,59 +42,99 @@ public class Options {
 	@Argument
     private List<String> arguments = new ArrayList<String>();
 	
+	/**
+	 * Informs the code forge where the project search will be performed
+	 * @return
+	 */
 	public SupportedForge getForge() {
-		return forge;
+		return this.forge;
 	}
 
+	/**
+	 * Returns the destination folder into which projects will be downloaded
+	 * @return
+	 */
 	public File getDestinationFolder() {
-		return destinationFolder;
+		return this.destinationFolder;
 	}
-
+	
+	/**
+	 * Sets the destination folder into which projects will be downloaded
+	 * @param destinationFolder
+	 */
 	public void setDestinationFolder(File destinationFolder) {
 		this.destinationFolder = destinationFolder;
 	}
 
+	/**
+	 * Informs the location of the folder where the metrics will be stored
+	 * @return A {@link File} object correspondent to the metrics folder
+	 */
 	public File getMetricsFolder() {
-		return metricsFolder;
+		return this.metricsFolder;
 	}
 
+	/**
+	 * Sets the location of the folder where the metrics will be stored
+	 * @param metricsFolder
+	 */
 	public void setMetricsFolder(File metricsFolder) {
 		this.metricsFolder = metricsFolder;
 	}
 
 	public Date getDatetime() throws ParseException {
-		return dateFormat.parse(datetime);
+		return dateFormat.parse(this.datetime);
 	}
 
 	public void setDatetime(String datetime) {
 		this.datetime = datetime;
-		
 	}
 
+	/**
+	 * Informs the maximum number of projects to be downloaded and processed
+	 * @return
+	 */
 	public int getnProjects() {
-		return nProjects;
+		return this.nProjects;
 	}
 
+	/**
+	 * Sets the maximum number of projects to be downloaded and processed
+	 * @param nProjects
+	 */
 	public void setnProjects(int nProjects) {
 		this.nProjects = nProjects;
 	}
 
+	/**
+	 * Informs the maximum number of concurrent threads to be ran
+	 * @return
+	 */
 	public int getnThreads() {
-		return nThreads;
+		return this.nThreads;
 	}
 
+	/**
+	 * Sets the maximum number of concurrent threads to be ran
+	 * @param nThreads
+	 */
 	public void setnThreads(int nThreads) {
 		this.nThreads = nThreads;
 	}
 
 	public List<String> getArguments() {
-		return arguments;
+		return this.arguments;
 	}
 
 	public void setArguments(List<String> arguments) {
 		this.arguments = arguments;
 	}
 
+	/**
+	 * Sets the forge where the search for projects will be performed
+	 * Valid options are those specified in the {@link SupportedForge} enumerator
+	 * @param forge
+	 */
 	public void setForge(SupportedForge forge) {
 		this.forge = forge;
 	}

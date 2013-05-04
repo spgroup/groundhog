@@ -79,8 +79,7 @@ public class CmdMain {
 			break;
 		}
 		return search;
-	}
-	
+	}	
 	
 	/**
 	 * Defines the forge crawler - that is - how the search will actually be performed on the chosen forge
@@ -108,6 +107,13 @@ public class CmdMain {
 		return crawler;
 	}
 	
+	/**
+	 * Defines the code history analysis mechanism according to the way it can be done for
+	 * the searched projects. Git, SourceForge or SVN.
+	 * @param scm
+	 * @return a {@link CodeHistory} object
+	 * @throws UnsupportedSCMException throw if the given SCM mechanism is not supported by Groundhog
+	 */
 	public static CodeHistory defineCodeHistory(SCM scm) throws UnsupportedSCMException {
 		Injector injector = Guice.createInjector(new CodeHistoryModule());
 		CodeHistory codehistory = null;
@@ -127,6 +133,16 @@ public class CmdMain {
 		return codehistory;
 	}
 	
+	/**
+	 * Performs the download and checkout of the given project
+	 * @param project the project to be downloaded and have its source code checked out
+	 * @param datetime the informed {@link Datetime}
+	 * @param repositoryFolderFuture
+	 * @return the checked out repository
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 * @throws CheckoutException
+	 */
 	public static File downloadAndCheckoutProject(Project project, Date datetime, Future<File> repositoryFolderFuture)
 			throws InterruptedException, ExecutionException, CheckoutException {
 		// Wait for project download
@@ -160,6 +176,15 @@ public class CmdMain {
 		return checkedOutRepository;
 	}
 	
+	/**
+	 * Analyzes the project's source code via a {@link JavaParser} and parses the result into JSON format
+	 * @param project the project to be analyzed
+	 * @param projectFolder the project folder where the source code to be analyzed is located
+	 * @param datetime
+	 * @param metricsFolder the directory where the JSON metrics output will be stored
+	 * @throws IOException
+	 * @throws JSONException
+	 */
 	public static void analyzeProject(Project project, File projectFolder, Date datetime, File metricsFolder)
 			throws IOException, JSONException {
 		String name = project.getName();
@@ -183,12 +208,17 @@ public class CmdMain {
 		}
 	}
 	
+	/**
+	 * Deletes the temporary directories and closes the log streams
+	 * @param crawler the {@link ForgeCrawler) object to have its resources emptied
+	 * @param errorStream the error stream to be closed
+	 */
 	public static void freeResources(ForgeCrawler crawler, OutputStream errorStream) {
 		crawler.shutdown();
 		try {
 			FileUtil.getInstance().deleteTempDirs();
 		} catch (IOException e) {
-			logger.warn("Could not delete temp folders (but they will be eventually deleted)");
+			logger.warn("Could not delete temporary folders (but they will eventually be deleted)");
 		}
 		
 		try {
@@ -296,6 +326,7 @@ public class CmdMain {
 			}));
 		}
 		ex.shutdown();
+		
 		for (int i = 0; i < analysisFutures.size(); i++) {
 			try {
 				analysisFutures.get(i).get();
@@ -306,7 +337,7 @@ public class CmdMain {
 			}
 		}
 		
-		// Free resources and delete temp directories
+		// Free resources and delete temporary directories
 		logger.info("Disposing resources...");
 		freeResources(crawler, errorStream);
 		logger.info("Done!");
