@@ -11,6 +11,10 @@ import br.ufpe.cin.groundhog.extractor.DefaultExtractor;
 import br.ufpe.cin.groundhog.scmclient.EmptyProjectAtDateException;
 import br.ufpe.cin.groundhog.util.FileUtil;
 
+/**
+ * The code history analysis implementation for SourceForge
+ * @author fjsj
+ */
 public class SFCodeHistory implements CodeHistory {
 	
 	@Override
@@ -20,6 +24,13 @@ public class SFCodeHistory implements CodeHistory {
 
 	// TODO: how to know if the single extracted file is really the source code of the project
 	// and isn't a library or just a part?
+	/**
+	 * 
+	 * @param project
+	 * @param repositoryFolder
+	 * @param Date
+	 * @throws EmptyProjectAtDateException
+	 */
 	@Override
 	public File checkoutToDate(String project, File repositoryFolder, Date date) throws EmptyProjectAtDateException {
 		long dateLong = date.getTime();
@@ -45,6 +56,7 @@ public class SFCodeHistory implements CodeHistory {
 				}
 			}
 		}
+		
 		if (closest != null) {
 			File projectFolder = new File(FileUtil.getInstance().createTempDir(), project);
 			DefaultExtractor.getInstance().extractFile(closest, projectFolder);
