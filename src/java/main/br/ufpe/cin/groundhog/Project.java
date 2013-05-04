@@ -7,40 +7,44 @@ import java.util.Date;
 /**
  * Represents a software project in Groundhog
  * @author fjsj, gustavopinto, rodrigoalvesvieira
- *
  */
 public class Project {
-	private String name;
-	private String description;
-	private String creator;
+	private String name;			// Project name
+	private String description;		// Project description
+	private String creator;			// Project's author's name
 	private String iconURL;
-	private SCM scm;
+	private SCM scm;				// The source code manager
 	private String scmURL;
-	private String sourceCodeURL;
+	private String sourceCodeURL;	// The URL where the source code is located
 	
-	private Date createdAt; // Stores when was the project created
-	private Date lastPushedAt; // Stores the when the last push occurred
+	private Date createdAt;			// The project's creation date
+	private Date lastPushedAt; 		// The Date on which last push occurred to the code
 
-	private boolean isFork; // Stores a boolean value for whether the project is a fork or not
-	private boolean hasDownloads;
-	private boolean hasIssues;
-	private boolean hasWiki;
+	private boolean isFork; 		// Value for whether the project is a fork or not
+	private boolean hasDownloads; 	// Value for whether the project allows downloads or not
+	private boolean hasIssues;		// Value for whether the project has Issues related or not
+	private boolean hasWiki;		// Value for whether the project has a Wiki or not
 
-	private int watchersCount;
-	private int followersCount;
-	private int forksCount;
-	private int issuesCount; // Stores the number of open issues
+	private int watchersCount;		// The number of people watching - or "starring" - the project
+	private int followersCount;		// The number of people following - or "starring" - the project
+	private int forksCount;			// The number of forks the project has
+	private int issuesCount; 		// The number of open issues
 	
 	public Project() {
 	}
 	
+	/**
+	 * 2-parameter constructor
+	 * @param name the project name
+	 * @param description description the project description
+	 */
 	public Project(String name, String description) {
 		this.name = name;
 		this.description = description;
 	}
 
 	/**
-	 * The 3-parameter constructor
+	 * 3-parameter constructor
 	 * @param name the project name
 	 * @param description the project description
 	 * @param iconURL the project's icon URL
@@ -69,19 +73,23 @@ public class Project {
 	}
 
 	/**
-	 * 
+	 * Informs the name of the project
 	 * @return the name of the project
 	 */
 	public String getName() {
 		return this.name;
 	}
 	
+	/**
+	 * Sets the name of the project
+	 * @param name a {@link String} for the project's name
+	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
 	/**
-	 * 
+	 * Informs the description of the project
 	 * @return the String description of the project
 	 */
 	public String getDescription() {
@@ -89,33 +97,49 @@ public class Project {
 	}
 
 	/**
-	 * 
-	 * @param description a String for setting the description of the project
+	 * Sets the description of the project
+	 * @param description a String for setting the description
 	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
 	/**
-	 * 
+	 * Informs the project's author name
 	 * @return a String correspondent to the name of the author of the project
 	 */
 	public String getCreator() {
 		return this.creator;
 	}
 
+	/**
+	 * Informs the project's author name
+	 * @param creator a {@link String} for the name of the project's author
+	 */
 	public void setCreator(String creator) {
 		this.creator = creator;
 	}
 	
+	/**
+	 * Informs the project's icon's URL
+	 * @return
+	 */
 	public String getIconURL() {
 		return this.iconURL;
 	}
 
+	/**
+	 * Informs the project's icon's URL
+	 * @param iconURL
+	 */
 	public void setIconURL(String iconURL) {
 		this.iconURL = iconURL;
 	}
 	
+	/**
+	 * Informs the project's SCM
+	 * @return
+	 */
 	public SCM getSCM() {
 		return this.scm;
 	}
@@ -123,17 +147,24 @@ public class Project {
 	public void setSCM(SCM scm) {
 		this.scm = scm;
 	}
-	
+	/**
+	 * Informs the project's SCM URL
+	 * @return 
+	 */
 	public String getScmURL() {
 		return this.scmURL;
 	}
 	
+	/**
+	 * Sets the project's SCM URL
+	 * @param scmURL
+	 */
 	public void setScmURL(String scmURL) {
 		this.scmURL = scmURL;
 	}
 	
 	/**
-	 * 
+	 * Informs the source code URL of the project
 	 * @return a String correspondent to the source code URL of the project in question
 	 */
 	public String getSourceCodeURL() {
@@ -141,7 +172,7 @@ public class Project {
 	}
 
 	/**
-	 * 
+	 * Sets the source code URL for the project
 	 * @param sourceCodeURL sets the URL String of the project's source code
 	 */
 	public void setSourceCodeURL(String sourceCodeURL) {
@@ -149,7 +180,7 @@ public class Project {
 	}
 
 	/**
-	 * 
+	 * Informs whether a project allow downloads or not
 	 * @return true if the project allows source code download. Returns false otherwise.
 	 */
 	public boolean hasDownloads() {
@@ -157,15 +188,14 @@ public class Project {
 	}
 
 	/**
-	 * 
-	 * @param hasDownloads a boolean for setting whether the project enables downloads or not
+	 * Sets if a project allows downloads or not
+	 * @param hasDownloads a {@link boolean} for setting whether the project enables downloads or not
 	 */
 	public void setHasDownloads(boolean hasDownloads) {
 		this.hasDownloads = hasDownloads;
 	}
 	
 	/**
-	 * 
 	 * @return true if the project has issues. Returns false otherwise.
 	 */
 	public boolean hasIssues() {
@@ -173,7 +203,6 @@ public class Project {
 	}
 
 	/**
-	 * 
 	 * @param hasIssues a boolean value for setting if the project has Issues or not
 	 */
 	public void setHasIssues(boolean hasIssues) {
@@ -181,7 +210,7 @@ public class Project {
 	}
 
 	/**
-	 * 
+	 * Informs whether the project has its own Wiki or not.
 	 * @return true if the project has a Wiki. Returns false otherwise. 
 	 */
 	public boolean hasWiki() {
@@ -189,23 +218,22 @@ public class Project {
 	}
 
 	/**
-	 * 
-	 * @param hasWiki a boolean for setting whether the project has a Wiki or not.
+	 * Sets whether a project has its own Wiki or not.
+	 * @param hasWiki a {@link boolean} for setting whether the project has a Wiki or not.
 	 */
 	public void setHasWiki(boolean hasWiki) {
 		this.hasWiki = hasWiki;
 	}
 
-	/**
-	 * 
-	 * @return an integer informing how many people are currently watching the project on its forge
+	/** Informs how many people are watching the project or have "starred" it
+	 * @return an {@link integer} informing how many people are currently watching the project on its forge
 	 */
 	public int getWatchersCount() {
 		return this.watchersCount;
 	}
 	
 	/**
-	 * 
+	 * Sets how many people are watching the project
 	 * @param watchersCount an integer for setting the number of people watching the project on its forge
 	 */
 	public void setWatchersCount(int watchersCount) {
