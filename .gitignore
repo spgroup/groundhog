@@ -11,5 +11,5 @@ bin
 .DS_Store
 *.log
 
-groundhog.jar
+*.jar
 metrics/
