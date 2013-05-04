@@ -12,16 +12,21 @@ import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.ListenableFuture;
 
 public class Requests {
-	
 	private AsyncHttpClient asyncClient;
 	
 	public Requests() {
-		asyncClient = new AsyncHttpClient();
+		this.asyncClient = new AsyncHttpClient();
 	}
 	
+	/**
+	 * Gets the response body of the given URL
+	 * @param urlStr
+	 * @return
+	 * @throws IOException
+	 */
 	public String get(String urlStr) throws IOException {
 		try {
-			return asyncClient.prepareGet(urlStr).execute().get().getResponseBody();
+			return this.asyncClient.prepareGet(urlStr).execute().get().getResponseBody();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 			throw new HttpException(e);
@@ -31,9 +36,15 @@ public class Requests {
 		}
 	}
 	
+	/**
+	 * Downloads the response body of the given URL
+	 * @param urlStr an URL of a page whose body will be downloaded
+	 * @return
+	 * @throws IOException
+	 */
 	public InputStream download(String urlStr) throws IOException {
 		try {
-			return asyncClient.prepareGet(urlStr).setFollowRedirects(true).execute().get().getResponseBodyAsStream();
+			return this.asyncClient.prepareGet(urlStr).setFollowRedirects(true).execute().get().getResponseBodyAsStream();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 			throw new HttpException(e);
@@ -59,7 +70,7 @@ public class Requests {
 	/**
 	 * 
 	 * @param s a String representing an URL
-	 * @return an UTF-8 decoded String derivated from the given URL
+	 * @return an UTF-8 decoded String derived from the given URL
 	 */
 	public String decodeURL(String s) {
 		try {
@@ -69,9 +80,11 @@ public class Requests {
 			throw new HttpException(e);
 		}
 	}
-
-	public void close() {
-		asyncClient.close();
-	}
 	
+	/**
+	 * Closes the connection
+	 */
+	public void close() {
+		this.asyncClient.close();
+	}
 }
