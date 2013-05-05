@@ -37,9 +37,18 @@ import br.ufpe.cin.groundhog.util.FileUtil;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
+/**
+ * The main test class
+ * @author fjsj, gustavopinto, rodrigoalvesvieira
+ */
 public class TestMain {
 	private static Logger logger = LoggerFactory.getLogger(TestMain.class);
 	
+	/**
+	 * Test method for search the GitHub forge
+	 * @param term the search term (project name)
+	 * @throws Exception
+	 */
 	public static void gitHubExample(String term) throws Exception {
 		File downloadFolder = FileUtil.getInstance().createTempDir();
 		
@@ -77,6 +86,10 @@ public class TestMain {
 		}
 	}
 	
+	/**
+	 * Test method for search the SourceForge forge
+	 * @throws Exception
+	 */
 	public static void sourceForgeExample() throws Exception {
 		File downloadFolder = FileUtil.getInstance().createTempDir();
 		
@@ -120,6 +133,11 @@ public class TestMain {
 		}
 	}
 	
+	/**
+	 * Test method for search the Google Code forge
+	 * @param term the search term (project name)
+	 * @throws Exception
+	 */
 	public static void googleCodeExample(String term) throws Exception {
 		File downloadFolder = FileUtil.getInstance().createTempDir();
 		

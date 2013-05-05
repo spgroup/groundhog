@@ -35,7 +35,7 @@ public class SearchGoogleCode implements ForgeSearch {
 	}
 	
 	/**
-	 * 
+	 * Fetches and returns the checkout command String for the project
 	 * @param html the HTML content of the page to be parsed
 	 * @return the checkout command within the given HTML page
 	 * @throws IOException
@@ -51,6 +51,11 @@ public class SearchGoogleCode implements ForgeSearch {
 		}
 	}
 	
+	/**
+	 * Sets the checkout command of the project according to its SCM tool
+	 * @param command the checkout command String
+	 * @param project the project to which the checkout must be applied
+	 */
 	private void setCheckoutCommandToProject(String command, Project project) {
 		if (command.startsWith("svn")) {
 			String url = command.split(" ")[2];
@@ -71,9 +76,6 @@ public class SearchGoogleCode implements ForgeSearch {
 		}
 	}
 	
-	/**
-	 * Performs the search in the Google Code forge
-	 */
 	public List<Project> getProjects(String term, int page) throws SearchException {
 		try {
 			List<Project> projects = new ArrayList<Project>();

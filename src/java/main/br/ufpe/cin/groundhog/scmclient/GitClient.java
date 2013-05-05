@@ -28,6 +28,15 @@ import org.gitective.core.filter.commit.CommitterDateFilter;
 
 public class GitClient {
 	
+	/**
+	 * Performs a clone operation for the given project URL and places the fetched code
+	 * into the destination directory.
+	 * @param url the project's URL
+	 * @param destination
+	 * @throws InvalidRemoteException
+	 * @throws TransportException
+	 * @throws GitAPIException
+	 */
 	public void clone(String url, File destination)
 			throws InvalidRemoteException, TransportException, GitAPIException {
 		Repository rep = Git.cloneRepository().
@@ -37,8 +46,20 @@ public class GitClient {
 		rep.close();
 	}
 
+	/**
+	 * Performs a checkout to the given Git repository
+	 * @param repositoryFolder the repository where the checkout will be performed
+	 * @param date
+	 * @throws IOException
+	 * @throws RefAlreadyExistsException
+	 * @throws RefNotFoundException
+	 * @throws InvalidRefNameException
+	 * @throws CheckoutConflictException
+	 * @throws GitAPIException
+	 * @throws EmptyProjectAtDateException
+	 */
 	public void checkout(File repositoryFolder, Date date)
-			throws IOException,RefAlreadyExistsException, RefNotFoundException,
+			throws IOException, RefAlreadyExistsException, RefNotFoundException,
 			InvalidRefNameException, CheckoutConflictException, GitAPIException,
 			EmptyProjectAtDateException {
 		Git git = Git.open(repositoryFolder);
@@ -69,13 +90,14 @@ public class GitClient {
 				return c1.getCommitterIdent().getWhen().compareTo(c2.getCommitterIdent().getWhen());
 			}
 		});
-
-		// Workaround ahead, since JGit in Windows automatically
-		// adds ^M (Carriage Returns) to some files after, leaving the working tree dirty.
-		// JGit stash won't work and reset also not. So we need to commit!
-		// This commit doesn't affects metrics, since we do a checkout after it.
-		// To reproduce this bug, try to checkout https://github.com/playframework/ to 2012-05-01 12:00
-		// TODO: report this bug to JGit team.
+		
+		/* Workaround ahead, since JGit in Windows automatically adds ^M (Carriage Returns) to some files after,
+		 * leaving the working tree dirty.
+		 * Neither JGit stash nor reset will work. So we need to commit!
+		 * This commit doesn't affects metrics, since we do a checkout after it.
+		 * To reproduce this bug, try to checkout https://github.com/playframework/ to 2012-05-01 12:00
+		 * TODO: report this bug to JGit team.
+		 */
 		Set<String> mods = git.status().call().getModified();
 		if (!mods.isEmpty()) {
 			AddCommand addCmd = git.add();
@@ -85,7 +107,7 @@ public class GitClient {
 			addCmd.call();
 			git.commit().setMessage("Groundhog commit").call();
 		}
-		// workaround end.
+		/* workaround end.*/
 
 		git.checkout().setName("groundhog-analyze").setStartPoint(closest).setCreateBranch(true).call();
 		rep.close();

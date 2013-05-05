@@ -41,8 +41,7 @@ public class ZipUncompressor {
 				ZipEntry entry = (ZipEntry) e.nextElement();
 				currentFile = new File(dir, entry.getName());
 
-				// if the directory is inexistent, create the structure and jump
-				// to the next entry
+				// if the directory is inexistent, create the structure and jump to the next entry
 				if (entry.isDirectory()) {
 					if (!currentFile.exists()) {
 						currentFile.mkdirs();

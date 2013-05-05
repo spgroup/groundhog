@@ -7,19 +7,24 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
 
+/**
+ * The URL parameter builder class
+ * @author fjsj
+ *
+ */
 public class ParamBuilder {
 	private List<NameValuePair> params;
 
 	public ParamBuilder() {
-		params = new ArrayList<NameValuePair>();
+		this.params = new ArrayList<NameValuePair>();
 	}
 
 	public ParamBuilder add(String name, String value) {
-		params.add(new BasicNameValuePair(name, value));
+		this.params.add(new BasicNameValuePair(name, value));
 		return this;
 	}
 
 	public String build() {
-		return URLEncodedUtils.format(params, "UTF-8");
+		return URLEncodedUtils.format(this.params, "UTF-8");
 	}
 }
