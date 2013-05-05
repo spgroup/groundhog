@@ -9,26 +9,26 @@ import java.util.Date;
  * @author fjsj, gustavopinto, rodrigoalvesvieira
  */
 public class Project {
-	private String name;			// Project name
-	private String description;		// Project description
-	private String creator;			// Project's author's name
+	private String name;
+	private String description;
+	private String creator;
 	private String iconURL;
-	private SCM scm;				// The source code manager
+	private SCM scm;
 	private String scmURL;
-	private String sourceCodeURL;	// The URL where the source code is located
+	private String sourceCodeURL;
 	
-	private Date createdAt;			// The project's creation date
-	private Date lastPushedAt; 		// The Date on which last push occurred to the code
+	private Date createdAt;
+	private Date lastPushedAt;
 
-	private boolean isFork; 		// Value for whether the project is a fork or not
-	private boolean hasDownloads; 	// Value for whether the project allows downloads or not
-	private boolean hasIssues;		// Value for whether the project has Issues related or not
-	private boolean hasWiki;		// Value for whether the project has a Wiki or not
+	private boolean isFork;
+	private boolean hasDownloads;
+	private boolean hasIssues;
+	private boolean hasWiki;
 
-	private int watchersCount;		// The number of people watching - or "starring" - the project
-	private int followersCount;		// The number of people following - or "starring" - the project
-	private int forksCount;			// The number of forks the project has
-	private int issuesCount; 		// The number of open issues
+	private int watchersCount;
+	private int followersCount;
+	private int forksCount;
+	private int issuesCount;
 	
 	public Project() {
 	}
@@ -225,7 +225,8 @@ public class Project {
 		this.hasWiki = hasWiki;
 	}
 
-	/** Informs how many people are watching the project or have "starred" it
+	/**
+	 * Informs how many people are watching the project or have "starred" it
 	 * @return an {@link integer} informing how many people are currently watching the project on its forge
 	 */
 	public int getWatchersCount() {
