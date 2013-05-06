@@ -122,6 +122,9 @@ public class JavaParser {
 	
 	/**
 	 * Creates the CSV representation of the extracted metrics
+	 * The output file groups data associated with each metric. 
+	 * Each metric has a set of entry value that are printed one per line
+	 *  
 	 * @return StringWriter that represents the CSV document
 	 * @throws IOException
 	 */
@@ -131,11 +134,16 @@ public class JavaParser {
 		if( counters != null ){
 			result = new StringWriter();
 			CSVWriter writer = new CSVWriter(result, ';');
-			for (Entry<String, HashMap<String, MutableInt>> entry : counters.entrySet()) {
-				writer.writeNext( new String[] { entry.getKey(), entry.getValue().toString() } );
-			}
+			writer.writeNext(new String[] { "#Metric", "#Entry", "#Value"} );
+			for (String metric : counters.keySet()) {				
+				writer.writeNext(new String[] { metric , "", ""} );
+				HashMap<String, MutableInt> counter = counters.get(metric);				
+				for (Entry<String, MutableInt> entry : counter.entrySet()) {
+					writer.writeNext(new String[] { "", entry.getKey() , entry.getValue().toString() } );
+				}				
+			}		
 			writer.flush();
-			writer.close();	
+			writer.close();
 		}
 		return result;
 	}

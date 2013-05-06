@@ -14,6 +14,10 @@ enum SupportedForge {
 	GITHUB, SOURCEFORGE, GOOGLECODE
 }
 
+enum MetricsOutputFormat{
+	JSON, CSV
+}
+
 public class Options {
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH_mm");
 	
@@ -35,9 +39,12 @@ public class Options {
 	@Option(name="-nthreads", usage="maximum number of concurrent threads")
 	private int nThreads = 4;
 	
-	@Argument
-    private List<String> arguments = new ArrayList<String>();
+	@Option(name="-o", usage="determine the output format of the metrics")
+	private MetricsOutputFormat metricsFormat = MetricsOutputFormat.JSON;
 	
+	@Argument
+    private List<String> arguments = new ArrayList<String>();	
+
 	public SupportedForge getForge() {
 		return forge;
 	}
@@ -98,4 +105,14 @@ public class Options {
 	public static SimpleDateFormat getDateFormat() {
 		return dateFormat;
 	}
+	
+	
+	public MetricsOutputFormat getMetricsFormat() {
+		return metricsFormat;
+	}
+
+	public void setMetricsFormat(MetricsOutputFormat metricsFormat) {
+		this.metricsFormat = metricsFormat;
+	}
+	
 }
