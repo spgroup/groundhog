@@ -44,19 +44,13 @@ public class SearchSourceForge implements ForgeSearch {
 				Element a = li.select("[itemprop=url]").first();
 			    
 				if (a != null) {
-					String projectName, description, iconURL, projectURL;
+					String projectName, description, projectURL;
 					
 					projectName = a.attr("href").split("/")[2];
 					description = li.select("[itemprop=description]").first().text();
-					iconURL = li.select("[itemprop=image]").first().attr("src");
-					
-					if (iconURL.startsWith("//")) {
-						iconURL = "http:" + iconURL;
-					}
-					
 					projectURL = String.format("http://sourceforge.net/projects/%s/files/", projectName);
 					
-					Project forgeProject = new Project(projectName, description, iconURL, SCM.SOURCE_FORGE, projectURL);
+					Project forgeProject = new Project(projectName, description, SCM.SOURCE_FORGE, projectURL);
 					projects.add(forgeProject);
 				}
 			}

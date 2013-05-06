@@ -12,7 +12,6 @@ public class Project {
 	private String name;
 	private String description;
 	private String creator;
-	private String iconURL;
 	private SCM scm;
 	private String scmURL;
 	private String sourceCodeURL;
@@ -47,28 +46,20 @@ public class Project {
 	 * 3-parameter constructor
 	 * @param name the project name
 	 * @param description the project description
-	 * @param iconURL the project's icon URL
+	 * @param sourceCodeURL the project's source code URL
 	 */
-	public Project(String name, String description, String iconURL) {
+	public Project(String name, String description, String sourceCodeURL) {
 		this(name, description);
-		this.iconURL = iconURL;
-	}
-	
-	public Project(String name, String description, String iconURL, String sourceCodeURL) {
-		this(name, description);
-		this.iconURL = iconURL;
 		this.sourceCodeURL = sourceCodeURL;
 	}
 	
-	public Project(String name, String description, String iconURL, SCM scm, String scmURL) {
-		this(name, description, iconURL);
+	public Project(String name, String description, SCM scm, String scmURL) {
+		this(name, description, scmURL);
 		this.scm = scm;
-		this.scmURL = scmURL;
 	}
 	
-	public Project(String name, String description, String iconURL, SCM scm, String scmURL,
-			String sourceCodeURL) {
-		this(name, description, iconURL, scm, scmURL);
+	public Project(String name, String description, SCM scm, String scmURL, String sourceCodeURL) {
+		this(name, description, scm, scmURL);
 		this.sourceCodeURL = sourceCodeURL;
 	}
 
@@ -118,22 +109,6 @@ public class Project {
 	 */
 	public void setCreator(String creator) {
 		this.creator = creator;
-	}
-	
-	/**
-	 * Informs the project's icon's URL
-	 * @return
-	 */
-	public String getIconURL() {
-		return this.iconURL;
-	}
-
-	/**
-	 * Informs the project's icon's URL
-	 * @param iconURL
-	 */
-	public void setIconURL(String iconURL) {
-		this.iconURL = iconURL;
 	}
 	
 	/**
@@ -375,6 +350,6 @@ public class Project {
 	@Override
 	public String toString() {
 		return String.format("Project(%s, %s, %s, %s)",
-				this.name, this.description, this.sourceCodeURL, this.iconURL);
+				this.name, this.description, this.sourceCodeURL);
 	}
 }
