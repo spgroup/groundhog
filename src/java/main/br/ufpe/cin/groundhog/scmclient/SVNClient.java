@@ -16,6 +16,12 @@ public class SVNClient {
 		this.svn = SVNClientManager.newInstance();
 	}
 	
+	/**
+	 * Performs a checkout for a project with the given URL on the given destination directory
+	 * @param url the project URL
+	 * @param destination the destination directory
+	 * @throws SVNException
+	 */
 	public void checkout(String url, File destination) throws SVNException {
 		SVNUpdateClient client = svn.getUpdateClient();
 		client.doCheckout(SVNURL.parseURIDecoded(url),
@@ -26,6 +32,14 @@ public class SVNClient {
 				false);
 	}
 	
+	/**
+	 * Performs a checkout for a project with the given URL on the given destination directory with a
+	 * specified SVN revision
+	 * @param url the project URL
+	 * @param destination the destination directory
+	 * @param revision the SVN revision
+	 * @throws SVNException
+	 */
 	public void checkout(String url, File destination, SVNRevision revision) throws SVNException {
 		SVNUpdateClient client = svn.getUpdateClient();
 		client.doCheckout(SVNURL.parseURIDecoded(url),

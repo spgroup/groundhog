@@ -15,11 +15,11 @@ import br.ufpe.cin.groundhog.scmclient.EmptyProjectAtDateException;
 public interface CodeHistory {
 	
 	/**
-	 * Checkos out the given project according to the given date. Returns a new temporary folder
+	 * Checks out the given project according to the given date. Returns a new temporary folder
 	 * with the project source code version at or before date. This variation of this method should
 	 * be used when the SCM revision history is centralized within a URL (like SVN). 
 	 * @param project project name
-	 * @param url project SCM url, usually set by a ForgeCrawler subclass
+	 * @param url project SCM URL, usually set by a ForgeCrawler subclass
 	 * @param date date to checkout
 	 * @return a new temporary folder with the project source code state at the given date.
 	 * @throws Exception when something nasty happens

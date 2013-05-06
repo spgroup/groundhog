@@ -15,8 +15,11 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
+/**
+ * The code history analysis implementation for the SVN SCM
+ * @author fjsj
+ */
 public class SvnCodeHistory implements CodeHistory {
-
 	private final SVNClient svnClient;
 
 	@Inject
@@ -24,13 +27,16 @@ public class SvnCodeHistory implements CodeHistory {
 		this.svnClient = svnClient;
 	}
 
+	/**
+	 * Performs a check out in the project based on the informed URL and date
+	 */
 	@Override
 	public File checkoutToDate(String project, String url, Date date)
 			throws CheckoutException {
 		try {
 			File projectFolder = new File(FileUtil.getInstance()
 					.createTempDir(), project);
-			svnClient.checkout(url, projectFolder, SVNRevision.create(date));
+			this.svnClient.checkout(url, projectFolder, SVNRevision.create(date));
 			return projectFolder;
 		} catch (SVNException e) {
 			throw new CheckoutException(e);

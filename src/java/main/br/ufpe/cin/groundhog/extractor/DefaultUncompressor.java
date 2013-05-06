@@ -10,6 +10,11 @@ import lzma.streams.LzmaInputStream;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 
+/**
+ * The default file uncompressor in Groundhog
+ * @author fjsj
+ *
+ */
 public class DefaultUncompressor {
 	private static DefaultUncompressor instance;
 	

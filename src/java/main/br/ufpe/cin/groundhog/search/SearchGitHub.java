@@ -31,7 +31,7 @@ public class SearchGitHub implements ForgeSearch {
 	}
 	
 	/**
-	 * 
+	 * Creates and returns a JSON object built by the contents of the given JSON document URL
 	 * @param urlStr the URL of the JSON document
 	 * @return a JSON object created filled with the content of the given JSON document
 	 * @throws IOException
