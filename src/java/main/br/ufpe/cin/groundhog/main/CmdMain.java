@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.StringWriter;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,6 +39,7 @@ import br.ufpe.cin.groundhog.crawler.ForgeCrawler;
 import br.ufpe.cin.groundhog.http.HttpModule;
 import br.ufpe.cin.groundhog.http.Requests;
 import br.ufpe.cin.groundhog.parser.JavaParser;
+import br.ufpe.cin.groundhog.parser.UnsuportedMetricsFormatException;
 import br.ufpe.cin.groundhog.scmclient.EmptyProjectAtDateException;
 import br.ufpe.cin.groundhog.scmclient.SVNClient;
 import br.ufpe.cin.groundhog.search.ForgeSearch;
@@ -104,7 +106,7 @@ public class CmdMain {
 			throw new UnsupportedSCMException(scm.toString());
 		}
 		return codehistory;
-	}
+	}	
 	
 	public static File downloadAndCheckoutProject(Project project, Date datetime, Future<File> repositoryFolderFuture)
 			throws InterruptedException, ExecutionException, CheckoutException {
@@ -139,23 +141,34 @@ public class CmdMain {
 		return checkedOutRepository;
 	}
 	
-	public static void analyzeProject(Project project, File projectFolder, Date datetime, File metricsFolder)
-			throws IOException, JSONException {
+	public static void analyzeProject(Project project, File projectFolder, Date datetime, File metricsFolder, 
+			MetricsOutputFormat metricsFormat) throws IOException, JSONException {
 		String name = project.getName();
 		String datetimeStr = Options.getDateFormat().format(datetime);
 		
 		// Parse project
 		logger.info(format("Parsing project %s...", name));
-		JavaParser parser = new JavaParser(projectFolder);
-		JSONObject metrics = null;
-		metrics = parser.parseToJSON();
+		JavaParser parser = new JavaParser(projectFolder);		
+		String metrics = null;
+		
+		switch ( metricsFormat ){
+			case CSV :
+				StringWriter csv = parser.parseToCSV();
+				if( csv != null ) metrics = csv.toString();				
+				break;
+			case JSON : 
+				JSONObject json = parser.parseToJSON(); 
+				if( json != null ) metrics = json.toString();
+				break;
+			default : throw new UnsuportedMetricsFormatException(metricsFormat.toString()); 
+		}
 		
 		if (metrics != null) {
 			// Save metrics to file
-			String metricsFilename = format("%s-%s.json", name, datetimeStr);
+			String metricsFilename = format("%s-%s.%s", name, datetimeStr, metricsFormat.toString().toLowerCase());
 			logger.info(format("Project %s parsed, metrics extracted! Writing result to file %s...", name, metricsFilename));
 			File metricsFile = new File(metricsFolder, metricsFilename);
-			FileUtil.getInstance().writeStringToFile(metricsFile, metrics.toString());
+			FileUtil.getInstance().writeStringToFile(metricsFile, metrics);
 			logger.info(format("Metrics of project %s written to file %s", name, metricsFile.getAbsolutePath()));
 		} else {
 			logger.warn(format("Project %s has no Java source files! Metrics couldn't be extracted...", name));
@@ -195,6 +208,7 @@ public class CmdMain {
 		opt.setMetricsFolder(new File("metrics"));
 		opt.setnProjects(5);
 		opt.setArguments(Arrays.asList("facebook"));
+		opt.setMetricsFormat(MetricsOutputFormat.JSON);
 		
 		List<String> terms = opt.getArguments();
 		String term = Joiner.on(" ").join(terms);
@@ -252,12 +266,14 @@ public class CmdMain {
 		logger.info("Downloading and processing projects...");
 		ExecutorService ex = Executors.newFixedThreadPool(Config.MAX_NUMBER_OF_THREADS);
 		List<Future<File>> downloadFutures = crawler.downloadProjects(projects);
-		List<Future<?>> analysisFutures = new ArrayList<Future<?>>();
+		List<Future<?>> analysisFutures = new ArrayList<Future<?>>();	
+		
 		for (int i = 0; i < downloadFutures.size(); i++) {
 			final Project project = projects.get(i);
 			final Date datetime_ = datetime;
 			final Future<File> repositoryFolderFuture = downloadFutures.get(i);
 			final File metricsFolder_ = metricsFolder;
+			final MetricsOutputFormat metricsFormat_ = opt.getMetricsFormat();
 			
 			analysisFutures.add(ex.submit(new Runnable() {
 				@Override
@@ -270,7 +286,7 @@ public class CmdMain {
 					}
 					if (checkedOutRepository != null) {
 						try {
-							analyzeProject(project, checkedOutRepository, datetime_, metricsFolder_);
+							analyzeProject(project, checkedOutRepository, datetime_, metricsFolder_, metricsFormat_);
 						} catch (Exception e) {
 							logger.error(format("Error while analyzing project %s", project.getName()), e);
 						}

@@ -115,7 +115,7 @@ public class JavaParser {
 			}
 			return json;
 		} else {
-			return null; //TODO returning null is not a good option, it should throw an exception
+			return null;
 		}
 	}
 	
@@ -134,12 +134,11 @@ public class JavaParser {
 		if( counters != null ){
 			result = new StringWriter();
 			CSVWriter writer = new CSVWriter(result, ';');
-			writer.writeNext(new String[] { "#Metric", "#Entry", "#Value"} );
-			for (String metric : counters.keySet()) {				
-				writer.writeNext(new String[] { metric , "", ""} );
+			writer.writeNext(new String[] { "Metric", "Entry", "Value"} );
+			for (String metric : counters.keySet()) {								
 				HashMap<String, MutableInt> counter = counters.get(metric);				
 				for (Entry<String, MutableInt> entry : counter.entrySet()) {
-					writer.writeNext(new String[] { "", entry.getKey() , entry.getValue().toString() } );
+					writer.writeNext(new String[] { metric , entry.getKey() , entry.getValue().toString() } );
 				}				
 			}		
 			writer.flush();
