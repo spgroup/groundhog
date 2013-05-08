@@ -7,7 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.io.StringWriter;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,7 +18,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +37,6 @@ import br.ufpe.cin.groundhog.crawler.ForgeCrawler;
 import br.ufpe.cin.groundhog.http.HttpModule;
 import br.ufpe.cin.groundhog.http.Requests;
 import br.ufpe.cin.groundhog.parser.JavaParser;
-import br.ufpe.cin.groundhog.parser.UnsuportedMetricsFormatException;
 import br.ufpe.cin.groundhog.scmclient.EmptyProjectAtDateException;
 import br.ufpe.cin.groundhog.scmclient.SVNClient;
 import br.ufpe.cin.groundhog.search.ForgeSearch;
@@ -149,20 +146,8 @@ public class CmdMain {
 		// Parse project
 		logger.info(format("Parsing project %s...", name));
 		JavaParser parser = new JavaParser(projectFolder);		
-		String metrics = null;
-		
-		switch ( metricsFormat ){
-			case CSV :
-				StringWriter csv = parser.parseToCSV();
-				if( csv != null ) metrics = csv.toString();				
-				break;
-			case JSON : 
-				JSONObject json = parser.parseToJSON(); 
-				if( json != null ) metrics = json.toString(4);
-				break;
-			default : throw new UnsuportedMetricsFormatException(metricsFormat.toString()); 
-		}
-		
+		String metrics = parser.format(metricsFormat.name());
+
 		if (metrics != null) {
 			// Save metrics to file
 			String metricsFilename = format("%s-%s.%s", name, datetimeStr, metricsFormat.toString().toLowerCase());

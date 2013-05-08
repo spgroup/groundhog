@@ -5,15 +5,11 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.SCM;
@@ -27,11 +23,13 @@ import br.ufpe.cin.groundhog.crawler.ForgeCrawler;
 import br.ufpe.cin.groundhog.http.HttpModule;
 import br.ufpe.cin.groundhog.http.Requests;
 import br.ufpe.cin.groundhog.parser.JavaParser;
-import br.ufpe.cin.groundhog.parser.MutableInt;
 import br.ufpe.cin.groundhog.search.SearchGitHub;
 import br.ufpe.cin.groundhog.search.SearchGoogleCode;
 import br.ufpe.cin.groundhog.search.SearchSourceForge;
 import br.ufpe.cin.groundhog.util.FileUtil;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 public class TestMain {
 	private static Logger logger = LoggerFactory.getLogger(TestMain.class);
@@ -59,8 +57,10 @@ public class TestMain {
 		
 		logger.info("4 - Parse...");
 		JavaParser parser = new JavaParser(temp);
-		HashMap<String, HashMap<String, MutableInt>> counters = parser.parse();
-		JavaParser.printResult(counters);
+		String metrics = parser.format("JSON");
+		System.out.println(metrics);
+//		HashMap<String, HashMap<String, MutableInt>> counters = parser.parse();
+//		JavaParser.printResult(counters);
 		
 		try {
 			FileUtil.getInstance().deleteTempDirs();
@@ -98,8 +98,8 @@ public class TestMain {
 		
 		logger.info("4 - Parse...");
 		JavaParser parser = new JavaParser(temp);
-		HashMap<String, HashMap<String, MutableInt>> counters = parser.parse();
-		JavaParser.printResult(counters);
+		String metrics = parser.format("CSV");
+		System.out.println(metrics);
 		
 		try {
 			FileUtil.getInstance().deleteTempDirs();
@@ -139,8 +139,8 @@ public class TestMain {
 		
 		logger.info("4 - Parse...");
 		JavaParser parser = new JavaParser(temp);
-		HashMap<String, HashMap<String, MutableInt>> counters = parser.parse();
-		JavaParser.printResult(counters);
+		String metrics = parser.format("CSV");
+		System.out.println(metrics);
 		
 		try {
 			FileUtil.getInstance().deleteTempDirs();

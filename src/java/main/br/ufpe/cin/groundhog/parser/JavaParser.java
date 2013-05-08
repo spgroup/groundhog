@@ -2,7 +2,6 @@ package br.ufpe.cin.groundhog.parser;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -18,9 +17,7 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import au.com.bytecode.opencsv.*;
+import br.ufpe.cin.groundhog.parser.formater.FormaterFactory;
 
 /**
  * Class that implements the metrics extraction functionality of this project.
@@ -30,8 +27,6 @@ import au.com.bytecode.opencsv.*;
  */
 public class JavaParser {
 	private static String fileSeparator = File.separator;
-	
-	
 	
 	private File folder;  // this folder means the root folder of the downloaded project
 	private List<File> filesList;
@@ -69,7 +64,7 @@ public class JavaParser {
 		Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles(filesList);
 		
 		// Options: http://docs.oracle.com/javase/6/docs/technotes/tools/windows/javac.html
-		ArrayList<String> options = new ArrayList<String>();
+		List<String> options = new ArrayList<String>();
 		options.add("-g:none"); // Do not generate any debugging information
 		options.add("-nowarn"); // Disable warning messages
 		options.add("-implicit:none"); // Suppress class file generation
@@ -91,7 +86,6 @@ public class JavaParser {
 	 * @throws IOException if something wrong happens when closing source file manager
 	 */
 	public HashMap<String, HashMap<String, MutableInt>> parse() throws IOException {
-
 		recursiveSearch(folder);
 		if (!filesList.isEmpty()) {
 			return invokeProcessor();
@@ -100,51 +94,12 @@ public class JavaParser {
 		}
 	}
 	
-	/**
-	 * Creates an object that represents the JSON result of the metrics.
-	 * @return JSONObject that embodies the result
-	 * @throws IOException throwed from use of the parse method
-	 * @throws JSONException
-	 */
-	public JSONObject parseToJSON() throws IOException, JSONException {
-		JSONObject json = new JSONObject();
+	public String format(String metricsFormat) throws IOException{
 		HashMap<String, HashMap<String, MutableInt>> counters = parse();
-		if (counters != null) {
-			for (Entry<String, HashMap<String, MutableInt>> entry : counters.entrySet()) {
-				json.put(entry.getKey(), entry.getValue());
-			}
-			return json;
-		} else {
-			return null;
+		if(counters == null) {
+			return "No metrics extracted.";
 		}
-	}
-	
-	
-	/**
-	 * Creates the CSV representation of the extracted metrics
-	 * The output file groups data associated with each metric. 
-	 * Each metric has a set of entry value that are printed one per line
-	 *  
-	 * @return StringWriter that represents the CSV document
-	 * @throws IOException
-	 */
-	public StringWriter parseToCSV() throws IOException {
-		StringWriter result = null;
-		HashMap<String, HashMap<String, MutableInt>> counters = parse();		
-		if( counters != null ){
-			result = new StringWriter();
-			CSVWriter writer = new CSVWriter(result, ';');
-			writer.writeNext(new String[] { "Metric", "Entry", "Value"} );
-			for (String metric : counters.keySet()) {								
-				HashMap<String, MutableInt> counter = counters.get(metric);				
-				for (Entry<String, MutableInt> entry : counter.entrySet()) {
-					writer.writeNext(new String[] { metric , entry.getKey() , entry.getValue().toString() } );
-				}				
-			}		
-			writer.flush();
-			writer.close();
-		}
-		return result;
+		return FormaterFactory.get(metricsFormat).format(counters);
 	}
 	
 	/**
