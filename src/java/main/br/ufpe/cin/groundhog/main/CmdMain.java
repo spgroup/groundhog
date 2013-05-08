@@ -158,7 +158,7 @@ public class CmdMain {
 				break;
 			case JSON : 
 				JSONObject json = parser.parseToJSON(); 
-				if( json != null ) metrics = json.toString();
+				if( json != null ) metrics = json.toString(4);
 				break;
 			default : throw new UnsuportedMetricsFormatException(metricsFormat.toString()); 
 		}
