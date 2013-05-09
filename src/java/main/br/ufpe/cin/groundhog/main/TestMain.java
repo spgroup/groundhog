@@ -24,12 +24,8 @@ import br.ufpe.cin.groundhog.crawler.ForgeCrawler;
 import br.ufpe.cin.groundhog.http.HttpModule;
 import br.ufpe.cin.groundhog.http.Requests;
 import br.ufpe.cin.groundhog.parser.JavaParser;
-<<<<<<< HEAD
-import br.ufpe.cin.groundhog.parser.MutableInt;
 import br.ufpe.cin.groundhog.scmclient.GitClient;
 import br.ufpe.cin.groundhog.scmclient.ScmModule;
-=======
->>>>>>> ft-metrics-output-csv
 import br.ufpe.cin.groundhog.search.SearchGitHub;
 import br.ufpe.cin.groundhog.search.SearchGoogleCode;
 import br.ufpe.cin.groundhog.search.SearchModule;
@@ -39,13 +35,10 @@ import br.ufpe.cin.groundhog.util.FileUtil;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-<<<<<<< HEAD
 /**
  * The main test class
  * @author fjsj, gustavopinto, rodrigoalvesvieira
  */
-=======
->>>>>>> ft-metrics-output-csv
 public class TestMain {
 	private static Logger logger = LoggerFactory.getLogger(TestMain.class);
 	
