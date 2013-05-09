@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -25,9 +24,12 @@ import br.ufpe.cin.groundhog.crawler.ForgeCrawler;
 import br.ufpe.cin.groundhog.http.HttpModule;
 import br.ufpe.cin.groundhog.http.Requests;
 import br.ufpe.cin.groundhog.parser.JavaParser;
+<<<<<<< HEAD
 import br.ufpe.cin.groundhog.parser.MutableInt;
 import br.ufpe.cin.groundhog.scmclient.GitClient;
 import br.ufpe.cin.groundhog.scmclient.ScmModule;
+=======
+>>>>>>> ft-metrics-output-csv
 import br.ufpe.cin.groundhog.search.SearchGitHub;
 import br.ufpe.cin.groundhog.search.SearchGoogleCode;
 import br.ufpe.cin.groundhog.search.SearchModule;
@@ -37,10 +39,13 @@ import br.ufpe.cin.groundhog.util.FileUtil;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
+<<<<<<< HEAD
 /**
  * The main test class
  * @author fjsj, gustavopinto, rodrigoalvesvieira
  */
+=======
+>>>>>>> ft-metrics-output-csv
 public class TestMain {
 	private static Logger logger = LoggerFactory.getLogger(TestMain.class);
 	
@@ -76,8 +81,10 @@ public class TestMain {
 		
 		logger.info("4 - Parse...");
 		JavaParser parser = new JavaParser(temp);
-		HashMap<String, HashMap<String, MutableInt>> counters = parser.parse();
-		JavaParser.printResult(counters);
+		String metrics = parser.format("JSON");
+		System.out.println(metrics);
+//		HashMap<String, HashMap<String, MutableInt>> counters = parser.parse();
+//		JavaParser.printResult(counters);
 		
 		try {
 			FileUtil.getInstance().deleteTempDirs();
@@ -123,8 +130,8 @@ public class TestMain {
 		
 		logger.info("4 - Parse...");
 		JavaParser parser = new JavaParser(temp);
-		HashMap<String, HashMap<String, MutableInt>> counters = parser.parse();
-		JavaParser.printResult(counters);
+		String metrics = parser.format("CSV");
+		System.out.println(metrics);
 		
 		try {
 			FileUtil.getInstance().deleteTempDirs();
@@ -172,8 +179,8 @@ public class TestMain {
 		
 		logger.info("4 - Parse...");
 		JavaParser parser = new JavaParser(temp);
-		HashMap<String, HashMap<String, MutableInt>> counters = parser.parse();
-		JavaParser.printResult(counters);
+		String metrics = parser.format("CSV");
+		System.out.println(metrics);
 		
 		try {
 			FileUtil.getInstance().deleteTempDirs();

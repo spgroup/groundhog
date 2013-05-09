@@ -14,6 +14,10 @@ enum SupportedForge {
 	GITHUB, SOURCEFORGE, GOOGLECODE
 }
 
+enum MetricsOutputFormat{
+	JSON, CSV
+}
+
 /**
  * The command-line options parsing class
  * @author fjsj, gustavopinto, rodrigoalvesvieira
@@ -39,9 +43,12 @@ public class Options {
 	@Option(name="-nthreads", usage="maximum number of concurrent threads")
 	private int nThreads = 4;
 	
+	@Option(name="-o", usage="determine the output format of the metrics")
+	private MetricsOutputFormat metricsFormat = MetricsOutputFormat.JSON;
+
 	@Argument
-    private List<String> arguments = new ArrayList<String>();
-	
+    private List<String> arguments = new ArrayList<String>();	
+
 	/**
 	 * Informs the code forge where the project search will be performed
 	 * @return
@@ -142,4 +149,14 @@ public class Options {
 	public static SimpleDateFormat getDateFormat() {
 		return dateFormat;
 	}
+	
+	
+	public MetricsOutputFormat getMetricsFormat() {
+		return metricsFormat;
+	}
+
+	public void setMetricsFormat(MetricsOutputFormat metricsFormat) {
+		this.metricsFormat = metricsFormat;
+	}
+	
 }

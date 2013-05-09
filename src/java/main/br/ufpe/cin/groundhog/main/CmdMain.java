@@ -19,7 +19,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -131,7 +130,7 @@ public class CmdMain {
 			throw new UnsupportedSCMException(scm.toString());
 		}
 		return codehistory;
-	}
+	}	
 	
 	/**
 	 * Performs the download and checkout of the given project
@@ -185,23 +184,22 @@ public class CmdMain {
 	 * @throws IOException
 	 * @throws JSONException
 	 */
-	public static void analyzeProject(Project project, File projectFolder, Date datetime, File metricsFolder)
-			throws IOException, JSONException {
+	public static void analyzeProject(Project project, File projectFolder, Date datetime, File metricsFolder, 
+			MetricsOutputFormat metricsFormat) throws IOException, JSONException {
 		String name = project.getName();
 		String datetimeStr = Options.getDateFormat().format(datetime);
 		
 		// Parse project
 		logger.info(format("Parsing project %s...", name));
-		JavaParser parser = new JavaParser(projectFolder);
-		JSONObject metrics = null;
-		metrics = parser.parseToJSON();
-		
+		JavaParser parser = new JavaParser(projectFolder);		
+		String metrics = parser.format(metricsFormat.name());
+
 		if (metrics != null) {
 			// Save metrics to file
-			String metricsFilename = format("%s-%s.json", name, datetimeStr);
+			String metricsFilename = format("%s-%s.%s", name, datetimeStr, metricsFormat.toString().toLowerCase());
 			logger.info(format("Project %s parsed, metrics extracted! Writing result to file %s...", name, metricsFilename));
 			File metricsFile = new File(metricsFolder, metricsFilename);
-			FileUtil.getInstance().writeStringToFile(metricsFile, metrics.toString());
+			FileUtil.getInstance().writeStringToFile(metricsFile, metrics);
 			logger.info(format("Metrics of project %s written to file %s", name, metricsFile.getAbsolutePath()));
 		} else {
 			logger.warn(format("Project %s has no Java source files! Metrics couldn't be extracted...", name));
@@ -240,6 +238,7 @@ public class CmdMain {
 		opt.setMetricsFolder(new File("metrics"));
 		opt.setnProjects(5);
 		opt.setArguments(Arrays.asList("facebook"));
+		opt.setMetricsFormat(MetricsOutputFormat.JSON);
 		
 		List<String> terms = opt.getArguments();
 		String term = Joiner.on(" ").join(terms);
@@ -297,12 +296,14 @@ public class CmdMain {
 		logger.info("Downloading and processing projects...");
 		ExecutorService ex = Executors.newFixedThreadPool(Config.MAX_NUMBER_OF_THREADS);
 		List<Future<File>> downloadFutures = crawler.downloadProjects(projects);
-		List<Future<?>> analysisFutures = new ArrayList<Future<?>>();
+		List<Future<?>> analysisFutures = new ArrayList<Future<?>>();	
+		
 		for (int i = 0; i < downloadFutures.size(); i++) {
 			final Project project = projects.get(i);
 			final Date datetime_ = datetime;
 			final Future<File> repositoryFolderFuture = downloadFutures.get(i);
 			final File metricsFolder_ = metricsFolder;
+			final MetricsOutputFormat metricsFormat_ = opt.getMetricsFormat();
 			
 			analysisFutures.add(ex.submit(new Runnable() {
 				@Override
@@ -315,7 +316,7 @@ public class CmdMain {
 					}
 					if (checkedOutRepository != null) {
 						try {
-							analyzeProject(project, checkedOutRepository, datetime_, metricsFolder_);
+							analyzeProject(project, checkedOutRepository, datetime_, metricsFolder_, metricsFormat_);
 						} catch (Exception e) {
 							logger.error(format("Error while analyzing project %s", project.getName()), e);
 						}

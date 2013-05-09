@@ -17,8 +17,7 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import br.ufpe.cin.groundhog.parser.formater.FormaterFactory;
 
 /**
  * Class that implements the metrics extraction functionality of this project.
@@ -29,7 +28,7 @@ import org.json.JSONObject;
 public class JavaParser {
 	private static String fileSeparator = File.separator;
 	
-	private File folder;
+	private File folder;  // this folder means the root folder of the downloaded project
 	private List<File> filesList;
 
 	/**
@@ -65,7 +64,7 @@ public class JavaParser {
 		Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles(filesList);
 		
 		// Options: http://docs.oracle.com/javase/6/docs/technotes/tools/windows/javac.html
-		ArrayList<String> options = new ArrayList<String>();
+		List<String> options = new ArrayList<String>();
 		options.add("-g:none"); // Do not generate any debugging information
 		options.add("-nowarn"); // Disable warning messages
 		options.add("-implicit:none"); // Suppress class file generation
@@ -95,17 +94,12 @@ public class JavaParser {
 		}
 	}
 	
-	public JSONObject parseToJSON() throws IOException, JSONException {
-		JSONObject json = new JSONObject();
+	public String format(String metricsFormat) throws IOException{
 		HashMap<String, HashMap<String, MutableInt>> counters = parse();
-		if (counters != null) {
-			for (Entry<String, HashMap<String, MutableInt>> entry : counters.entrySet()) {
-				json.put(entry.getKey(), entry.getValue());
-			}
-			return json;
-		} else {
-			return null;
+		if(counters == null) {
+			return "No metrics extracted.";
 		}
+		return FormaterFactory.get(metricsFormat).format(counters);
 	}
 	
 	/**
