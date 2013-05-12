@@ -1,117 +1,59 @@
 package br.ufpe.cin.groundhog.search;
 
-import japa.parser.ParseException;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import br.ufpe.cin.groundhog.GroundhogException;
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.SCM;
 import br.ufpe.cin.groundhog.http.Requests;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.inject.Inject;
 
 /**
  * Performs the project search on GitHub, via its official JSON API
+ * 
  * @author fjsj, gustavopinto, rodrigoalvesvieira
  */
 public class SearchGitHub implements ForgeSearch {
 	private static String root = "https://api.github.com";
-	private Requests requests;
-	
+	private final Requests requests;
+	private final Gson gson;
+
 	@Inject
-	public SearchGitHub(Requests requests) {	
+	public SearchGitHub(Requests requests) {
 		this.requests = requests;
+		this.gson = new Gson();
 	}
-	
-	/**
-	 * Creates and returns a JSON object built by the contents of the given JSON document URL
-	 * @param urlStr the URL of the JSON document
-	 * @return a JSON object created filled with the content of the given JSON document
-	 * @throws IOException
-	 * @throws JSONException
-	 */
-	private JSONObject getJsonFromAPI(String urlStr) throws IOException, JSONException {
-		return new JSONObject(requests.get(urlStr));
-	}
-	
-	public List<Project> getProjects(String term, int page) throws SearchException {
+
+	public List<Project> getProjects(String term, int page)
+			throws SearchException {
 		try {
 			List<Project> projects = new ArrayList<Project>();
-			String searchUrl = root + String.format("/legacy/repos/search/%s?start_page=%s&language=java",
-					requests.encodeURL(term), page);
-			JSONArray results = getJsonFromAPI(searchUrl).getJSONArray("repositories");
-			
-			for (int i = 0; i < results.length(); i++) {
-				JSONObject result = results.getJSONObject(i);
-				Project forgeProject = new Project();
-				
-				String name, username, sourceCodeURL, description, lastPushedAt, createdAt;
-				boolean isFork, hasDownloads, hasIssues, hasWiki;
-				int watchersCount, followersCount, forksCount;
-				
-				name = result.getString("name");
-				username = result.getString("username");
-				sourceCodeURL = result.getString("url");
-				
-				description = null;
-				
-				if (result.has("description")) {
-					description = result.getString("description");
-				}
-				
-				lastPushedAt = result.getString("pushed_at");
-				createdAt = result.getString("created_at");
-				
-				isFork = Boolean.parseBoolean(result.getString("fork"));
-				hasDownloads = Boolean.parseBoolean(result.getString("has_downloads"));
-				hasIssues = Boolean.parseBoolean(result.getString("has_issues"));
-				hasWiki = Boolean.parseBoolean(result.getString("has_wiki"));
-				
-				watchersCount = Integer.parseInt(result.getString("watchers"));
-				followersCount = Integer.parseInt(result.getString("followers"));
-				forksCount = Integer.parseInt(result.getString("forks"));
-				
-				forgeProject.setName(name);
-				forgeProject.setCreator(username);
-				forgeProject.setSCM(SCM.GIT);
-				forgeProject.setScmURL(String.format("git://github.com/%s/%s.git", username, name));
-				forgeProject.setDescription(description);
-				forgeProject.setSourceCodeURL(sourceCodeURL);
-				
-				try {
-					forgeProject.setCreatedAt(createdAt);
-					forgeProject.setLastPushedAt(lastPushedAt);
-				} catch (java.text.ParseException e) {
-					e.printStackTrace();
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
-				
-				forgeProject.setHasDownloads(hasDownloads);
-				forgeProject.setHasIssues(hasIssues);
-				forgeProject.setHasWiki(hasWiki);
-				forgeProject.setIsFork(isFork);
-				
-				forgeProject.setWatchersCount(watchersCount);
-				forgeProject.setFollowersCount(followersCount);
-				forgeProject.setForksCount(forksCount);
-				
-				forgeProject.setHasDownloads(hasDownloads);
-				forgeProject.setHasIssues(hasIssues);
-				forgeProject.setHasWiki(hasWiki);
-				forgeProject.setIsFork(isFork);
-				
-				projects.add(forgeProject);
+			String searchUrl = root
+					+ String.format(
+							"/legacy/repos/search/%s?start_page=%s&language=java",
+							requests.encodeURL(term), page);
+
+			String json = requests.get(searchUrl);
+			JsonObject jsonObject = gson.fromJson(json, JsonElement.class).getAsJsonObject();
+			JsonArray jsonArray = jsonObject.get("repositories").getAsJsonArray();
+
+			for (int i = 0; i < jsonArray.size(); i++) {
+				String element = jsonArray.get(i).toString();
+				Project p = gson.fromJson(element, Project.class);
+				p.setSCM(SCM.GIT);
+				p.setScmURL(String.format("git://github.com/%s/%s.git", p.getOwner(), p.getName()));
+				projects.add(p);
 			}
 			return projects;
-		} catch (JSONException | IOException | GroundhogException e) {
+		} catch (IOException | GroundhogException e) {
+			e.printStackTrace();
 			throw new SearchException(e);
 		}
 	}

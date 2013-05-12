@@ -1,8 +1,8 @@
 package br.ufpe.cin.groundhog;
 
-import japa.parser.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import br.ufpe.cin.groundhog.util.Dates;
 
 /**
  * Represents a software project in Groundhog
@@ -11,24 +11,25 @@ import java.util.Date;
 public class Project {
 	private String name;
 	private String description;
-	private String creator;
+	private String owner;
 	private String iconURL;
 	private SCM scm;
 	private String scmURL;
 	private String sourceCodeURL;
+	private String language;
 	
-	private Date createdAt;
-	private Date lastPushedAt;
+	private Date created;
+	private Date pushed;
 
-	private boolean isFork;
-	private boolean hasDownloads;
-	private boolean hasIssues;
-	private boolean hasWiki;
+	private boolean fork;
+	private boolean has_downloads;
+	private boolean has_issues;
+	private boolean has_wiki;
 
-	private int watchersCount;
-	private int followersCount;
-	private int forksCount;
-	private int issuesCount;
+	private int watchers;
+	private int followers;
+	private int forks;
+	private int open_issues;
 	
 	public Project() {
 	}
@@ -108,16 +109,16 @@ public class Project {
 	 * Informs the project's author name
 	 * @return a String correspondent to the name of the author of the project
 	 */
-	public String getCreator() {
-		return this.creator;
+	public String getOwner() {
+		return this.owner;
 	}
 
 	/**
 	 * Informs the project's author name
-	 * @param creator a {@link String} for the name of the project's author
+	 * @param owner a {@link String} for the name of the project's author
 	 */
-	public void setCreator(String creator) {
-		this.creator = creator;
+	public void setOwner(String owner) {
+		this.owner = owner;
 	}
 	
 	/**
@@ -184,7 +185,7 @@ public class Project {
 	 * @return true if the project allows source code download. Returns false otherwise.
 	 */
 	public boolean hasDownloads() {
-		return this.hasDownloads;
+		return this.has_downloads;
 	}
 
 	/**
@@ -192,21 +193,21 @@ public class Project {
 	 * @param hasDownloads a {@link boolean} for setting whether the project enables downloads or not
 	 */
 	public void setHasDownloads(boolean hasDownloads) {
-		this.hasDownloads = hasDownloads;
+		this.has_downloads = hasDownloads;
 	}
 	
 	/**
 	 * @return true if the project has issues. Returns false otherwise.
 	 */
 	public boolean hasIssues() {
-		return this.hasIssues;
+		return this.has_issues;
 	}
 
 	/**
 	 * @param hasIssues a boolean value for setting if the project has Issues or not
 	 */
 	public void setHasIssues(boolean hasIssues) {
-		this.hasIssues = hasIssues;
+		this.has_issues = hasIssues;
 	}
 
 	/**
@@ -214,7 +215,7 @@ public class Project {
 	 * @return true if the project has a Wiki. Returns false otherwise. 
 	 */
 	public boolean hasWiki() {
-		return this.hasWiki;
+		return this.has_wiki;
 	}
 
 	/**
@@ -222,7 +223,7 @@ public class Project {
 	 * @param hasWiki a {@link boolean} for setting whether the project has a Wiki or not.
 	 */
 	public void setHasWiki(boolean hasWiki) {
-		this.hasWiki = hasWiki;
+		this.has_wiki = hasWiki;
 	}
 
 	/**
@@ -230,7 +231,7 @@ public class Project {
 	 * @return an {@link integer} informing how many people are currently watching the project on its forge
 	 */
 	public int getWatchersCount() {
-		return this.watchersCount;
+		return this.watchers;
 	}
 	
 	/**
@@ -238,7 +239,7 @@ public class Project {
 	 * @param watchersCount an integer for setting the number of people watching the project on its forge
 	 */
 	public void setWatchersCount(int watchersCount) {
-		this.watchersCount = watchersCount;
+		this.watchers = watchersCount;
 	}
 
 	/**
@@ -246,7 +247,7 @@ public class Project {
 	 * @return an integer informing the number of people following the project on its forge
 	 */
 	public int getFollowersCount() {
-		return this.followersCount;
+		return this.followers;
 	}
 
 	/**
@@ -254,7 +255,7 @@ public class Project {
 	 * @param followersCount an integer, the number of people following the project
 	 */
 	public void setFollowersCount(int followersCount) {
-		this.followersCount = followersCount;
+		this.followers = followersCount;
 	}
 	
 	/**
@@ -262,7 +263,7 @@ public class Project {
 	 * @return an integer correspondent to the number of forks
 	 */
 	public int getForksCount() {
-		return this.forksCount;
+		return this.forks;
 	}
 
 	/**
@@ -270,7 +271,7 @@ public class Project {
 	 * @param forksCount an integer for setting the number of forks the project has.
 	 */
 	public void setForksCount(int forksCount) {
-		this.forksCount = forksCount;
+		this.forks = forksCount;
 	}
 	
 	/**
@@ -279,7 +280,7 @@ public class Project {
 	 * @return an integer value correspondent to the amount of open issues
 	 */
 	public int getIssuesCount() {
-		return this.issuesCount;
+		return this.open_issues;
 	}
 
 	/**
@@ -287,7 +288,7 @@ public class Project {
 	 * @param issuesCount an integer for setting the number of Issues of the project
 	 */
 	public void setIssuesCount(int issuesCount) {
-		this.issuesCount = issuesCount;
+		this.open_issues = issuesCount;
 	}
 	
 	/**
@@ -295,7 +296,7 @@ public class Project {
 	 * @return a boolean value: true if it's a fork, false otherwise
 	 */
 	public boolean isFork() {
-		return this.isFork;
+		return this.fork;
 	}
 	
 	/**
@@ -303,7 +304,7 @@ public class Project {
 	 * @param value a boolean value for informing whether the project is a fork of another or not
 	 */
 	public void setIsFork(boolean value) {
-		this.isFork = value;
+		this.fork = value;
 	}
 	
 	/**
@@ -318,7 +319,7 @@ public class Project {
 	 * @return a Date object correspondent to the project's creation date
 	 */
 	public Date getCreatedAt() {
-		return this.createdAt;
+		return this.created;
 	}
 
 	/**
@@ -326,19 +327,15 @@ public class Project {
 	 * @param createdAt a Date object for setting the creation date of the project
 	 */
 	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
+		this.created = createdAt;
 	}
 	
 	/**
 	 * 
 	 * @param createdAtParam the String correspondent to the creation date of the project in question. e.g: 2012-04-28T15:40:35Z
-	 * @throws java.text.ParseException
 	 */
-	public void setCreatedAt(String createdAtParam) throws java.text.ParseException {
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Date createAtDate = format.parse(createdAtParam.replace('T', ' ').replace("Z", ""));
-		
-		this.createdAt = createAtDate;
+	public void setCreatedAt(String createdAtParam) {
+		this.created = Dates.format("yyyy-MM-dd HH:mm:ss", createdAtParam);
 	}
 
 	/**
@@ -346,7 +343,7 @@ public class Project {
 	 * @return a Date object of the latest push
 	 */
 	public Date getLastPushedAt() {
-		return this.lastPushedAt;
+		return this.pushed;
 	}
 
 	/**
@@ -355,21 +352,25 @@ public class Project {
 	 * in question
 	 */
 	public void setLastPushedAt(Date lastPushedAtParam) {
-		this.lastPushedAt = lastPushedAtParam;
+		this.pushed = lastPushedAtParam;
 	}
 	
 	/**
 	 * 
 	 * @param lastPushedAtParam the String correspondent to the date of the last push to the project
 	 * in question. e.g: 2012-04-28T15:40:35Z
-	 * @throws ParseException
-	 * @throws java.text.ParseException
 	 */
-	public void setLastPushedAt(String lastPushedAtParam) throws ParseException, java.text.ParseException {		
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Date lastPushDate = format.parse(lastPushedAtParam.replace('T', ' ').replace("Z", ""));
+	public void setLastPushedAt(String lastPushedAtParam) {
+		this.pushed = Dates.format("yyyy-MM-dd HH:mm:ss", lastPushedAtParam);
+	}
+	
 
-		this.lastPushedAt = lastPushDate;
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
 	}
 
 	@Override

@@ -6,7 +6,6 @@ import java.io.IOException;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.TransportException;
-import org.json.JSONException;
 
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.scmclient.GitClient;
@@ -29,9 +28,8 @@ public class CrawlGitHub extends ForgeCrawler {
 	}
 
 	@Override
-	protected File downloadProject(Project project) throws JSONException,
-			IOException, InvalidRemoteException, TransportException,
-			GitAPIException {
+	protected File downloadProject(Project project) throws IOException,
+			InvalidRemoteException, TransportException, GitAPIException {
 		String projectName = project.getName();
 		String cloneUrl = project.getScmURL();
 		File projectFolder = new File(destinationFolder, projectName);

@@ -18,7 +18,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -185,7 +184,7 @@ public class CmdMain {
 	 * @throws JSONException
 	 */
 	public static void analyzeProject(Project project, File projectFolder, Date datetime, File metricsFolder, 
-			MetricsOutputFormat metricsFormat) throws IOException, JSONException {
+			MetricsOutputFormat metricsFormat) throws IOException {
 		String name = project.getName();
 		String datetimeStr = Options.getDateFormat().format(datetime);
 		
