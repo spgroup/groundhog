@@ -1,6 +1,8 @@
 package br.ufpe.cin.groundhog.main;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -10,47 +12,58 @@ import java.util.List;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
+import com.google.common.base.Joiner;
+import com.google.common.io.Files;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+
 enum SupportedForge {
 	GITHUB, SOURCEFORGE, GOOGLECODE
 }
 
-enum MetricsOutputFormat{
+enum MetricsOutputFormat {
 	JSON, CSV
 }
 
 /**
  * The command-line options parsing class
+ * 
  * @author fjsj, gustavopinto, rodrigoalvesvieira
  */
 public class Options {
-	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH_mm");
-	
-	@Option(name="-forge", usage="forge to be used in search and crawling process")
+	private static SimpleDateFormat dateFormat = new SimpleDateFormat(
+			"yyyy-MM-dd_HH_mm");
+
+	@Option(name = "-forge", usage = "forge to be used in search and crawling process")
 	private SupportedForge forge = SupportedForge.GITHUB;
-	
-	@Option(name="-dest", usage="destination folder into which projects will be downloaded")
+
+	@Option(name = "-dest", usage = "destination folder into which projects will be downloaded")
 	private File destinationFolder = null;
-	
-	@Option(name="-out", usage="output folder to metrics files")
+
+	@Option(name = "-out", usage = "output folder to metrics files")
 	private File metricsFolder = null;
-	
-	@Option(name="-datetime", usage="datetime of projects source code to be processed")
+
+	@Option(name = "-datetime", usage = "datetime of projects source code to be processed")
 	private String datetime = dateFormat.format(new Date());
-	
-	@Option(name="-nprojects", usage="maximum number of projects to be downloaded and processed")
+
+	@Option(name = "-nprojects", usage = "maximum number of projects to be downloaded and processed")
 	private int nProjects = 4;
-	
-	@Option(name="-nthreads", usage="maximum number of concurrent threads")
+
+	@Option(name = "-nthreads", usage = "maximum number of concurrent threads")
 	private int nThreads = 4;
-	
-	@Option(name="-o", usage="determine the output format of the metrics")
+
+	@Option(name = "-o", usage = "determine the output format of the metrics")
 	private MetricsOutputFormat metricsFormat = MetricsOutputFormat.JSON;
 
+	@Option(name = "-in", usage = "all inputs in one json file")
+	private JsonInputArgs inputFile = null;
+
 	@Argument
-    private List<String> arguments = new ArrayList<String>();	
+	private List<String> arguments = new ArrayList<String>();
 
 	/**
 	 * Informs the code forge where the project search will be performed
+	 * 
 	 * @return
 	 */
 	public SupportedForge getForge() {
@@ -59,14 +72,16 @@ public class Options {
 
 	/**
 	 * Returns the destination folder into which projects will be downloaded
+	 * 
 	 * @return
 	 */
 	public File getDestinationFolder() {
 		return this.destinationFolder;
 	}
-	
+
 	/**
 	 * Sets the destination folder into which projects will be downloaded
+	 * 
 	 * @param destinationFolder
 	 */
 	public void setDestinationFolder(File destinationFolder) {
@@ -75,6 +90,7 @@ public class Options {
 
 	/**
 	 * Informs the location of the folder where the metrics will be stored
+	 * 
 	 * @return A {@link File} object correspondent to the metrics folder
 	 */
 	public File getMetricsFolder() {
@@ -83,6 +99,7 @@ public class Options {
 
 	/**
 	 * Sets the location of the folder where the metrics will be stored
+	 * 
 	 * @param metricsFolder
 	 */
 	public void setMetricsFolder(File metricsFolder) {
@@ -99,6 +116,7 @@ public class Options {
 
 	/**
 	 * Informs the maximum number of projects to be downloaded and processed
+	 * 
 	 * @return
 	 */
 	public int getnProjects() {
@@ -107,6 +125,7 @@ public class Options {
 
 	/**
 	 * Sets the maximum number of projects to be downloaded and processed
+	 * 
 	 * @param nProjects
 	 */
 	public void setnProjects(int nProjects) {
@@ -115,6 +134,7 @@ public class Options {
 
 	/**
 	 * Informs the maximum number of concurrent threads to be ran
+	 * 
 	 * @return
 	 */
 	public int getnThreads() {
@@ -123,6 +143,7 @@ public class Options {
 
 	/**
 	 * Sets the maximum number of concurrent threads to be ran
+	 * 
 	 * @param nThreads
 	 */
 	public void setnThreads(int nThreads) {
@@ -138,19 +159,19 @@ public class Options {
 	}
 
 	/**
-	 * Sets the forge where the search for projects will be performed
-	 * Valid options are those specified in the {@link SupportedForge} enumerator
+	 * Sets the forge where the search for projects will be performed Valid
+	 * options are those specified in the {@link SupportedForge} enumerator
+	 * 
 	 * @param forge
 	 */
 	public void setForge(SupportedForge forge) {
 		this.forge = forge;
 	}
-	
+
 	public static SimpleDateFormat getDateFormat() {
 		return dateFormat;
 	}
-	
-	
+
 	public MetricsOutputFormat getMetricsFormat() {
 		return metricsFormat;
 	}
@@ -158,5 +179,23 @@ public class Options {
 	public void setMetricsFormat(MetricsOutputFormat metricsFormat) {
 		this.metricsFormat = metricsFormat;
 	}
-	
+
+	public JsonInputArgs getInputFile() {
+		return inputFile;
+	}
+
+	public void setInputFile(File inputFile) {
+		try {
+			List<String> lines = Files.readLines(inputFile, Charset.defaultCharset());
+			String json = Joiner.on(" ").join(lines);
+			JsonInputArgs args = new Gson().fromJson(json, JsonInputArgs.class);
+			System.out.println(args);
+			this.inputFile = args;
+		} catch (JsonSyntaxException e) {
+			throw new RuntimeException("O formato do arquivo json parece estranho. De uma olhada nos nossos exemplos!");
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new RuntimeException("Não consegui achar o arquivo " + inputFile.getName() + ". Ele não está em outro diretório?");
+		}
+	}
 }

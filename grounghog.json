@@ -1,0 +1,14 @@
+{
+    "forge": "github",
+    "dest": "C:/groundhog/dest",
+    "out": "C:/groundhog/metrics",
+    "datetime": "2012-07-01_12_00",
+    "nprojects": 30,
+    "nthreads": 4,
+    "outputformat": "csv",
+    "search": {
+        "projects": ["rails", "bootstrap"],
+        "username":"gustavopinto"
+    }
+}
+
