@@ -31,6 +31,35 @@ public class SearchGitHub implements ForgeSearch {
 		this.gson = new Gson();
 	}
 
+	public List<Project> getProjects(int maxNumber, int sinceID)
+			throws SearchException {		
+		List<Project> projects = new ArrayList<Project>();
+		int numProjects = 0;
+		try {
+			while(numProjects <= maxNumber){				
+				String searchUrl = root
+						+ String.format( "repositories?since=%d&language=java",sinceID);
+	
+				String json = requests.get(searchUrl);
+				JsonObject jsonObject = gson.fromJson(json, JsonElement.class).getAsJsonObject();				
+				JsonArray jsonArray = jsonObject.get("repositories").getAsJsonArray();								
+				for (int i = 0; i < jsonArray.size(); i++) {
+					String element = jsonArray.get(i).toString();
+					Project p = gson.fromJson(element, Project.class);
+					p.setSCM(SCM.GIT);
+					p.setScmURL(String.format("git://github.com/%s/%s.git", p.getOwner(), p.getName()));
+					projects.add(p);					
+				}
+				//TODO continue developing the feature
+				
+			}
+			return projects;
+		} catch (IOException | GroundhogException e) {
+			e.printStackTrace();
+			throw new SearchException(e);
+		}
+	}
+	
 	public List<Project> getProjects(String term, int page)
 			throws SearchException {
 		try {
