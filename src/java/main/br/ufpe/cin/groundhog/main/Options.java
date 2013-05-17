@@ -3,18 +3,13 @@ package br.ufpe.cin.groundhog.main;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
 import br.ufpe.cin.groundhog.GroundhogException;
-import br.ufpe.cin.groundhog.parser.formater.Formater;
-import br.ufpe.cin.groundhog.parser.formater.FormaterFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.io.Files;
@@ -31,26 +26,27 @@ enum SupportedForge {
  * @author fjsj, gustavopinto, rodrigoalvesvieira
  */
 public class Options {
-	private static SimpleDateFormat dateFormat = new SimpleDateFormat(
-			"yyyy-MM-dd_HH_mm");
 
 	@Option(name = "-forge", usage = "forge to be used in search and crawling process")
 	private SupportedForge forge = SupportedForge.GITHUB;
 
 	@Option(name = "-dest", usage = "destination folder into which projects will be downloaded")
-	private File destinationFolder = null;
+	private File destinationFolder = new File("projects");
 
 	@Option(name = "-out", usage = "output folder to metrics files")
-	private File metricsFolder = null;
+	private File metricsFolder = new File("metrics");
 
 	@Option(name = "-datetime", usage = "datetime of projects source code to be processed")
-	private String datetime = dateFormat.format(new Date());
+	private String datetime = "2012-10-01 12:00";
 
 	@Option(name = "-nprojects", usage = "maximum number of projects to be downloaded and processed")
 	private int nProjects = 4;
 
-	@Option(name = "-o", usage = "determine the output format of the metrics")
+	@Option(name = "-format", usage = "determine the output format of the metrics")
 	private String metricsFormat = "csv";
+	
+	@Option(name = "-user", usage = "determine the output format of the metrics")
+	private String username = "";
 
 	private JsonInput input = null;
 
@@ -102,8 +98,8 @@ public class Options {
 		this.metricsFolder = metricsFolder;
 	}
 
-	public Date getDatetime() throws ParseException {
-		return dateFormat.parse(this.datetime);
+	public String getDatetime() {
+		return this.datetime;
 	}
 
 	public void setDatetime(String datetime) {
@@ -115,8 +111,8 @@ public class Options {
 	 * 
 	 * @return
 	 */
-	public int getnProjects() {
-		return this.nProjects;
+	public String getnProjects() {
+		return String.valueOf(this.nProjects);
 	}
 
 	/**
@@ -146,8 +142,8 @@ public class Options {
 		this.forge = forge;
 	}
 
-	public Formater getMetricsFormat() {
-		return FormaterFactory.get(metricsFormat);
+	public String getMetricsFormat() {
+		return metricsFormat;
 	}
 
 	public void setMetricsFormat(String metricsFormat) {
@@ -158,7 +154,15 @@ public class Options {
 		return input;
 	}
 
-	@Option(name = "-in", usage = "all above inputs in one json file")
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	@Option(name = "-in", usage = "all inputs together in one json file")
 	public void setInputFile(File inputFile) {
 		try {
 			List<String> lines = Files.readLines(inputFile,

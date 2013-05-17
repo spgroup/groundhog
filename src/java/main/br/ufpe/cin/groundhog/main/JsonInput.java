@@ -10,6 +10,7 @@ import br.ufpe.cin.groundhog.parser.formater.FormaterFactory;
 import br.ufpe.cin.groundhog.util.Dates;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
 public final class JsonInput {
 	private String forge;
@@ -19,6 +20,17 @@ public final class JsonInput {
 	private String nprojects;
 	private String outputformat;
 	private Search search;
+
+	public JsonInput(Options opt) {
+		super();
+		this.forge = opt.getForge().name();
+		this.dest = opt.getDestinationFolder() != null ? opt.getDestinationFolder().getAbsolutePath() : null;
+		this.out = opt.getMetricsFolder().getAbsolutePath();
+		this.datetime = opt.getDatetime();
+		this.nprojects = opt.getnProjects();
+		this.outputformat = opt.getMetricsFormat();
+		this.search = new Search(opt.getArguments(), opt.getUsername());
+	}
 
 	//TODO: this should be discovered dinamically
 	public SupportedForge getForge() {
@@ -36,7 +48,7 @@ public final class JsonInput {
 		return new File(dest);
 	}
 
-	public File getOut() {
+	public File getOut() { 
 		return new File(out);
 	}
 
@@ -76,6 +88,12 @@ public final class JsonInput {
 final class Search {
 	private List<String> projects;
 	private String username;
+
+	public Search(List<String> projects, String username) {
+		super();
+		this.projects = projects.size() > 0 ? projects : Lists.newArrayList("jboss");
+		this.username = username;
+	}
 
 	public String getUsername() {
 		return username;

@@ -15,7 +15,8 @@ import br.ufpe.cin.groundhog.util.FileUtil;
 
 public abstract class GroundhogMain {
 
-	private final static Logger logger = LoggerFactory.getLogger(GroundhogMain.class);
+	private final static Logger logger = LoggerFactory
+			.getLogger(GroundhogMain.class);
 
 	public abstract void run(JsonInput input);
 
@@ -36,13 +37,12 @@ public abstract class GroundhogMain {
 		}
 
 		try {
-			
+
 			logger.info("Groundhog was initialized!");
 			parser.parseArgument(args);
-			
-			checkArguments(opt);
-			input = opt.getInputFile();
-			
+
+			input = checkArguments(opt);
+
 			logger.info("We received the following parameters: " + input);
 			new CmdMain().run(input);
 
@@ -58,16 +58,18 @@ public abstract class GroundhogMain {
 		}
 	}
 
-	private static void checkArguments(Options opt) {
-//		System.out.println(opt.getForge());
-//		System.out.println(opt.getMetricsFolder());
-//		System.out.println(opt.getArguments());
-//		System.exit(0);
+	private static JsonInput checkArguments(Options opt) {
+		if (opt.getInputFile() != null) {
+			return opt.getInputFile();
+		}
+		return new JsonInput(opt);
 	}
 
-	/**		
+	/**
 	 * Deletes the temporary directories and closes the log streams
-	 * @param errorStream the error stream to be closed
+	 * 
+	 * @param errorStream
+	 *            the error stream to be closed
 	 */
 	public static void freeResources(OutputStream errorStream) {
 		try {
