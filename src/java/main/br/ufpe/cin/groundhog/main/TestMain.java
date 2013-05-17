@@ -24,6 +24,7 @@ import br.ufpe.cin.groundhog.crawler.ForgeCrawler;
 import br.ufpe.cin.groundhog.http.HttpModule;
 import br.ufpe.cin.groundhog.http.Requests;
 import br.ufpe.cin.groundhog.parser.JavaParser;
+import br.ufpe.cin.groundhog.parser.formater.FormaterFactory;
 import br.ufpe.cin.groundhog.scmclient.GitClient;
 import br.ufpe.cin.groundhog.scmclient.ScmModule;
 import br.ufpe.cin.groundhog.search.SearchGitHub;
@@ -74,7 +75,7 @@ public class TestMain {
 		
 		logger.info("4 - Parse...");
 		JavaParser parser = new JavaParser(temp);
-		String metrics = parser.format("JSON");
+		String metrics = parser.format(FormaterFactory.get("json"));
 		System.out.println(metrics);
 //		HashMap<String, HashMap<String, MutableInt>> counters = parser.parse();
 //		JavaParser.printResult(counters);
@@ -123,7 +124,7 @@ public class TestMain {
 		
 		logger.info("4 - Parse...");
 		JavaParser parser = new JavaParser(temp);
-		String metrics = parser.format("CSV");
+		String metrics = parser.format(FormaterFactory.get("csv"));
 		System.out.println(metrics);
 		
 		try {
@@ -172,7 +173,7 @@ public class TestMain {
 		
 		logger.info("4 - Parse...");
 		JavaParser parser = new JavaParser(temp);
-		String metrics = parser.format("CSV");
+		String metrics = parser.format(FormaterFactory.get("csv"));
 		System.out.println(metrics);
 		
 		try {

@@ -17,7 +17,7 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
-import br.ufpe.cin.groundhog.parser.formater.FormaterFactory;
+import br.ufpe.cin.groundhog.parser.formater.Formater;
 
 /**
  * Class that implements the metrics extraction functionality of this project.
@@ -94,12 +94,12 @@ public class JavaParser {
 		}
 	}
 	
-	public String format(String metricsFormat) throws IOException{
+	public String format(Formater metricsFormat) throws IOException{
 		HashMap<String, HashMap<String, MutableInt>> counters = parse();
 		if(counters == null) {
 			return "No metrics extracted.";
 		}
-		return FormaterFactory.get(metricsFormat).format(counters);
+		return  metricsFormat.format(counters);
 	}
 	
 	/**

@@ -5,7 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 import br.ufpe.cin.groundhog.codehistory.UnsupportedForgeException;
-import br.ufpe.cin.groundhog.parser.UnsupportedMetricsFormatException;
+import br.ufpe.cin.groundhog.parser.formater.Formater;
+import br.ufpe.cin.groundhog.parser.formater.FormaterFactory;
 import br.ufpe.cin.groundhog.util.Dates;
 
 import com.google.common.base.Objects;
@@ -47,16 +48,8 @@ public final class JsonInput {
 		return Integer.parseInt(nprojects);
 	}
 
-	//TODO: this should be discovered dinamically
-	public MetricsOutputFormat getOutputformat() {
-		if (outputformat.toLowerCase().equals("csv")) {
-			return MetricsOutputFormat.CSV;
-		} else if (outputformat.toLowerCase().equals("json")) {
-			return MetricsOutputFormat.JSON;			
-		}
-		
-		String msg = String.format("I did not reconginze this output format (%s) :( I can only format in CSV or JSON", outputformat);
-		throw new UnsupportedMetricsFormatException(msg);
+	public Formater getOutputformat() {
+		return FormaterFactory.get(outputformat.toLowerCase());
 	}
 
 	public static int getMaxThreads() {

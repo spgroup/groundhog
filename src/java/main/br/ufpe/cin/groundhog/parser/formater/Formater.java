@@ -4,8 +4,15 @@ import java.util.HashMap;
 
 import br.ufpe.cin.groundhog.parser.MutableInt;
 
-public interface Formater {
+public abstract class Formater {
 
-	String format(HashMap<String, HashMap<String, MutableInt>> object);
+	public abstract String format(HashMap<String, HashMap<String, MutableInt>> object);
 
+	public String simpleName() {
+		return getClass().getSimpleName().toLowerCase().replaceAll("formater", "");
+	}
+	
+	public String toString() {
+		return simpleName();
+	}
 }

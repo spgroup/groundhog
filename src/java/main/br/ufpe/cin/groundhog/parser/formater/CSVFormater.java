@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 import au.com.bytecode.opencsv.CSVWriter;
 import br.ufpe.cin.groundhog.parser.MutableInt;
 
-public class CSVFormater implements Formater {
+public class CSVFormater extends Formater {
 
 	/**
 	 * Creates the CSV representation of the extracted metrics The output file

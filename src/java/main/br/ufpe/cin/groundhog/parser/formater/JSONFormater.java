@@ -8,7 +8,7 @@ import org.json.JSONObject;
 
 import br.ufpe.cin.groundhog.parser.MutableInt;
 
-public class JSONFormater implements Formater {
+public class JSONFormater extends Formater {
 
 	/**
 	 * Creates an object that represents the JSON result of the metrics.

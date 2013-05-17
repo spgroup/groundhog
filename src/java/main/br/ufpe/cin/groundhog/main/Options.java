@@ -12,6 +12,10 @@ import java.util.List;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
+import br.ufpe.cin.groundhog.GroundhogException;
+import br.ufpe.cin.groundhog.parser.formater.Formater;
+import br.ufpe.cin.groundhog.parser.formater.FormaterFactory;
+
 import com.google.common.base.Joiner;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
@@ -19,10 +23,6 @@ import com.google.gson.JsonSyntaxException;
 
 enum SupportedForge {
 	GITHUB, SOURCEFORGE, GOOGLECODE
-}
-
-enum MetricsOutputFormat {
-	JSON, CSV
 }
 
 /**
@@ -50,7 +50,7 @@ public class Options {
 	private int nProjects = 4;
 
 	@Option(name = "-o", usage = "determine the output format of the metrics")
-	private MetricsOutputFormat metricsFormat = MetricsOutputFormat.JSON;
+	private String metricsFormat = "csv";
 
 	private JsonInput input = null;
 
@@ -146,11 +146,11 @@ public class Options {
 		this.forge = forge;
 	}
 
-	public MetricsOutputFormat getMetricsFormat() {
-		return metricsFormat;
+	public Formater getMetricsFormat() {
+		return FormaterFactory.get(metricsFormat);
 	}
 
-	public void setMetricsFormat(MetricsOutputFormat metricsFormat) {
+	public void setMetricsFormat(String metricsFormat) {
 		this.metricsFormat = metricsFormat;
 	}
 
@@ -167,10 +167,10 @@ public class Options {
 			JsonInput args = new Gson().fromJson(json, JsonInput.class);
 			this.input = args;
 		} catch (JsonSyntaxException e) {
-			throw new RuntimeException(
+			throw new GroundhogException(
 					"The format of the json file seems strangy. Do you have already looked at one of ours examples?");
 		} catch (IOException e) {
-			throw new RuntimeException("I do not found this file "
+			throw new GroundhogException("I do not found this file "
 					+ inputFile.getName()
 					+ ". Does it actually exists?");
 		}

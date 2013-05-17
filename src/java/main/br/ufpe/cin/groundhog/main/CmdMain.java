@@ -3,10 +3,7 @@ package br.ufpe.cin.groundhog.main;
 import static java.lang.String.format;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,16 +12,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.json.JSONException;
-import org.kohsuke.args4j.CmdLineException;
-import org.kohsuke.args4j.CmdLineParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.ufpe.cin.groundhog.GroundhogException;
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.SCM;
-import br.ufpe.cin.groundhog.codehistory.CheckoutException;
 import br.ufpe.cin.groundhog.codehistory.CodeHistory;
 import br.ufpe.cin.groundhog.codehistory.CodeHistoryModule;
 import br.ufpe.cin.groundhog.codehistory.GitCodeHistory;
@@ -38,6 +31,7 @@ import br.ufpe.cin.groundhog.crawler.ForgeCrawler;
 import br.ufpe.cin.groundhog.http.HttpModule;
 import br.ufpe.cin.groundhog.http.Requests;
 import br.ufpe.cin.groundhog.parser.JavaParser;
+import br.ufpe.cin.groundhog.parser.formater.Formater;
 import br.ufpe.cin.groundhog.scmclient.EmptyProjectAtDateException;
 import br.ufpe.cin.groundhog.scmclient.GitClient;
 import br.ufpe.cin.groundhog.scmclient.ScmModule;
@@ -52,7 +46,7 @@ import br.ufpe.cin.groundhog.util.FileUtil;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-public class CmdMain {
+public class CmdMain extends GroundhogMain {
 	private static Logger logger = LoggerFactory.getLogger(CmdMain.class);
 
 	/**
@@ -64,7 +58,7 @@ public class CmdMain {
 	 *            the forge name
 	 * @return the search object of the chosen forge
 	 */
-	public static ForgeSearch defineForgeSearch(SupportedForge f) {
+	public ForgeSearch defineForgeSearch(SupportedForge f) {
 		Injector injector = Guice.createInjector(new SearchModule());
 		ForgeSearch search = null;
 		switch (f) {
@@ -92,7 +86,7 @@ public class CmdMain {
 	 *            the destination directory
 	 * @return the {@link ForgeCrawler} object for the chosen forge
 	 */
-	public static ForgeCrawler defineForgeCrawler(SupportedForge f,
+	public ForgeCrawler defineForgeCrawler(SupportedForge f,
 			File destinationFolder) {
 		ForgeCrawler crawler = null;
 		Injector injector = Guice.createInjector(new HttpModule(),
@@ -124,7 +118,7 @@ public class CmdMain {
 	 *             throw if the given SCM mechanism is not supported by
 	 *             Groundhog
 	 */
-	public static CodeHistory defineCodeHistory(SCM scm)
+	public CodeHistory defineCodeHistory(SCM scm)
 			throws UnsupportedForgeException {
 		Injector injector = Guice.createInjector(new CodeHistoryModule());
 		CodeHistory codehistory = null;
@@ -156,11 +150,10 @@ public class CmdMain {
 	 * @return the checked out repository
 	 * @throws InterruptedException
 	 * @throws ExecutionException
-	 * @throws CheckoutException
 	 */
-	public static File downloadAndCheckoutProject(Project project,
+	public File downloadAndCheckoutProject(Project project,
 			Date datetime, Future<File> repositoryFolderFuture)
-			throws InterruptedException, ExecutionException, CheckoutException {
+			throws InterruptedException, ExecutionException {
 		// Wait for project download
 		String name = project.getName();
 		File repositoryFolder = repositoryFolderFuture.get();
@@ -201,23 +194,21 @@ public class CmdMain {
 	 * @param metricsFolder
 	 *            the directory where the JSON metrics output will be stored
 	 * @throws IOException
-	 * @throws JSONException
 	 */
-	public static void analyzeProject(Project project, File projectFolder,
-			Date datetime, File metricsFolder, MetricsOutputFormat metricsFormat)
-			throws IOException, JSONException {
+	public void analyzeProject(Project project, File projectFolder,
+			Date datetime, File metricsFolder, Formater metricsFormat)
+			throws IOException {
 		String name = project.getName();
 		String datetimeStr = new Dates("yyyy-MM-dd").format(datetime);
 
 		// Parse project
 		logger.info(format("Parsing project %s...", name));
 		JavaParser parser = new JavaParser(projectFolder);
-		String metrics = parser.format(metricsFormat.name());
+		String metrics = parser.format(metricsFormat);
 
 		if (metrics != null) {
 			// Save metrics to file
-			String metricsFilename = format("%s-%s.%s", name, datetimeStr,
-					metricsFormat.toString().toLowerCase());
+			String metricsFilename = format("%s-%s.%s", name, datetimeStr, metricsFormat.simpleName());
 			logger.info(format(
 					"Project %s parsed, metrics extracted! Writing result to file %s...",
 					name, metricsFilename));
@@ -232,70 +223,22 @@ public class CmdMain {
 		}
 	}
 
-	/**		
-	 * Deletes the temporary directories and closes the log streams
-	 * @param crawler the {@link ForgeCrawler) object to have its resources emptied
-	 * @param errorStream the error stream to be closed
-	 */
-	public static void freeResources(ForgeCrawler crawler,
-			OutputStream errorStream) {
-		crawler.shutdown();
+
+	@Override
+	public void run(JsonInput input) {
 		try {
-			FileUtil.getInstance().deleteTempDirs();
-		} catch (IOException e) {
-			logger.warn("Could not delete temporary folders (but they will eventually be deleted)");
-		}
-
-		try {
-			if (errorStream != null) {
-				errorStream.close();
-			}
-		} catch (IOException e) {
-			logger.error("Unable to close error.log stream", e);
-		}
-	}
-
-	public static void main(String[] args) {
-		PrintStream errorStream = null;
-
-		try {
-			// Redirect System.err to file
-			try {
-				errorStream = new PrintStream("error.log");
-				System.setErr(errorStream);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-				return;
-			}
-
-			JsonInput input = null;
-			Options opt = new Options();
-			CmdLineParser parser = new CmdLineParser(opt);
-			try {
-				parser.parseArgument(args);
-				input = opt.getInputFile();
-			} catch (CmdLineException e) {
-				e.printStackTrace();
-				return;
-			}
 
 			File destinationFolder = input.getDest();
-			if (destinationFolder == null) {
-				destinationFolder = FileUtil.getInstance().createTempDir();
-			} else {
-				if (!destinationFolder.exists()) {
-					destinationFolder.mkdirs();
-				}
-			}
 			File metricsFolder = input.getOut();
-			if (!metricsFolder.exists()) {
-				metricsFolder.mkdirs();
-			}
+			
+			logger.info("Creating temp folders...");
+			createTempFolders(destinationFolder, metricsFolder);
+			
 			Date datetime = input.getDatetime();
 			int nProjects = input.getNprojects();
 
 			// Search for projects
-			logger.info("Searching for projects...");
+			logger.info("Searching for projects... " + input.getSearch().getProjects());
 			ForgeSearch search = defineForgeSearch(input.getForge());
 			ForgeCrawler crawler = defineForgeCrawler(input.getForge(), destinationFolder);
 
@@ -320,8 +263,7 @@ public class CmdMain {
 				final Date datetime_ = datetime;
 				final Future<File> repositoryFolderFuture = downloadFutures.get(i);
 				final File metricsFolder_ = metricsFolder;
-				final MetricsOutputFormat metricsFormat_ = input
-						.getOutputformat();
+				final Formater metricsFormat_ = input.getOutputformat();
 
 				analysisFutures.add(ex.submit(new Runnable() {
 					@Override
@@ -356,15 +298,26 @@ public class CmdMain {
 					logger.error(format("Error while analyzing project %s", projects.get(i).getName()), e);
 				}
 			}
+			logger.info("All projects downloaded and analyzed!");
+			crawler.shutdown();
 
-			// Free resources and delete temporary directories
-			logger.info("Disposing resources...");
-			freeResources(crawler, errorStream);
-			logger.info("Done!");
-			
 		} catch (GroundhogException e) {
 			e.printStackTrace();
 			logger.error(e.getMessage());
+		}
+	}
+
+	private void createTempFolders(File destinationFolder, File metricsFolder) {
+		if (destinationFolder == null) {
+			destinationFolder = FileUtil.getInstance().createTempDir();
+		} else {
+			if (!destinationFolder.exists()) {
+				destinationFolder.mkdirs();
+			}
+		}
+		
+		if (!metricsFolder.exists()) {
+			metricsFolder.mkdirs();
 		}
 	}
 }
