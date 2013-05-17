@@ -46,7 +46,14 @@ import br.ufpe.cin.groundhog.util.FileUtil;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-public class CmdMain extends GroundhogMain {
+
+/**
+ * The groundhog entry point
+ * 
+ * @author fjsj, gustavopinto
+ */
+
+public final class CmdMain extends GroundhogMain {
 	private static Logger logger = LoggerFactory.getLogger(CmdMain.class);
 
 	/**
@@ -154,6 +161,7 @@ public class CmdMain extends GroundhogMain {
 	public File downloadAndCheckoutProject(Project project,
 			Date datetime, Future<File> repositoryFolderFuture)
 			throws InterruptedException, ExecutionException {
+		
 		// Wait for project download
 		String name = project.getName();
 		File repositoryFolder = repositoryFolderFuture.get();
@@ -242,7 +250,7 @@ public class CmdMain extends GroundhogMain {
 			ForgeSearch search = defineForgeSearch(input.getForge());
 			ForgeCrawler crawler = defineForgeCrawler(input.getForge(), destinationFolder);
 
-			String term = input.getSearch().getProjects().get(0);
+			String term = input.getSearch().getProjects().get(2);
 			List<Project> allProjects = search.getProjects(term, 1);
 			
 			List<Project> projects = new ArrayList<Project>();
@@ -273,7 +281,7 @@ public class CmdMain extends GroundhogMain {
 							checkedOutRepository = downloadAndCheckoutProject(
 									project, datetime_, repositoryFolderFuture);
 						} catch (Exception e) {
-							logger.error(format("Error while downloading project %s",project.getName()), e);
+							logger.error(format("Error while downloading project %s: %s", project.getName(), e.getMessage()));
 						}
 						if (checkedOutRepository != null) {
 							try {
@@ -289,6 +297,7 @@ public class CmdMain extends GroundhogMain {
 					}
 				}));
 			}
+			crawler.shutdown();
 			ex.shutdown();
 
 			for (int i = 0; i < analysisFutures.size(); i++) {
@@ -299,7 +308,6 @@ public class CmdMain extends GroundhogMain {
 				}
 			}
 			logger.info("All projects downloaded and analyzed!");
-			crawler.shutdown();
 
 		} catch (GroundhogException e) {
 			e.printStackTrace();

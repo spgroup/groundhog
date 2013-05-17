@@ -60,7 +60,7 @@ public class GitClient {
 	 * @throws EmptyProjectAtDateException
 	 */
 	public void checkout(File repositoryFolder, Date date)
-			throws IOException, RefAlreadyExistsException, RefNotFoundException,
+			throws IOException, RefAlreadyExistsException,
 			InvalidRefNameException, CheckoutConflictException, GitAPIException,
 			EmptyProjectAtDateException {
 		Git git = Git.open(repositoryFolder);

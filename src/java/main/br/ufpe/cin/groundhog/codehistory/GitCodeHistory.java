@@ -3,17 +3,17 @@ package br.ufpe.cin.groundhog.codehistory;
 import java.io.File;
 import java.util.Date;
 
-import com.google.inject.Inject;
-
-import br.ufpe.cin.groundhog.scmclient.EmptyProjectAtDateException;
 import br.ufpe.cin.groundhog.scmclient.GitClient;
 import br.ufpe.cin.groundhog.util.FileUtil;
 
+import com.google.inject.Inject;
+
 /**
  * The code history analysis implementation for the Git SCM
- * @author fjsj
+ * @author fjsj, gustavopinto
  */
 public class GitCodeHistory implements CodeHistory {
+	
 	private final GitClient gitClient;
 	
 	@Inject
@@ -34,8 +34,7 @@ public class GitCodeHistory implements CodeHistory {
 	 * @param repositoryFolder the repository where the source code is located
 	 * @param date the date on which the checkout will be based
 	 */
-	public File checkoutToDate(String project, File repositoryFolder, final Date date)
-			throws CheckoutException, EmptyProjectAtDateException {
+	public File checkoutToDate(String project, File repositoryFolder, final Date date) {
 		try {
 			File projectFolder = new File(FileUtil.getInstance()
 					.createTempDir(), project);
@@ -46,7 +45,7 @@ public class GitCodeHistory implements CodeHistory {
 			this.gitClient.checkout(projectFolder, date);
 			return projectFolder;
 		} catch (Exception e) {
-			throw new CheckoutException(e);
+			throw new CheckoutException(e.getMessage());
 		}
 	}
 }
