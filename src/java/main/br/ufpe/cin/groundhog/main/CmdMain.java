@@ -16,9 +16,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.json.JSONException;
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.ufpe.cin.groundhog.GroundhogException;
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.SCM;
 import br.ufpe.cin.groundhog.codehistory.CheckoutException;
@@ -27,7 +30,7 @@ import br.ufpe.cin.groundhog.codehistory.CodeHistoryModule;
 import br.ufpe.cin.groundhog.codehistory.GitCodeHistory;
 import br.ufpe.cin.groundhog.codehistory.SFCodeHistory;
 import br.ufpe.cin.groundhog.codehistory.SvnCodeHistory;
-import br.ufpe.cin.groundhog.codehistory.UnsupportedSCMException;
+import br.ufpe.cin.groundhog.codehistory.UnsupportedForgeException;
 import br.ufpe.cin.groundhog.crawler.CrawlGitHub;
 import br.ufpe.cin.groundhog.crawler.CrawlGoogleCode;
 import br.ufpe.cin.groundhog.crawler.CrawlSourceForge;
@@ -39,7 +42,6 @@ import br.ufpe.cin.groundhog.scmclient.EmptyProjectAtDateException;
 import br.ufpe.cin.groundhog.scmclient.GitClient;
 import br.ufpe.cin.groundhog.scmclient.ScmModule;
 import br.ufpe.cin.groundhog.search.ForgeSearch;
-import br.ufpe.cin.groundhog.search.SearchException;
 import br.ufpe.cin.groundhog.search.SearchGitHub;
 import br.ufpe.cin.groundhog.search.SearchGoogleCode;
 import br.ufpe.cin.groundhog.search.SearchModule;
@@ -118,12 +120,12 @@ public class CmdMain {
 	 * 
 	 * @param scm
 	 * @return a {@link CodeHistory} object
-	 * @throws UnsupportedSCMException
+	 * @throws UnsupportedForgeException
 	 *             throw if the given SCM mechanism is not supported by
 	 *             Groundhog
 	 */
 	public static CodeHistory defineCodeHistory(SCM scm)
-			throws UnsupportedSCMException {
+			throws UnsupportedForgeException {
 		Injector injector = Guice.createInjector(new CodeHistoryModule());
 		CodeHistory codehistory = null;
 		switch (scm) {
@@ -137,7 +139,7 @@ public class CmdMain {
 			codehistory = injector.getInstance(SvnCodeHistory.class);
 			break;
 		default:
-			throw new UnsupportedSCMException(scm.toString());
+			throw new UnsupportedForgeException(scm.toString());
 		}
 		return codehistory;
 	}
@@ -166,32 +168,22 @@ public class CmdMain {
 
 		// Checkout project to date
 		String datetimeStr = new Dates("yyyy-MM-dd").format(datetime);
-		logger.info(format("Checking out project %s to %s...", name,
-				datetimeStr));
-		CodeHistory codehistory = null;
-		try {
-			codehistory = defineCodeHistory(project.getSCM());
-		} catch (UnsupportedSCMException e) {
-			logger.warn(format("Project %s has an unsupported SCM: %s", name,
-					e.getMessage()));
-			return null;
-		}
+		logger.info(format("Checking out project %s to %s...", name, datetimeStr));
+		CodeHistory codehistory = defineCodeHistory(project.getSCM());
+		
 		File checkedOutRepository = null;
 		try {
-			if (project.getSCM() != SCM.SVN) {
-				checkedOutRepository = codehistory.checkoutToDate(
-						project.getName(), repositoryFolder, datetime);
+			if (project.getSCM() == SCM.SVN) {
+				checkedOutRepository = codehistory.checkoutToDate(project.getName(), project.getScmURL(), datetime);
 			} else {
-				checkedOutRepository = codehistory.checkoutToDate(
-						project.getName(), project.getScmURL(), datetime);
+				checkedOutRepository = codehistory.checkoutToDate(project.getName(), repositoryFolder, datetime);
 			}
 		} catch (EmptyProjectAtDateException e) {
-			logger.warn(format("Project %s was empty at specified date: %s",
-					name, datetimeStr));
+			logger.warn(format("Project %s was empty at specified date: %s", name, datetimeStr));
 			return null;
 		}
-		logger.info(format("Project %s successfully checked out to %s", name,
-				datetimeStr));
+		
+		logger.info(format("Project %s successfully checked out to %s", name, datetimeStr));
 
 		return checkedOutRepository;
 	}
@@ -239,7 +231,7 @@ public class CmdMain {
 					name));
 		}
 	}
-	
+
 	/**		
 	 * Deletes the temporary directories and closes the log streams
 	 * @param crawler the {@link ForgeCrawler) object to have its resources emptied
@@ -263,107 +255,116 @@ public class CmdMain {
 		}
 	}
 
-	public void main(JsonInput input) {
-		File destinationFolder = input.getDest();
-		if (destinationFolder == null) {
-			destinationFolder = FileUtil.getInstance().createTempDir();
-		} else {
-			if (!destinationFolder.exists()) {
-				destinationFolder.mkdirs();
-			}
-			if (destinationFolder.list().length > 0) {
-					logger.warn("Attention, destination folder isn't empty! "
-							+ "Errors may happen if any of the projects to be downloaded already exist in this folder.");
-			}
-		}
-		File metricsFolder = input.getOut();
-		if (!metricsFolder.exists()) {
-			metricsFolder.mkdirs();
-		}
-		Date datetime = input.getDatetime();
-
-		int nProjects = input.getNprojects();
-
-		// Redirect System.err to file
+	public static void main(String[] args) {
 		PrintStream errorStream = null;
-		try {
-			errorStream = new PrintStream("error.log");
-			System.setErr(errorStream);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-
-		// Search for projects
-		logger.info("Searching for projects...");
-		ForgeSearch search = defineForgeSearch(input.getForge());
-		ForgeCrawler crawler = defineForgeCrawler(input.getForge(),
-				destinationFolder);
-		List<Project> allProjects = null;
-		List<Project> projects = new ArrayList<Project>();
 
 		try {
-			String term = input.getSearch().getProjects().get(0);
-			allProjects = search.getProjects(term, 1);
-		} catch (SearchException e) {
-			e.printStackTrace();
-			return;
-		}
-		for (int i = 0; i < nProjects; i++) {
-			if (i < allProjects.size()) {
-				projects.add(allProjects.get(i));
-			}
-		}
-
-		// Download and analyze projects
-		logger.info("Downloading and processing projects...");
-		ExecutorService ex = Executors.newFixedThreadPool(JsonInput
-				.getMaxThreads());
-		List<Future<File>> downloadFutures = crawler.downloadProjects(projects);
-		List<Future<?>> analysisFutures = new ArrayList<Future<?>>();
-
-		for (int i = 0; i < downloadFutures.size(); i++) {
-			final Project project = projects.get(i);
-			final Date datetime_ = datetime;
-			final Future<File> repositoryFolderFuture = downloadFutures.get(i);
-			final File metricsFolder_ = metricsFolder;
-			final MetricsOutputFormat metricsFormat_ = input.getOutputformat();
-
-			analysisFutures.add(ex.submit(new Runnable() {
-				@Override
-				public void run() {
-					File checkedOutRepository = null;
-					try {
-						checkedOutRepository = downloadAndCheckoutProject(
-								project, datetime_, repositoryFolderFuture);
-					} catch (Exception e) {
-						logger.error(format("Error while downloading project %s", project.getName()), e);
-					}
-					if (checkedOutRepository != null) {
-						try {
-							analyzeProject(project, checkedOutRepository,
-									datetime_, metricsFolder_, metricsFormat_);
-						} catch (Exception e) {
-							logger.error(format("Error while analyzing project %s", project.getName()), e);
-						}
-					} else {
-						logger.warn(format("Project %s can't be analyzed", project.getName()));
-					}
-				}
-			}));
-		}
-		ex.shutdown();
-
-		for (int i = 0; i < analysisFutures.size(); i++) {
+			// Redirect System.err to file
 			try {
-				analysisFutures.get(i).get();
-			} catch (InterruptedException | ExecutionException e) {
-				logger.error(format("Error while analyzing project %s", projects.get(i).getName()), e);
+				errorStream = new PrintStream("error.log");
+				System.setErr(errorStream);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+				return;
 			}
-		}
 
-		// Free resources and delete temporary directories
-		logger.info("Disposing resources...");
-		freeResources(crawler, errorStream);
-		logger.info("Done!");
+			JsonInput input = null;
+			Options opt = new Options();
+			CmdLineParser parser = new CmdLineParser(opt);
+			try {
+				parser.parseArgument(args);
+				input = opt.getInputFile();
+			} catch (CmdLineException e) {
+				e.printStackTrace();
+				return;
+			}
+
+			File destinationFolder = input.getDest();
+			if (destinationFolder == null) {
+				destinationFolder = FileUtil.getInstance().createTempDir();
+			} else {
+				if (!destinationFolder.exists()) {
+					destinationFolder.mkdirs();
+				}
+			}
+			File metricsFolder = input.getOut();
+			if (!metricsFolder.exists()) {
+				metricsFolder.mkdirs();
+			}
+			Date datetime = input.getDatetime();
+			int nProjects = input.getNprojects();
+
+			// Search for projects
+			logger.info("Searching for projects...");
+			ForgeSearch search = defineForgeSearch(input.getForge());
+			ForgeCrawler crawler = defineForgeCrawler(input.getForge(), destinationFolder);
+
+			String term = input.getSearch().getProjects().get(0);
+			List<Project> allProjects = search.getProjects(term, 1);
+			
+			List<Project> projects = new ArrayList<Project>();
+			for (int i = 0; i < nProjects; i++) {
+				if (i < allProjects.size()) {
+					projects.add(allProjects.get(i));
+				}
+			}
+
+			// Download and analyze projects
+			logger.info("Downloading and processing projects...");
+			ExecutorService ex = Executors.newFixedThreadPool(JsonInput.getMaxThreads());
+			List<Future<File>> downloadFutures = crawler.downloadProjects(projects);
+			List<Future<?>> analysisFutures = new ArrayList<Future<?>>();
+
+			for (int i = 0; i < downloadFutures.size(); i++) {
+				final Project project = projects.get(i);
+				final Date datetime_ = datetime;
+				final Future<File> repositoryFolderFuture = downloadFutures.get(i);
+				final File metricsFolder_ = metricsFolder;
+				final MetricsOutputFormat metricsFormat_ = input
+						.getOutputformat();
+
+				analysisFutures.add(ex.submit(new Runnable() {
+					@Override
+					public void run() {
+						File checkedOutRepository = null;
+						try {
+							checkedOutRepository = downloadAndCheckoutProject(
+									project, datetime_, repositoryFolderFuture);
+						} catch (Exception e) {
+							logger.error(format("Error while downloading project %s",project.getName()), e);
+						}
+						if (checkedOutRepository != null) {
+							try {
+								analyzeProject(project, checkedOutRepository,
+										datetime_, metricsFolder_,
+										metricsFormat_);
+							} catch (Exception e) {
+								logger.error(format("Error while analyzing project %s",project.getName()), e);
+							}
+						} else {
+							logger.warn(format("Project %s can't be analyzed",project.getName()));
+						}
+					}
+				}));
+			}
+			ex.shutdown();
+
+			for (int i = 0; i < analysisFutures.size(); i++) {
+				try {
+					analysisFutures.get(i).get();
+				} catch (InterruptedException | ExecutionException e) {
+					logger.error(format("Error while analyzing project %s", projects.get(i).getName()), e);
+				}
+			}
+
+			// Free resources and delete temporary directories
+			logger.info("Disposing resources...");
+			freeResources(crawler, errorStream);
+			logger.info("Done!");
+			
+		} catch (GroundhogException e) {
+			e.printStackTrace();
+			logger.error(e.getMessage());
+		}
 	}
 }

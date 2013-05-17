@@ -3,7 +3,7 @@
     "dest": "/opt/groundhog/dest",
     "out": "/opt/groundhog/metrics",
     "datetime": "2012-07-01 12:00",
-    "nprojects": 30,
+    "nprojects": 3,
     "outputformat": "csv",
     "search": {
         "projects": ["vraptor", "Turbine", "epona"],

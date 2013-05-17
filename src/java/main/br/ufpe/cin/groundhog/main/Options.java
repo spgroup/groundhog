@@ -168,11 +168,11 @@ public class Options {
 			this.input = args;
 		} catch (JsonSyntaxException e) {
 			throw new RuntimeException(
-					"O formato do arquivo json parece estranho. De uma olhada nos nossos exemplos!");
+					"The format of the json file seems strangy. Do you have already looked at one of ours examples?");
 		} catch (IOException e) {
-			throw new RuntimeException("Não consegui achar o arquivo "
+			throw new RuntimeException("I do not found this file "
 					+ inputFile.getName()
-					+ ". Ele não está em outro diretório?");
+					+ ". Does it actually exists?");
 		}
 	}
 }

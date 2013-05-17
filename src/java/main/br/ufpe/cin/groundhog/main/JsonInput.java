@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.Date;
 import java.util.List;
 
+import br.ufpe.cin.groundhog.codehistory.UnsupportedForgeException;
+import br.ufpe.cin.groundhog.parser.UnsupportedMetricsFormatException;
 import br.ufpe.cin.groundhog.util.Dates;
 
 import com.google.common.base.Objects;
@@ -23,8 +25,10 @@ public final class JsonInput {
 			return SupportedForge.GITHUB;
 		} else if (forge.equals("googlecode")) {
 			return SupportedForge.GOOGLECODE;
+		} else if (forge.equals("googlecode")) {
+			return SupportedForge.SOURCEFORGE;			
 		}
-		return SupportedForge.SOURCEFORGE;
+		throw new UnsupportedForgeException("Sorry, currently groundhog only supports Github, Sourceforge and GoogleCode. We do not support: " + forge);
 	}
 
 	public File getDest() {
@@ -47,8 +51,12 @@ public final class JsonInput {
 	public MetricsOutputFormat getOutputformat() {
 		if (outputformat.toLowerCase().equals("csv")) {
 			return MetricsOutputFormat.CSV;
+		} else if (outputformat.toLowerCase().equals("json")) {
+			return MetricsOutputFormat.JSON;			
 		}
-		return MetricsOutputFormat.JSON;
+		
+		String msg = String.format("I did not reconginze this output format (%s) :( I can only format in CSV or JSON", outputformat);
+		throw new UnsupportedMetricsFormatException(msg);
 	}
 
 	public static int getMaxThreads() {
