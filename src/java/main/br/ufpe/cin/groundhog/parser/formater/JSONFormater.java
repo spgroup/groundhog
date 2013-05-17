@@ -1,12 +1,11 @@
 package br.ufpe.cin.groundhog.parser.formater;
 
 import java.util.HashMap;
-import java.util.Map.Entry;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import br.ufpe.cin.groundhog.parser.MutableInt;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class JSONFormater extends Formater {
 
@@ -16,15 +15,7 @@ public class JSONFormater extends Formater {
 	 */
 	@Override
 	public String format(HashMap<String, HashMap<String, MutableInt>> object) {
-		JSONObject json = new JSONObject();
-		try {
-			for (Entry<String, HashMap<String, MutableInt>> entry : object
-					.entrySet()) {
-				json.put(entry.getKey(), entry.getValue());
-			}
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		return json.toString();
+		Gson gson = new GsonBuilder().serializeNulls().create();
+		return gson.toJson(object);
 	}
 }

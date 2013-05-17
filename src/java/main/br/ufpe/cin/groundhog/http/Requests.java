@@ -12,7 +12,7 @@ import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.ListenableFuture;
 
 public class Requests {
-	private AsyncHttpClient asyncClient;
+	private final AsyncHttpClient asyncClient;
 	
 	public Requests() {
 		this.asyncClient = new AsyncHttpClient();

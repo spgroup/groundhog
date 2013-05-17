@@ -1,7 +1,6 @@
 package br.ufpe.cin.groundhog;
 
-import japa.parser.ParseException;
-
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -12,12 +11,12 @@ import java.util.Date;
 public class Project {
 	private String name;
 	private String description;
-	private String creator;
+	private String owner;
 	private String iconURL;
 	private SCM scm;
 	private String scmURL;
 	private String sourceCodeURL;
-	
+
 	private Date createdAt;
 	private Date lastPushedAt;
 
@@ -30,10 +29,10 @@ public class Project {
 	private int followersCount;
 	private int forksCount;
 	private int issuesCount;
-	
+
 	public Project() {
 	}
-	
+
 	/**
 	 * 2-parameter constructor
 	 * @param name the project name
@@ -54,19 +53,19 @@ public class Project {
 		this(name, description);
 		this.iconURL = iconURL;
 	}
-	
+
 	public Project(String name, String description, String iconURL, String sourceCodeURL) {
 		this(name, description);
 		this.iconURL = iconURL;
 		this.sourceCodeURL = sourceCodeURL;
 	}
-	
+
 	public Project(String name, String description, String iconURL, SCM scm, String scmURL) {
 		this(name, description, iconURL);
 		this.scm = scm;
 		this.scmURL = scmURL;
 	}
-	
+
 	public Project(String name, String description, String iconURL, SCM scm, String scmURL,
 			String sourceCodeURL) {
 		this(name, description, iconURL, scm, scmURL);
@@ -80,7 +79,7 @@ public class Project {
 	public String getName() {
 		return this.name;
 	}
-	
+
 	/**
 	 * Sets the name of the project
 	 * @param name a {@link String} for the project's name
@@ -109,18 +108,18 @@ public class Project {
 	 * Informs the project's author name
 	 * @return a String correspondent to the name of the author of the project
 	 */
-	public String getCreator() {
-		return this.creator;
+	public String getOwner() {
+		return this.owner;
 	}
 
 	/**
 	 * Informs the project's author name
-	 * @param creator a {@link String} for the name of the project's author
+	 * @param owner a {@link String} for the name of the project's author
 	 */
-	public void setCreator(String creator) {
-		this.creator = creator;
+	public void setOwner(String owner) {
+		this.owner = owner;
 	}
-	
+
 	/**
 	 * Informs the project's icon's URL
 	 * @return
@@ -136,7 +135,7 @@ public class Project {
 	public void setIconURL(String iconURL) {
 		this.iconURL = iconURL;
 	}
-	
+
 	/**
 	 * Informs the project's SCM
 	 * @return
@@ -144,7 +143,7 @@ public class Project {
 	public SCM getSCM() {
 		return this.scm;
 	}
-	
+
 	public void setSCM(SCM scm) {
 		this.scm = scm;
 	}
@@ -155,7 +154,7 @@ public class Project {
 	public String getScmURL() {
 		return this.scmURL;
 	}
-	
+
 	/**
 	 * Sets the project's SCM URL
 	 * @param scmURL
@@ -163,7 +162,7 @@ public class Project {
 	public void setScmURL(String scmURL) {
 		this.scmURL = scmURL;
 	}
-	
+
 	/**
 	 * Informs the source code URL of the project
 	 * @return a String correspondent to the source code URL of the project in question
@@ -195,7 +194,7 @@ public class Project {
 	public void setHasDownloads(boolean hasDownloads) {
 		this.hasDownloads = hasDownloads;
 	}
-	
+
 	/**
 	 * @return true if the project has issues. Returns false otherwise.
 	 */
@@ -233,7 +232,7 @@ public class Project {
 	public int getWatchersCount() {
 		return this.watchersCount;
 	}
-	
+
 	/**
 	 * Sets how many people are watching the project
 	 * @param watchersCount an integer for setting the number of people watching the project on its forge
@@ -257,7 +256,7 @@ public class Project {
 	public void setFollowersCount(int followersCount) {
 		this.followersCount = followersCount;
 	}
-	
+
 	/**
 	 * Informs the number of forks the project has
 	 * @return an integer correspondent to the number of forks
@@ -273,7 +272,7 @@ public class Project {
 	public void setForksCount(int forksCount) {
 		this.forksCount = forksCount;
 	}
-	
+
 	/**
 	 * 
 	 * Informs the number of open issues of the project
@@ -290,7 +289,7 @@ public class Project {
 	public void setIssuesCount(int issuesCount) {
 		this.issuesCount = issuesCount;
 	}
-	
+
 	/**
 	 * Tells whether a project is a fork of another or not
 	 * @return a boolean value: true if it's a fork, false otherwise
@@ -298,7 +297,7 @@ public class Project {
 	public boolean isFork() {
 		return this.isFork;
 	}
-	
+
 	/**
 	 * Sets if the project is a fork of another or not
 	 * @param value a boolean value for informing whether the project is a fork of another or not
@@ -306,14 +305,14 @@ public class Project {
 	public void setIsFork(boolean value) {
 		this.isFork = value;
 	}
-	
+
 	/**
 	 * Methods that deal with dates are below
 	 * Notice that each setter method is overloaded to support Date and String parameters.
 	 * When the parameter is provided as a String object, the setter method will perform the
 	 * conversion to a date object
 	 */
-	
+
 	/**
 	 * Informs the creation date of the project
 	 * @return a Date object correspondent to the project's creation date
@@ -329,7 +328,7 @@ public class Project {
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
 	}
-	
+
 	/**
 	 * 
 	 * @param createdAtParam the String correspondent to the creation date of the project in question. e.g: 2012-04-28T15:40:35Z
@@ -338,7 +337,7 @@ public class Project {
 	public void setCreatedAt(String createdAtParam) throws java.text.ParseException {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date createAtDate = format.parse(createdAtParam.replace('T', ' ').replace("Z", ""));
-		
+
 		this.createdAt = createAtDate;
 	}
 
@@ -358,7 +357,7 @@ public class Project {
 	public void setLastPushedAt(Date lastPushedAtParam) {
 		this.lastPushedAt = lastPushedAtParam;
 	}
-	
+
 	/**
 	 * 
 	 * @param lastPushedAtParam the String correspondent to the date of the last push to the project

@@ -26,6 +26,7 @@ public class SearchGitHubTest {
 			System.out.printf("Elapsed: %.2f",
 					(System.nanoTime() - time) / 1000000000.0);
 		} catch (Exception e) {
+			e.printStackTrace();
 			Assert.fail();
 		}
 	}
