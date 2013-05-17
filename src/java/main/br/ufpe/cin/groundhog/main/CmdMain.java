@@ -8,9 +8,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -55,7 +53,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 public class CmdMain {
-	private static Logger logger = LoggerFactory.getLogger(CrawlGoogleCode.class);
+	private static Logger logger = LoggerFactory.getLogger(CmdMain.class);
 	
 	/**
 	 * Defines the code forge where the search will be performed.
@@ -228,17 +226,7 @@ public class CmdMain {
 		}
 	}
 	
-	public static void main(String[] args) {
-		Options opt = new Options();
-		String date = new SimpleDateFormat("yyyy-MM-dd_HH_mm").format(new Date()); // Current datetime String
-		
-		opt.setDatetime(date);
-		//opt.setDestinationFolder(new File("download"));
-		opt.setForge(SupportedForge.GITHUB);
-		opt.setMetricsFolder(new File("metrics"));
-		opt.setnProjects(5);
-		opt.setArguments(Arrays.asList("facebook"));
-		opt.setMetricsFormat(MetricsOutputFormat.JSON);
+	public static void main(Options opt) {
 		
 		List<String> terms = opt.getArguments();
 		String term = Joiner.on(" ").join(terms);
@@ -272,9 +260,6 @@ public class CmdMain {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		
-		// Set ThreadsConfig.nThreads
-		Config.MAX_NUMBER_OF_THREADS = opt.getnThreads();
 		
 		// Search for projects
 		logger.info("Searching for projects...");

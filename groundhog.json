@@ -4,10 +4,9 @@
     "out": "C:/groundhog/metrics",
     "datetime": "2012-07-01_12_00",
     "nprojects": 30,
-    "nthreads": 4,
     "outputformat": "csv",
     "search": {
-        "projects": ["rails", "bootstrap"],
+        "projects": ["vraptor", "Turbine", "epona"],
         "username":"gustavopinto"
     }
 }

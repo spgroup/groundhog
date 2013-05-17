@@ -1,6 +1,7 @@
 package br.ufpe.cin.groundhog.main;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.ParseException;
@@ -49,14 +50,10 @@ public class Options {
 	@Option(name = "-nprojects", usage = "maximum number of projects to be downloaded and processed")
 	private int nProjects = 4;
 
-	@Option(name = "-nthreads", usage = "maximum number of concurrent threads")
-	private int nThreads = 4;
-
 	@Option(name = "-o", usage = "determine the output format of the metrics")
 	private MetricsOutputFormat metricsFormat = MetricsOutputFormat.JSON;
 
-	@Option(name = "-in", usage = "all inputs in one json file")
-	private JsonInputArgs inputFile = null;
+	private JsonInput input = null;
 
 	@Argument
 	private List<String> arguments = new ArrayList<String>();
@@ -132,24 +129,6 @@ public class Options {
 		this.nProjects = nProjects;
 	}
 
-	/**
-	 * Informs the maximum number of concurrent threads to be ran
-	 * 
-	 * @return
-	 */
-	public int getnThreads() {
-		return this.nThreads;
-	}
-
-	/**
-	 * Sets the maximum number of concurrent threads to be ran
-	 * 
-	 * @param nThreads
-	 */
-	public void setnThreads(int nThreads) {
-		this.nThreads = nThreads;
-	}
-
 	public List<String> getArguments() {
 		return this.arguments;
 	}
@@ -180,22 +159,25 @@ public class Options {
 		this.metricsFormat = metricsFormat;
 	}
 
-	public JsonInputArgs getInputFile() {
-		return inputFile;
+	public JsonInput getInputFile() {
+		return input;
 	}
 
-	public void setInputFile(File inputFile) {
+	@Option(name = "-in", usage = "all above inputs in one json file")
+	public void setInputFile(File inputFile) throws FileNotFoundException {
 		try {
-			List<String> lines = Files.readLines(inputFile, Charset.defaultCharset());
+			List<String> lines = Files.readLines(inputFile,
+					Charset.defaultCharset());
 			String json = Joiner.on(" ").join(lines);
-			JsonInputArgs args = new Gson().fromJson(json, JsonInputArgs.class);
-			System.out.println(args);
-			this.inputFile = args;
+			JsonInput args = new Gson().fromJson(json, JsonInput.class);
+			this.input = args;
 		} catch (JsonSyntaxException e) {
-			throw new RuntimeException("O formato do arquivo json parece estranho. De uma olhada nos nossos exemplos!");
+			throw new RuntimeException(
+					"O formato do arquivo json parece estranho. De uma olhada nos nossos exemplos!");
 		} catch (IOException e) {
-			e.printStackTrace();
-			throw new RuntimeException("Não consegui achar o arquivo " + inputFile.getName() + ". Ele não está em outro diretório?");
+			throw new RuntimeException("Não consegui achar o arquivo "
+					+ inputFile.getName()
+					+ ". Ele não está em outro diretório?");
 		}
 	}
 }

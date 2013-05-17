@@ -5,7 +5,7 @@ import java.io.File;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class OptionTest {
+public class OptionsTest {
 
 	@Test
 	public void testJsonInputFile() {
