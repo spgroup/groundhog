@@ -19,11 +19,12 @@ import br.ufpe.cin.groundhog.main.JsonInput;
  *
  */
 public abstract class ForgeCrawler {
-	protected ExecutorService ex;
+	private ExecutorService ex;
 	protected File destinationFolder;
 	
 	/**
 	 * Constructs a new ForgeCrawler with a given destinationFolder.
+	 * 
 	 * @param destinationFolder folder into which projects will be downloaded
 	 */
 	protected ForgeCrawler(File destinationFolder) {
@@ -34,6 +35,7 @@ public abstract class ForgeCrawler {
 	/**
 	 * Downloads a single project and returns its repository folder. A project repository folder is useful to be
 	 * manipulated by CodeHistory class and to be parsed by Parser class. 
+	 * 
 	 * @param project a ForgeProject.
 	 * @return a repository folder (if has SCM as Git or SVN) or a project folder (which contains archived/compressed files)
 	 * @throws Exception when something nasty happens
@@ -46,6 +48,7 @@ public abstract class ForgeCrawler {
 	 * according to ForgeProject list ordering. To get a future result, 
 	 * just call its .get() method. A project repository folder is useful to be
 	 * manipulated by CodeHistory class and to be parsed by Parser class.
+	 * 
 	 * @param projects list of ForgeProjects, usually given by a ForgeSearch subclass
 	 * @return list of futures with repository folders as File objects
 	 */

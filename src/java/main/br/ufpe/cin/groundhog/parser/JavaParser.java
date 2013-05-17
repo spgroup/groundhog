@@ -97,9 +97,9 @@ public class JavaParser {
 	public String format(Formater metricsFormat) throws IOException{
 		HashMap<String, HashMap<String, MutableInt>> counters = parse();
 		if(counters == null) {
-			return "No metrics extracted.";
+			throw new NotAJavaProjectException();
 		}
-		return  metricsFormat.format(counters);
+		return metricsFormat.format(counters);
 	}
 	
 	/**

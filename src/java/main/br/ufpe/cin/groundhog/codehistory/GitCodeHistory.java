@@ -3,6 +3,10 @@ package br.ufpe.cin.groundhog.codehistory;
 import java.io.File;
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import br.ufpe.cin.groundhog.scmclient.EmptyProjectAtDateException;
 import br.ufpe.cin.groundhog.scmclient.GitClient;
 import br.ufpe.cin.groundhog.util.FileUtil;
 
@@ -13,6 +17,8 @@ import com.google.inject.Inject;
  * @author fjsj, gustavopinto
  */
 public class GitCodeHistory implements CodeHistory {
+	
+	private static Logger logger = LoggerFactory.getLogger(GitCodeHistory.class);
 	
 	private final GitClient gitClient;
 	
@@ -44,6 +50,9 @@ public class GitCodeHistory implements CodeHistory {
 			
 			this.gitClient.checkout(projectFolder, date);
 			return projectFolder;
+		} catch (EmptyProjectAtDateException e) {
+			logger.warn(e.getMessage());
+			throw new CheckoutException(e.getMessage());
 		} catch (Exception e) {
 			throw new CheckoutException(e.getMessage());
 		}

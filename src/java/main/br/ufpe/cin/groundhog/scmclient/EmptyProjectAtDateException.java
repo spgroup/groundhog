@@ -12,6 +12,6 @@ public class EmptyProjectAtDateException extends GroundhogException {
 	private static final long serialVersionUID = 1L;
 	
 	public EmptyProjectAtDateException(String msg) {
-		super("No source of found to this date: " + msg);
+		super("No source code was found to this date: " + msg);
 	}
 }

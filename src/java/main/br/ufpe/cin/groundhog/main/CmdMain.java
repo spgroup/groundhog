@@ -3,7 +3,6 @@ package br.ufpe.cin.groundhog.main;
 import static java.lang.String.format;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,6 +30,7 @@ import br.ufpe.cin.groundhog.crawler.ForgeCrawler;
 import br.ufpe.cin.groundhog.http.HttpModule;
 import br.ufpe.cin.groundhog.http.Requests;
 import br.ufpe.cin.groundhog.parser.JavaParser;
+import br.ufpe.cin.groundhog.parser.NotAJavaProjectException;
 import br.ufpe.cin.groundhog.parser.formater.Formater;
 import br.ufpe.cin.groundhog.scmclient.EmptyProjectAtDateException;
 import br.ufpe.cin.groundhog.scmclient.GitClient;
@@ -46,7 +46,6 @@ import br.ufpe.cin.groundhog.util.FileUtil;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-
 /**
  * The groundhog entry point
  * 
@@ -54,6 +53,7 @@ import com.google.inject.Injector;
  */
 
 public final class CmdMain extends GroundhogMain {
+
 	private static Logger logger = LoggerFactory.getLogger(CmdMain.class);
 
 	/**
@@ -155,38 +155,40 @@ public final class CmdMain extends GroundhogMain {
 	 *            the informed {@link Datetime}
 	 * @param repositoryFolderFuture
 	 * @return the checked out repository
-	 * @throws InterruptedException
-	 * @throws ExecutionException
 	 */
 	public File downloadAndCheckoutProject(Project project,
-			Date datetime, Future<File> repositoryFolderFuture)
-			throws InterruptedException, ExecutionException {
+			Date datetime, Future<File> repositoryFolderFuture) {
 		
-		// Wait for project download
 		String name = project.getName();
-		File repositoryFolder = repositoryFolderFuture.get();
-		logger.info(format("Project %s was downloaded", name));
-
-		// Checkout project to date
 		String datetimeStr = new Dates("yyyy-MM-dd").format(datetime);
-		logger.info(format("Checking out project %s to %s...", name, datetimeStr));
-		CodeHistory codehistory = defineCodeHistory(project.getSCM());
 		
-		File checkedOutRepository = null;
 		try {
+			// Wait for project download
+			
+			File repositoryFolder = repositoryFolderFuture.get();
+			logger.info(format("Project %s was downloaded", name));
+
+			logger.info(format("Checking out project %s to %s...", name, datetimeStr));
+			CodeHistory codehistory = defineCodeHistory(project.getSCM());
+			
+			File checkedOutRepository = null;
+
 			if (project.getSCM() == SCM.SVN) {
 				checkedOutRepository = codehistory.checkoutToDate(project.getName(), project.getScmURL(), datetime);
 			} else {
 				checkedOutRepository = codehistory.checkoutToDate(project.getName(), repositoryFolder, datetime);
 			}
+			logger.info(format("Project %s successfully checked out to %s", name, datetimeStr));
+
+			return checkedOutRepository;
+			
 		} catch (EmptyProjectAtDateException e) {
 			logger.warn(format("Project %s was empty at specified date: %s", name, datetimeStr));
 			return null;
+		} catch (Exception e) {
+			logger.error(format("Error while downloading project %s", name));
+			return null;
 		}
-		
-		logger.info(format("Project %s successfully checked out to %s", name, datetimeStr));
-
-		return checkedOutRepository;
 	}
 
 	/**
@@ -201,33 +203,32 @@ public final class CmdMain extends GroundhogMain {
 	 * @param datetime
 	 * @param metricsFolder
 	 *            the directory where the JSON metrics output will be stored
-	 * @throws IOException
 	 */
 	public void analyzeProject(Project project, File projectFolder,
-			Date datetime, File metricsFolder, Formater metricsFormat)
-			throws IOException {
+			Date datetime, File metricsFolder, Formater metricsFormat) {
 		String name = project.getName();
 		String datetimeStr = new Dates("yyyy-MM-dd").format(datetime);
 
-		// Parse project
-		logger.info(format("Parsing project %s...", name));
-		JavaParser parser = new JavaParser(projectFolder);
-		String metrics = parser.format(metricsFormat);
-
-		if (metrics != null) {
-			// Save metrics to file
-			String metricsFilename = format("%s-%s.%s", name, datetimeStr, metricsFormat.simpleName());
-			logger.info(format(
-					"Project %s parsed, metrics extracted! Writing result to file %s...",
-					name, metricsFilename));
-			File metricsFile = new File(metricsFolder, metricsFilename);
-			FileUtil.getInstance().writeStringToFile(metricsFile, metrics);
-			logger.info(format("Metrics of project %s written to file %s",
-					name, metricsFile.getAbsolutePath()));
-		} else {
-			logger.warn(format(
-					"Project %s has no Java source files! Metrics couldn't be extracted...",
-					name));
+		try {
+			// Parse project
+			logger.info(format("Parsing project %s...", name));
+			JavaParser parser = new JavaParser(projectFolder);
+			String metrics = parser.format(metricsFormat);
+	
+			if (metrics != null) {
+				// Save metrics to file
+				String metricsFilename = format("%s-%s.%s", name, datetimeStr, metricsFormat.simpleName());
+				logger.info(format("Project %s parsed, metrics extracted! Writing result to file %s...", name, metricsFilename));
+				
+				File metricsFile = new File(metricsFolder, metricsFilename);
+				FileUtil.getInstance().writeStringToFile(metricsFile, metrics);
+				
+				logger.info(format("Metrics of project %s written to file %s", name, metricsFile.getAbsolutePath()));
+			} 
+		} catch (NotAJavaProjectException e) {
+			logger.warn(format(e.getMessage(), name));
+		} catch (Exception e) {
+			logger.error(format("Error while analyzing project %s:%s", project.getName()), e.getMessage());
 		}
 	}
 
@@ -236,13 +237,13 @@ public final class CmdMain extends GroundhogMain {
 	public void run(JsonInput input) {
 		try {
 
-			File destinationFolder = input.getDest();
-			File metricsFolder = input.getOut();
+			final File destinationFolder = input.getDest();
+			final File metricsFolder = input.getOut();
 			
 			logger.info("Creating temp folders...");
 			createTempFolders(destinationFolder, metricsFolder);
 			
-			Date datetime = input.getDatetime();
+			final Date datetime = input.getDatetime();
 			int nProjects = input.getNprojects();
 
 			// Search for projects
@@ -250,7 +251,7 @@ public final class CmdMain extends GroundhogMain {
 			ForgeSearch search = defineForgeSearch(input.getForge());
 			ForgeCrawler crawler = defineForgeCrawler(input.getForge(), destinationFolder);
 
-			String term = input.getSearch().getProjects().get(2);
+			String term = input.getSearch().getProjects().get(3);
 			List<Project> allProjects = search.getProjects(term, 1);
 			
 			List<Project> projects = new ArrayList<Project>();
@@ -268,31 +269,18 @@ public final class CmdMain extends GroundhogMain {
 
 			for (int i = 0; i < downloadFutures.size(); i++) {
 				final Project project = projects.get(i);
-				final Date datetime_ = datetime;
 				final Future<File> repositoryFolderFuture = downloadFutures.get(i);
-				final File metricsFolder_ = metricsFolder;
-				final Formater metricsFormat_ = input.getOutputformat();
+				final Formater metricsFormat = input.getOutputformat();
 
 				analysisFutures.add(ex.submit(new Runnable() {
 					@Override
 					public void run() {
-						File checkedOutRepository = null;
-						try {
-							checkedOutRepository = downloadAndCheckoutProject(
-									project, datetime_, repositoryFolderFuture);
-						} catch (Exception e) {
-							logger.error(format("Error while downloading project %s: %s", project.getName(), e.getMessage()));
-						}
+						File checkedOutRepository = downloadAndCheckoutProject(project, datetime, repositoryFolderFuture);
+						
 						if (checkedOutRepository != null) {
-							try {
-								analyzeProject(project, checkedOutRepository,
-										datetime_, metricsFolder_,
-										metricsFormat_);
-							} catch (Exception e) {
-								logger.error(format("Error while analyzing project %s",project.getName()), e);
-							}
+							analyzeProject(project, checkedOutRepository, datetime, metricsFolder, metricsFormat);
 						} else {
-							logger.warn(format("Project %s can't be analyzed",project.getName()));
+							logger.warn(format("Project %s can't be analyzed", project.getName()));
 						}
 					}
 				}));
@@ -307,7 +295,7 @@ public final class CmdMain extends GroundhogMain {
 					logger.error(format("Error while analyzing project %s", projects.get(i).getName()), e);
 				}
 			}
-			logger.info("All projects downloaded and analyzed!");
+			logger.info("All projects were downloaded and analyzed!");
 
 		} catch (GroundhogException e) {
 			e.printStackTrace();

@@ -6,7 +6,7 @@
     "nprojects": 3,
     "outputformat": "json",
     "search": {
-        "projects": ["vraptor", "Turbine", "epona"],
+        "projects": ["vraptor", "Turbine", "epona", "rails"],
         "username":"gustavopinto"
     }
 }

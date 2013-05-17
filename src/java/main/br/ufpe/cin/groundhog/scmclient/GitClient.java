@@ -16,7 +16,6 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRefNameException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.RefAlreadyExistsException;
-import org.eclipse.jgit.api.errors.RefNotFoundException;
 import org.eclipse.jgit.api.errors.TransportException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -53,7 +52,6 @@ public class GitClient {
 	 * @param date
 	 * @throws IOException
 	 * @throws RefAlreadyExistsException
-	 * @throws RefNotFoundException
 	 * @throws InvalidRefNameException
 	 * @throws CheckoutConflictException
 	 * @throws GitAPIException
