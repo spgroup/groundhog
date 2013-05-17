@@ -11,8 +11,8 @@ import java.util.concurrent.Future;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import br.ufpe.cin.groundhog.main.JsonInput;
 import br.ufpe.cin.groundhog.util.FileUtil;
-import br.ufpe.cin.groundhog.Config;
 
 /**
  * Singleton class to extract files and recursively extract all files within a hierarchy of folders.
@@ -45,7 +45,7 @@ public class DefaultExtractor implements Extractor {
 	 * @param destinationFolder the destination folder to which the extracted files will be moved to
 	 */
 	private void recursiveExtract(final File root, File next, final File destinationFolder) {
-		ExecutorService executor = Executors.newFixedThreadPool(Config.MAX_NUMBER_OF_THREADS);
+		ExecutorService executor = Executors.newFixedThreadPool(JsonInput.getMaxThreads());
 		File[] subFiles = next.listFiles();
 		List<Future<?>> futures = new ArrayList<Future<?>>();
 		

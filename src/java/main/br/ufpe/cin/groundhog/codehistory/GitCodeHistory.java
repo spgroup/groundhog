@@ -39,8 +39,10 @@ public class GitCodeHistory implements CodeHistory {
 		try {
 			File projectFolder = new File(FileUtil.getInstance()
 					.createTempDir(), project);
+			
 			FileUtil.getInstance().copyDirectory(repositoryFolder,
 					projectFolder);
+			
 			this.gitClient.checkout(projectFolder, date);
 			return projectFolder;
 		} catch (Exception e) {

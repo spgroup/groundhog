@@ -2,7 +2,6 @@ package br.ufpe.cin.groundhog.scmclient;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -25,6 +24,8 @@ import org.eclipse.jgit.revwalk.RevWalk;
 import org.gitective.core.CommitFinder;
 import org.gitective.core.filter.commit.AllCommitFilter;
 import org.gitective.core.filter.commit.CommitterDateFilter;
+
+import br.ufpe.cin.groundhog.util.Dates;
 
 public class GitClient {
 	
@@ -83,7 +84,7 @@ public class GitClient {
 
 		if (commits.size() == 0) {
 			rep.close();
-			throw new EmptyProjectAtDateException(new SimpleDateFormat().format(date));
+			throw new EmptyProjectAtDateException(new Dates("yyyy-MM-dd").format(date));
 		}
 		RevCommit closest = Collections.max(commits, new Comparator<RevCommit>() {
 			public int compare(RevCommit c1, RevCommit c2) {

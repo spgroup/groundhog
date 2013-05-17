@@ -2,6 +2,7 @@ package br.ufpe.cin.groundhog.crawler;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
@@ -16,7 +17,7 @@ import com.google.inject.Inject;
 /**
  * A concrete class to crawl GitHub.
  * 
- * @author fjsj
+ * @author fjsj, gustavopinto
  */
 public class CrawlGitHub extends ForgeCrawler {
 
@@ -32,7 +33,7 @@ public class CrawlGitHub extends ForgeCrawler {
 	protected File downloadProject(Project project) throws JSONException,
 			IOException, InvalidRemoteException, TransportException,
 			GitAPIException {
-		String projectName = project.getName();
+		String projectName = project.getName() + "_" + new Random().nextInt();
 		String cloneUrl = project.getScmURL();
 		File projectFolder = new File(destinationFolder, projectName);
 

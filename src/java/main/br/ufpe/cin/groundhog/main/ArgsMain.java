@@ -10,10 +10,10 @@ public class ArgsMain {
 		CmdLineParser parser = new CmdLineParser(opt);
 		try {
 			parser.parseArgument(args);
-			System.out.println(opt.getInputFile());
+			new CmdMain().main(opt.getInputFile());
 		} catch (CmdLineException e) {
 			e.printStackTrace();
-			System.err.println("java -jar myprogram.jar [options...] arguments...");
+			System.err.println("java -jar groundhog.jar [options...] arguments...");
 			parser.printUsage(System.err);
 			return;
 		}

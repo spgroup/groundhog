@@ -1,7 +1,6 @@
 package br.ufpe.cin.groundhog.main;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.ParseException;
@@ -147,10 +146,6 @@ public class Options {
 		this.forge = forge;
 	}
 
-	public static SimpleDateFormat getDateFormat() {
-		return dateFormat;
-	}
-
 	public MetricsOutputFormat getMetricsFormat() {
 		return metricsFormat;
 	}
@@ -164,7 +159,7 @@ public class Options {
 	}
 
 	@Option(name = "-in", usage = "all above inputs in one json file")
-	public void setInputFile(File inputFile) throws FileNotFoundException {
+	public void setInputFile(File inputFile) {
 		try {
 			List<String> lines = Files.readLines(inputFile,
 					Charset.defaultCharset());

@@ -1,8 +1,8 @@
 {
     "forge": "github",
-    "dest": "C:/groundhog/dest",
-    "out": "C:/groundhog/metrics",
-    "datetime": "2012-07-01_12_00",
+    "dest": "/opt/groundhog/dest",
+    "out": "/opt/groundhog/metrics",
+    "datetime": "2012-07-01 12:00",
     "nprojects": 30,
     "outputformat": "csv",
     "search": {

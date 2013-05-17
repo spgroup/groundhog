@@ -1,6 +1,10 @@
 package br.ufpe.cin.groundhog.main;
 
+import java.io.File;
+import java.util.Date;
 import java.util.List;
+
+import br.ufpe.cin.groundhog.util.Dates;
 
 import com.google.common.base.Objects;
 
@@ -13,68 +17,64 @@ public final class JsonInput {
 	private String outputformat;
 	private Search search;
 
-	public JsonInput(String forge, String dest, String out, String datetime,
-			String nprojects, String outputformat, Search search) {
-		super();
-		this.forge = forge;
-		this.dest = dest;
-		this.out = out;
-		this.datetime = datetime;
-		this.nprojects = nprojects;
-		this.outputformat = outputformat;
-		this.search = search;
+	//TODO: this should be discovered dinamically
+	public SupportedForge getForge() {
+		if (forge.toLowerCase().equals("github")) {
+			return SupportedForge.GITHUB;
+		} else if (forge.equals("googlecode")) {
+			return SupportedForge.GOOGLECODE;
+		}
+		return SupportedForge.SOURCEFORGE;
 	}
 
-	public String getForge() {
-		return forge;
+	public File getDest() {
+		return new File(dest);
 	}
 
-	public String getDest() {
-		return dest;
+	public File getOut() {
+		return new File(out);
 	}
 
-	public String getOut() {
-		return out;
+	public Date getDatetime() {
+		return new Dates("yyyy-MM-dd HH:mm").format(datetime);
 	}
 
-	public String getDatetime() {
-		return datetime;
+	public int getNprojects() {
+		return Integer.parseInt(nprojects);
 	}
 
-	public String getNprojects() {
-		return nprojects;
+	//TODO: this should be discovered dinamically
+	public MetricsOutputFormat getOutputformat() {
+		if (outputformat.toLowerCase().equals("csv")) {
+			return MetricsOutputFormat.CSV;
+		}
+		return MetricsOutputFormat.JSON;
 	}
 
-	public String getOutputformat() {
-		return outputformat;
+	public static int getMaxThreads() {
+		return 4;
 	}
-
+	
 	public Search getSearch() {
 		return search;
 	}
 
 	public String toString() {
 		return Objects.toStringHelper(this)
-					.add("forge", forge)
-					.add("dest", dest)
-					.add("out", out)
-					.add("datetime", datetime)
-					.add("nproject", nprojects)
-					.add("outputformat", outputformat)
-					.add("search", search)
-					.toString();
+				.add("forge", forge)
+				.add("dest", dest)
+				.add("out", out)
+				.add("datetime", datetime)
+				.add("nproject", nprojects)
+				.add("outputformat", outputformat)
+				.add("search", search)
+				.toString();
 	}
 }
 
 final class Search {
-	private final List<String> projects;
-	private final String username;
-
-	public Search(List<String> projects, String username) {
-		super();
-		this.projects = projects;
-		this.username = username;
-	}
+	private List<String> projects;
+	private String username;
 
 	public String getUsername() {
 		return username;
@@ -83,7 +83,7 @@ final class Search {
 	public List<String> getProjects() {
 		return projects;
 	}
-	
+
 	public String toString() {
 		return Objects.toStringHelper(this)
 				.add("projects", projects)
