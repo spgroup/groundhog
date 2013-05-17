@@ -71,7 +71,7 @@ public abstract class ForgeCrawler {
 	 * Should be called after downloadProjects.
 	 */
 	public void shutdown() {
-		ex.shutdown();
+		ex.shutdownNow();
 	}
 	
 }

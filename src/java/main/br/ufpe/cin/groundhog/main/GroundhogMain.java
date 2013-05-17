@@ -15,7 +15,7 @@ import br.ufpe.cin.groundhog.util.FileUtil;
 
 public abstract class GroundhogMain {
 
-	private static Logger logger = LoggerFactory.getLogger(GroundhogMain.class);
+	private final static Logger logger = LoggerFactory.getLogger(GroundhogMain.class);
 
 	public abstract void run(JsonInput input);
 
@@ -38,9 +38,12 @@ public abstract class GroundhogMain {
 		try {
 			
 			logger.info("Groundhog was initialized!");
-
 			parser.parseArgument(args);
+			
+			checkArguments(opt);
 			input = opt.getInputFile();
+			
+			logger.info("We received the following parameters: " + input);
 			new CmdMain().run(input);
 
 			// Free resources and delete temporary directories
@@ -53,6 +56,13 @@ public abstract class GroundhogMain {
 			e.printStackTrace();
 			return;
 		}
+	}
+
+	private static void checkArguments(Options opt) {
+//		System.out.println(opt.getForge());
+//		System.out.println(opt.getMetricsFolder());
+//		System.out.println(opt.getArguments());
+//		System.exit(0);
 	}
 
 	/**		

@@ -244,7 +244,8 @@ public final class CmdMain extends GroundhogMain {
 			createTempFolders(destinationFolder, metricsFolder);
 			
 			final Date datetime = input.getDatetime();
-			int nProjects = input.getNprojects();
+			final int nProjects = input.getNprojects();
+			final String username = input.getSearch().getUsername();
 
 			// Search for projects
 			logger.info("Searching for projects... " + input.getSearch().getProjects());
@@ -252,7 +253,13 @@ public final class CmdMain extends GroundhogMain {
 			ForgeCrawler crawler = defineForgeCrawler(input.getForge(), destinationFolder);
 
 			String term = input.getSearch().getProjects().get(3);
-			List<Project> allProjects = search.getProjects(term, 1);
+			
+			List<Project> allProjects = null;
+			if(username != null) {
+				allProjects = search.getProjects(term, 1);
+			} else {
+				allProjects = search.getProjects(term, username, 1);
+			}
 			
 			List<Project> projects = new ArrayList<Project>();
 			for (int i = 0; i < nProjects; i++) {

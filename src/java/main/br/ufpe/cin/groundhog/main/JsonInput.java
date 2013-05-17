@@ -61,7 +61,7 @@ public final class JsonInput {
 	}
 
 	public String toString() {
-		return Objects.toStringHelper(this)
+		return Objects.toStringHelper("")
 				.add("forge", forge)
 				.add("dest", dest)
 				.add("out", out)
@@ -86,7 +86,7 @@ final class Search {
 	}
 
 	public String toString() {
-		return Objects.toStringHelper(this)
+		return Objects.toStringHelper("")
 				.add("projects", projects)
 				.add("username", username)
 				.toString();

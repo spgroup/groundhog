@@ -140,4 +140,10 @@ public class SearchGoogleCode implements ForgeSearch {
 			throw new SearchException(e);
 		}
 	}
+
+	@Override
+	public List<Project> getProjects(String term, String username, int page)
+			throws SearchException {
+		throw new UnsupportedOperationException("not implemented yet");
+	}
 }

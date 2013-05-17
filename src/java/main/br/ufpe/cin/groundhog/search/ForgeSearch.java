@@ -24,5 +24,17 @@ public interface ForgeSearch {
 	 * @throws Exception when something nasty happens
 	 */
 	public List<Project> getProjects(String term, int page) throws SearchException;
+	
+	/**
+	 * Uses search functionality of the forge to get projects.
+	 * 
+	 * @param term term to be searched (ex: a project name, like h2database)
+	 * @parm username the user that should have the aforementioned project
+	 * @param page 1-indexed page to get results (ie: starts with 1)
+	 * 
+	 * @return list of ForgeProject entities with projects info
+	 * @throws Exception when something nasty happens
+	 */
+	public List<Project> getProjects(String term, String username, int page) throws SearchException;
 
 }
