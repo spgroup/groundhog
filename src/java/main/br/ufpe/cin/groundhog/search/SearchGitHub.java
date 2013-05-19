@@ -1,15 +1,21 @@
 package br.ufpe.cin.groundhog.search;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import br.ufpe.cin.groundhog.GroundhogException;
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.SCM;
 import br.ufpe.cin.groundhog.http.Requests;
 
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -21,7 +27,7 @@ import com.google.inject.Inject;
  * @author fjsj, gustavopinto, rodrigoalvesvieira
  */
 public class SearchGitHub implements ForgeSearch {
-	private static String root = "https://api.github.com";
+	private final static String root = "https://api.github.com";
 	private final Requests requests;
 	private final Gson gson;
 
@@ -31,16 +37,12 @@ public class SearchGitHub implements ForgeSearch {
 		this.gson = new Gson();
 	}
 
-	public List<Project> getProjects(String term, int page)
-			throws SearchException {
+	private List<Project> gatherProjects(String url) {
 		try {
 			List<Project> projects = new ArrayList<Project>();
-			String searchUrl = root
-					+ String.format(
-							"/legacy/repos/search/%s?start_page=%s&language=java",
-							requests.encodeURL(term), page);
 
-			String json = requests.get(searchUrl);
+			String json = requests.get(url);
+			
 			JsonObject jsonObject = gson.fromJson(json, JsonElement.class).getAsJsonObject();
 			JsonArray jsonArray = jsonObject.get("repositories").getAsJsonArray();
 
@@ -58,9 +60,38 @@ public class SearchGitHub implements ForgeSearch {
 		}
 	}
 
+	public List<Project> getProjects(String term, int page)
+			throws SearchException {
+		term = requests.encodeURL(term);
+		String searchUrl = String.format("%s/legacy/repos/search/%s?start_page=%s&language=java", root, term, page);
+		return gatherProjects(searchUrl);
+	}
+
 	@Override
 	public List<Project> getProjects(String term, String username, int page)
 			throws SearchException {
-		return getProjects(term, page);
+		
+		try {
+			term = requests.encodeURL(term);
+			String url = String.format("%s/repos/%s/%s", root, username, term);
+			
+			String 	json = requests.get(url);
+			
+			Project p = new GsonBuilder().excludeFieldsWithModifiers(Modifier.VOLATILE).create().fromJson(json, Project.class);
+			p.setSCM(SCM.GIT);
+			p.setScmURL(String.format("git://github.com/%s/%s.git", username, p.getName()));
+			
+			return Lists.newArrayList(p);
+		
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public static void main(String[] args) throws FileNotFoundException {
+		String json = new Scanner(new File("/home/ghlp/Desktop/example.json")).nextLine();
+		Project p = new GsonBuilder().excludeFieldsWithModifiers(Modifier.VOLATILE).create().fromJson(json, Project.class);
+		System.out.println(p.getName());
 	}
 }

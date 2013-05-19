@@ -2,11 +2,11 @@
     "forge": "github",
     "dest": "/opt/groundhog/dest",
     "out": "/opt/groundhog/metrics",
-    "datetime": "2012-07-01 12:00",
+    "datetime": "2013-04-28 12:00",
     "nprojects": 3,
     "outputformat": "json",
     "search": {
-        "projects": ["vraptor", "Turbine", "epona", "rails"],
+        "projects": ["hello-curiosity", "Turbine", "epona", "rails"],
         "username":"gustavopinto"
     }
 }

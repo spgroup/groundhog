@@ -37,13 +37,16 @@ public class GitClient {
 	 * @throws TransportException
 	 * @throws GitAPIException
 	 */
-	public void clone(String url, File destination)
-			throws InvalidRemoteException, TransportException, GitAPIException {
-		Repository rep = Git.cloneRepository().
-		setURI(url).
-		setDirectory(destination).
-		call().getRepository();
-		rep.close();
+	public void clone(String url, File destination) {
+		try {
+			Repository rep = Git.cloneRepository()
+								.setURI(url)
+								.setDirectory(destination)
+								.call().getRepository();
+			rep.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**

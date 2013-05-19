@@ -11,7 +11,7 @@ import java.util.Date;
 public class Project {
 	private String name;
 	private String description;
-	private String owner;
+	private volatile String owner;
 	private String iconURL;
 	private SCM scm;
 	private String scmURL;

@@ -186,7 +186,8 @@ public final class CmdMain extends GroundhogMain {
 			logger.warn(format("Project %s was empty at specified date: %s", name, datetimeStr));
 			return null;
 		} catch (Exception e) {
-			logger.error(format("Error while downloading project %s", name));
+			e.printStackTrace();
+			logger.error(format("Error while downloading project %s: %s", name, e.getMessage()));
 			return null;
 		}
 	}
@@ -215,16 +216,14 @@ public final class CmdMain extends GroundhogMain {
 			JavaParser parser = new JavaParser(projectFolder);
 			String metrics = parser.format(metricsFormat);
 
-			if (metrics != null) {
-				// Save metrics to file
-				String metricsFilename = format("%s-%s.%s", name, datetimeStr, metricsFormat.simpleName());
-				logger.info(format("Project %s parsed, metrics extracted! Writing result to file %s...", name, metricsFilename));
+			// Save metrics to file
+			String metricsFilename = format("%s-%s.%s", name, datetimeStr, metricsFormat.simpleName());
+			logger.info(format("Project %s parsed, metrics extracted! Writing result to file %s...", name, metricsFilename));
 
-				File metricsFile = new File(metricsFolder, metricsFilename);
-				FileUtil.getInstance().writeStringToFile(metricsFile, metrics);
+			File metricsFile = new File(metricsFolder, metricsFilename);
+			FileUtil.getInstance().writeStringToFile(metricsFile, metrics);
 
-				logger.info(format("Metrics of project %s written to file %s", name, metricsFile.getAbsolutePath()));
-			} 
+			logger.info(format("Metrics of project %s written to file %s", name, metricsFile.getAbsolutePath()));
 		} catch (NotAJavaProjectException e) {
 			logger.warn(format(e.getMessage(), name));
 		} catch (Exception e) {
@@ -255,10 +254,10 @@ public final class CmdMain extends GroundhogMain {
 			String term = input.getSearch().getProjects().get(0);
 
 			List<Project> allProjects = null;
-			if(username != null) {
-				allProjects = search.getProjects(term, 1);
+			if(username != null && !username.isEmpty()) {
+				allProjects = search.getProjects(term, username, 1);				
 			} else {
-				allProjects = search.getProjects(term, username, 1);
+				allProjects = search.getProjects(term, 1);
 			}
 
 			List<Project> projects = new ArrayList<Project>();

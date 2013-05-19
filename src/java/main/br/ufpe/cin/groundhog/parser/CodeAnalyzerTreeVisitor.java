@@ -17,6 +17,9 @@ import com.sun.source.tree.Tree;
 import com.sun.source.util.TreePathScanner;
 import com.sun.source.util.Trees;
 
+/**
+ * @author benitofe, jpso, filipeximenes, weslleyt, fjsj
+ */
 // see: http://docs.oracle.com/javase/6/docs/jdk/api/javac/tree/com/sun/source/tree/package-summary.html
 public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 	private HashMap<String, HashMap<String, MutableInt>> counters;

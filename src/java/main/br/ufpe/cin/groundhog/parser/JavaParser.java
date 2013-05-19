@@ -4,18 +4,18 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import javax.tools.JavaCompiler;
 import javax.tools.JavaCompiler.CompilationTask;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import br.ufpe.cin.groundhog.parser.formater.Formater;
 
@@ -26,10 +26,11 @@ import br.ufpe.cin.groundhog.parser.formater.Formater;
  *
  */
 public class JavaParser {
-	private static String fileSeparator = File.separator;
 	
-	private File folder;  // this folder means the root folder of the downloaded project
-	private List<File> filesList;
+	private static Logger logger = LoggerFactory.getLogger(JavaParser.class);
+	
+	private final File folder;  // this folder means the root folder of the downloaded project
+	private final List<File> filesList;
 
 	/**
 	 * Constructs a new JavaParser which will extract metrics of all Java source files inside
@@ -38,7 +39,7 @@ public class JavaParser {
 	 */
 	public JavaParser(File folder) {
 		this.folder = folder;
-		filesList = new LinkedList<File>();
+		this.filesList = new LinkedList<File>();
 	}
 
 	private void recursiveSearch(File start) {
@@ -50,7 +51,7 @@ public class JavaParser {
 					recursiveSearch(f);
 				} else if (f.isFile()) {
 					String path = f.getAbsolutePath();
-					if (!path.contains(fileSeparator + "__MACOSX") && f.getName().endsWith(".java")) {
+					if (!path.contains(File.separator + "__MACOSX") && f.getName().endsWith(".java")) {
 						filesList.add(f);	
 					}
 				}
@@ -86,12 +87,12 @@ public class JavaParser {
 	 * @throws IOException if something wrong happens when closing source file manager
 	 */
 	public HashMap<String, HashMap<String, MutableInt>> parse() throws IOException {
+		logger.info("Running parser..");
 		recursiveSearch(folder);
 		if (!filesList.isEmpty()) {
 			return invokeProcessor();
-		} else {
-			return null;
-		}
+		} 
+		return null;
 	}
 	
 	public String format(Formater metricsFormat) throws IOException{
@@ -100,35 +101,5 @@ public class JavaParser {
 			throw new NotAJavaProjectException();
 		}
 		return metricsFormat.format(counters);
-	}
-	
-	/**
-	 * Pretty print metrics
-	 * @param counters parse method result 
-	 */
-	public static void printResult(HashMap<String, HashMap<String, MutableInt>> counters) {
-		for (String metric : counters.keySet()) {
-			System.out.println("Metric - " + metric);
-			HashMap<String, MutableInt> counter = counters.get(metric);
-			List<Entry<String, MutableInt>> entries = new ArrayList<Entry<String, MutableInt>>();
-			entries.addAll(counter.entrySet());
-			Collections.sort(entries, new Comparator<Entry<String, MutableInt>>() {
-				public int compare(Entry<String, MutableInt> e1, Entry<String, MutableInt> e2) {
-					return e2.getValue().get() - e1.getValue().get();
-				}
-			});
-			
-			for (Entry<String, MutableInt> entry : entries) {
-				System.out.println(entry.getKey() + ": " + entry.getValue());
-			}
-			System.out.println("-----------------------");
-			System.out.println();
-		}
-	}
-	
-	public static void main(String[] args) throws Exception {
-		HashMap<String, HashMap<String, MutableInt>> counters = 
-				new JavaParser(new File("C:\\Users\\fjsj\\AppData\\Local\\Temp\\1341192512523-0\\javacv")).parse();
-		printResult(counters);
 	}
 }

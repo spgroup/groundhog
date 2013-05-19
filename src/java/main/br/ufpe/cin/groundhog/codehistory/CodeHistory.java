@@ -3,8 +3,6 @@ package br.ufpe.cin.groundhog.codehistory;
 import java.io.File;
 import java.util.Date;
 
-import br.ufpe.cin.groundhog.scmclient.EmptyProjectAtDateException;
-
 /**
  * An interface that defines the code history functionality.
  * This functionality allows temporal navigation through source code history,
@@ -25,7 +23,7 @@ public interface CodeHistory {
 	 * @throws Exception when something nasty happens
 	 */
 	public File checkoutToDate(String project, String url, Date date)
-			throws CheckoutException, EmptyProjectAtDateException;
+			throws CheckoutException;
 	
 	/**
 	 * Checks out the given project according to the given date. Returns a new temporary folder
@@ -39,6 +37,6 @@ public interface CodeHistory {
 	 * @throws Exception when something nasty happens
 	 */
 	public File checkoutToDate(String project, File repositoryFolder, Date date)
-			throws CheckoutException, EmptyProjectAtDateException;
+			throws CheckoutException;
 
 }
