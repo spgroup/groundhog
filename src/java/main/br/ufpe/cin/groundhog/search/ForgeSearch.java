@@ -27,9 +27,9 @@ public interface ForgeSearch {
 	public List<Project> getProjects(String term, int page) throws SearchException;
 
 	/**
-	 * Provides a dump of every repository in the forge.
+	 * Provides a dump of every projects in the forge.
 	 * 
-	 * @param start The search will start from the repository 
+	 * @param start The search will start from the projects 
 	 * with the this specified integer ID.
 	 * @param limit Maximum number of projects to be returned. Negative values 
 	 * for this parameter will result in an unbounded search.
