@@ -241,6 +241,8 @@ public class CmdMain {
 		
 		List<String> terms = opt.getArguments();
 		String term = Joiner.on(" ").join(terms);
+		//TODO remove, only for testing 
+		term = null;
 		File destinationFolder = opt.getDestinationFolder();
 		if (destinationFolder == null) {
 			destinationFolder = FileUtil.getInstance().createTempDir();
