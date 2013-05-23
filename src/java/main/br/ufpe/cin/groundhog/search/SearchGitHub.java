@@ -1,12 +1,9 @@
 package br.ufpe.cin.groundhog.search;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 import br.ufpe.cin.groundhog.GroundhogException;
 import br.ufpe.cin.groundhog.Project;
@@ -50,7 +47,7 @@ public class SearchGitHub implements ForgeSearch {
 				String element = jsonArray.get(i).toString();
 				Project p = gson.fromJson(element, Project.class);
 				p.setSCM(SCM.GIT);
-				p.setScmURL(String.format("git://github.com/%s/%s.git", p.getOwner(), p.getName()));
+				p.setScmURL(String.format("git@github.com:%s/%s.git", p.getOwner(), p.getName()));
 				projects.add(p);
 			}
 			return projects;
@@ -79,7 +76,7 @@ public class SearchGitHub implements ForgeSearch {
 			
 			Project p = new GsonBuilder().excludeFieldsWithModifiers(Modifier.VOLATILE).create().fromJson(json, Project.class);
 			p.setSCM(SCM.GIT);
-			p.setScmURL(String.format("git://github.com/%s/%s.git", username, p.getName()));
+			p.setScmURL(String.format("git@github.com:%s/%s.git", username, p.getName()));
 			
 			return Lists.newArrayList(p);
 		
@@ -87,11 +84,5 @@ public class SearchGitHub implements ForgeSearch {
 			e.printStackTrace();
 			return null;
 		}
-	}
-	
-	public static void main(String[] args) throws FileNotFoundException {
-		String json = new Scanner(new File("/home/ghlp/Desktop/example.json")).nextLine();
-		Project p = new GsonBuilder().excludeFieldsWithModifiers(Modifier.VOLATILE).create().fromJson(json, Project.class);
-		System.out.println(p.getName());
 	}
 }

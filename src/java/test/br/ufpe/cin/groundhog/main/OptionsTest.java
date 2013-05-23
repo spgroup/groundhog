@@ -10,8 +10,7 @@ public class OptionsTest {
 	@Test
 	public void testJsonInputFile() {
 		Options op = new Options();
-		op.setInputFile(new File(
-				"/home/ghlp/workspace/java/groundhog/grounghog.json"));
+		op.setInputFile(new File("groundhog.json"));
 		Assert.assertNotNull(op.getInputFile());
 	}
 }

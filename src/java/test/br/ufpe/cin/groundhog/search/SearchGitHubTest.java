@@ -1,8 +1,13 @@
 package br.ufpe.cin.groundhog.search;
 
+
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import br.ufpe.cin.groundhog.Project;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -22,7 +27,9 @@ public class SearchGitHubTest {
 		try {
 			
 			long time = System.nanoTime();
-			System.out.println(searchGitHub.getProjects("github api", 1));
+			List<Project> projects = searchGitHub.getProjects("groundhog", 1);
+			Assert.assertNotNull(projects);
+			
 			System.out.printf("Elapsed: %.2f",
 					(System.nanoTime() - time) / 1000000000.0);
 		} catch (Exception e) {

@@ -14,9 +14,7 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.CheckoutConflictException;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRefNameException;
-import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.RefAlreadyExistsException;
-import org.eclipse.jgit.api.errors.TransportException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
@@ -33,17 +31,15 @@ public class GitClient {
 	 * into the destination directory.
 	 * @param url the project's URL
 	 * @param destination
-	 * @throws InvalidRemoteException
-	 * @throws TransportException
-	 * @throws GitAPIException
 	 */
 	public void clone(String url, File destination) {
 		try {
-			Repository rep = Git.cloneRepository()
+			Git git = Git.cloneRepository()
 								.setURI(url)
 								.setDirectory(destination)
-								.call().getRepository();
-			rep.close();
+								.call();
+			
+			git.getRepository().close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

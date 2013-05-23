@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Test;
 
 import br.ufpe.cin.groundhog.Project;
 
@@ -20,8 +21,9 @@ public class SearchGoogleCodeTest {
 		searchGoogleCode = injector.getInstance(SearchGoogleCode.class);
 	}
 
+	@Test
 	public void testSimpleSearch() {
-		List<Project> projects = searchGoogleCode.getProjects("", 1);
+		List<Project> projects = searchGoogleCode.getProjects("java", 1);
 		Assert.assertNotNull(projects);
 	}
 }
