@@ -9,7 +9,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Stack;
 import java.util.Vector;
@@ -24,12 +23,9 @@ import org.jsoup.select.Elements;
 
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.extractor.Formats;
-import br.ufpe.cin.groundhog.http.HttpModule;
 import br.ufpe.cin.groundhog.http.Requests;
 
-import com.google.inject.Guice;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.ListenableFuture;
 import com.ning.http.client.Response;
@@ -40,13 +36,15 @@ public class CrawlSourceForge extends ForgeCrawler {
 	private ConcurrentHashMap<String, Date> mapModifiedDate;
 	private SimpleDateFormat dateFormat;
 	private Requests requests;
+	private File destinationFolder;
 
 	@Inject
 	public CrawlSourceForge(Requests requests, File destinationFolder) {
-		super(destinationFolder);
+		super();
 		this.mapModifiedDate = new ConcurrentHashMap<String, Date>();
 		this.dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
 		this.requests = requests;
+		this.destinationFolder = destinationFolder;
 	}
 
 	private void parseURLsFromPage(String project, String html,
@@ -189,35 +187,5 @@ public class CrawlSourceForge extends ForgeCrawler {
 			downloadAndSaveFile(projectName, url, is, destinationFolder);
 		}
 		return new File(destinationFolder, projectName);
-	}
-
-	private void setProjectsDirectoriesDates() {
-		Enumeration<String> e = mapModifiedDate.keys();
-		for (String relativePath = e.nextElement(); e.hasMoreElements(); relativePath = e
-				.nextElement()) {
-			Date modifiedDate = mapModifiedDate.get(relativePath);
-			File f = new File(destinationFolder, relativePath);
-			if (f.exists()) {
-				f.setLastModified(modifiedDate.getTime());
-			}
-		}
-	}
-
-	public static void main(String[] args) throws Exception {
-		long time = System.nanoTime();
-		List<Project> projects = Arrays.asList(new Project("geom-java", ""),
-				new Project("im4java", ""));
-		File dest = new File("C:\\Users\\fjsj\\Downloads\\EponaProjects\\");
-		Injector injector = Guice.createInjector(new HttpModule());
-		Requests requests = injector.getInstance(Requests.class);
-
-		CrawlSourceForge crawl = new CrawlSourceForge(requests, dest);
-		List<Future<File>> fs = crawl.downloadProjects(projects);
-		crawl.shutdown();
-		for (Future<File> f : fs)
-			f.get();
-		crawl.setProjectsDirectoriesDates();
-		System.out.printf("Elapsed: %.2f",
-				(System.nanoTime() - time) / 1000000000.0);
 	}
 }

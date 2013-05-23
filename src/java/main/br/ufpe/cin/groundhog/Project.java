@@ -1,8 +1,8 @@
 package br.ufpe.cin.groundhog;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import br.ufpe.cin.groundhog.util.Dates;
 
 /**
  * Represents a software project in Groundhog
@@ -330,14 +330,10 @@ public class Project {
 	}
 
 	/**
-	 * 
 	 * @param createdAtParam the String correspondent to the creation date of the project in question. e.g: 2012-04-28T15:40:35Z
-	 * @throws java.text.ParseException
 	 */
-	public void setCreatedAt(String createdAtParam) throws java.text.ParseException {
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Date createAtDate = format.parse(createdAtParam.replace('T', ' ').replace("Z", ""));
-
+	public void setCreatedAt(String createdAtParam) {
+		Date createAtDate = new Dates("yyyy-MM-dd HH:mm:ss").format(createdAtParam);
 		this.createdAt = createAtDate;
 	}
 
@@ -359,16 +355,11 @@ public class Project {
 	}
 
 	/**
-	 * 
 	 * @param lastPushedAtParam the String correspondent to the date of the last push to the project
 	 * in question. e.g: 2012-04-28T15:40:35Z
-	 * @throws ParseException
-	 * @throws java.text.ParseException
 	 */
-	public void setLastPushedAt(String lastPushedAtParam) throws ParseException, java.text.ParseException {		
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Date lastPushDate = format.parse(lastPushedAtParam.replace('T', ' ').replace("Z", ""));
-
+	public void setLastPushedAt(String lastPushedAtParam){		
+		Date lastPushDate = new Dates("yyyy-MM-dd HH:mm:ss").format(lastPushedAtParam);
 		this.lastPushedAt = lastPushDate;
 	}
 

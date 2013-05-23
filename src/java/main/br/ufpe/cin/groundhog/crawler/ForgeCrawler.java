@@ -19,17 +19,14 @@ import br.ufpe.cin.groundhog.main.JsonInput;
  *
  */
 public abstract class ForgeCrawler {
+	
 	private ExecutorService ex;
-	protected File destinationFolder;
 	
 	/**
 	 * Constructs a new ForgeCrawler with a given destinationFolder.
-	 * 
-	 * @param destinationFolder folder into which projects will be downloaded
 	 */
-	protected ForgeCrawler(File destinationFolder) {
-		ex = Executors.newFixedThreadPool(JsonInput.getMaxThreads());
-		this.destinationFolder = destinationFolder;
+	protected ForgeCrawler() {
+		this.ex = Executors.newFixedThreadPool(JsonInput.getMaxThreads());
 	}
 	
 	/**
@@ -63,6 +60,9 @@ public abstract class ForgeCrawler {
 			});
 			fs.add(f);
 		}
+		
+		shutdown();
+		
 		return fs;
 	}
 	
@@ -70,7 +70,7 @@ public abstract class ForgeCrawler {
 	 * Guarantees downloads to be executed, but no new downloads will be accepted.
 	 * Should be called after downloadProjects.
 	 */
-	public void shutdown() {
+	private void shutdown() {
 		ex.shutdownNow();
 	}
 	

@@ -2,9 +2,6 @@ package br.ufpe.cin.groundhog.crawler;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.Future;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
@@ -16,10 +13,6 @@ import org.tmatesoft.svn.core.SVNException;
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.SCM;
 import br.ufpe.cin.groundhog.scmclient.GitClient;
-import br.ufpe.cin.groundhog.scmclient.ScmModule;
-
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 
 /**
  * A concrete class to crawl GitHub.
@@ -30,10 +23,12 @@ public class CrawlGoogleCode extends ForgeCrawler {
 	private static Logger logger = LoggerFactory.getLogger(CrawlGoogleCode.class);
 	
 	private final GitClient gitClient;
+	private final File destinationFolder;
 	
 	public CrawlGoogleCode(GitClient gitClient, File destinationFolder) {
-		super(destinationFolder);
+		super();
 		this.gitClient = gitClient;
+		this.destinationFolder = destinationFolder;
 	}
 	
 	@Override
@@ -70,21 +65,5 @@ public class CrawlGoogleCode extends ForgeCrawler {
 					"Are you sure this project came from Google Code?", projectName, scm));
 		}
 		return projectFolder;
-	}
-	
-	public static void main(String[] args) throws Exception {
-		long time = System.nanoTime();
-		List<Project> projects = Arrays.asList(
-				new Project("epubcheck", ""));
-		File dest = new File("C:\\Users\\fjsj\\Downloads\\EponaProjects\\");
-		
-		Injector injector = Guice.createInjector(new ScmModule());
-		GitClient gitClient = injector.getInstance(GitClient.class);
-		
-		CrawlGoogleCode crawl = new CrawlGoogleCode(gitClient, dest);
-		List<Future<File>> fs = crawl.downloadProjects(projects);
-		crawl.shutdown();
-		for (Future<File> f : fs) f.get();
-		System.out.printf("Elapsed: %.2f", (System.nanoTime() - time) / 1000000000.0);
 	}
 }

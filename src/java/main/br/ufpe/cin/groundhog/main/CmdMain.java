@@ -287,9 +287,8 @@ public final class CmdMain extends GroundhogMain {
 					}
 				}));
 			}
-			crawler.shutdown();
+			
 			ex.shutdown();
-
 			for (int i = 0; i < analysisFutures.size(); i++) {
 				try {
 					analysisFutures.get(i).get();

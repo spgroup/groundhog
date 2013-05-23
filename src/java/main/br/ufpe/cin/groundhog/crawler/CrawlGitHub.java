@@ -21,15 +21,16 @@ import com.google.inject.Inject;
  */
 public class CrawlGitHub extends ForgeCrawler {
 
-	private final static Logger logger = LoggerFactory
-			.getLogger(CrawlGitHub.class);
+	private final static Logger logger = LoggerFactory.getLogger(CrawlGitHub.class);
 
 	private final GitClient gitClient;
+	private final File destinationFolder;
 
 	@Inject
 	public CrawlGitHub(GitClient gitClient, File destinationFolder) {
-		super(destinationFolder);
+		super();
 		this.gitClient = gitClient;
+		this.destinationFolder = destinationFolder;
 	}
 
 	@Override
@@ -41,7 +42,7 @@ public class CrawlGitHub extends ForgeCrawler {
 
 		logger.info(String.format("Downloading %s project..", project.getName()));
 
-		gitClient.clone(cloneUrl, projectFolder);
+		this.gitClient.clone(cloneUrl, projectFolder);
 		return projectFolder;
 	}
 }

@@ -1,6 +1,5 @@
 package br.ufpe.cin.groundhog.search;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -26,6 +25,7 @@ import com.ning.http.client.Response;
  *
  */
 public class SearchGoogleCode implements ForgeSearch {
+	
 	private static String root = "http://code.google.com";
 	private final Requests requests;
 	
@@ -38,17 +38,12 @@ public class SearchGoogleCode implements ForgeSearch {
 	 * Fetches and returns the checkout command String for the project
 	 * @param html the HTML content of the page to be parsed
 	 * @return the checkout command within the given HTML page
-	 * @throws IOException
 	 */
-	private String parseCheckoutCommand(String html) throws IOException {
+	private String parseCheckoutCommand(String html) {
 		Document doc = Jsoup.parse(html);
 		Elements es = doc.select("#checkoutcmd");
 		
-		if (es.isEmpty()) {
-			return "";
-		} else {
-			return es.first().text();
-		}
+		return es.isEmpty() ? "" : es.first().text();
 	}
 	
 	/**
@@ -57,18 +52,15 @@ public class SearchGoogleCode implements ForgeSearch {
 	 * @param project the project to which the checkout must be applied
 	 */
 	private void setCheckoutCommandToProject(String command, Project project) {
+		String url = command.split(" ")[2];
+		project.setScmURL(url);
+
 		if (command.startsWith("svn")) {
-			String url = command.split(" ")[2];
 			project.setSCM(SCM.SVN);
-			project.setScmURL(url);
 		} else if (command.startsWith("git")) {
-			String url = command.split(" ")[2];
 			project.setSCM(SCM.GIT);
-			project.setScmURL(url);
 		} else if (command.startsWith("hg")) {
-			String url = command.split(" ")[2];
 			project.setSCM(SCM.HG);
-			project.setScmURL(url);
 		} else if (command.equals("")) {
 			project.setSCM(SCM.NONE);
 		} else {
@@ -79,13 +71,12 @@ public class SearchGoogleCode implements ForgeSearch {
 	public List<Project> getProjects(String term, int page) throws SearchException {
 		try {
 			List<Project> projects = new ArrayList<Project>();
-			String paramsStr =
-				new ParamBuilder().
-				add("q", term + " label:Java").
-				add("start", String.valueOf((page - 1) * 10)).
-				build();
+			String params = new ParamBuilder()
+									.add("q", term + " label:Java")
+									.add("start", String.valueOf((page - 1) * 10))
+									.build();
 			
-			Document doc = Jsoup.parse(requests.get(root + "/hosting/search?" + paramsStr));
+			Document doc = Jsoup.parse(requests.get(root + "/hosting/search?" + params));
 			for (Element tr : doc.select("#serp table tbody tr")) {
 				Element el = tr.child(0).child(0);
 				
@@ -93,22 +84,19 @@ public class SearchGoogleCode implements ForgeSearch {
 				// of people watching the project on Google Code
 				Element span = tr.child(1).child(2).child(0);
 				
-				String projectName, description, imgSrc, iconURL, sourceCodeUrl;
-				int stars;
+				String projectName = el.attr("href").split("/")[2];
+				String description = tr.child(1).ownText();
+				String iconURL = el.child(0).attr("src");
 				
-				projectName = el.attr("href").split("/")[2];
-				description = tr.child(1).ownText();
-				imgSrc = el.child(0).attr("src");
-				iconURL = imgSrc;
-				stars = Integer.parseInt(span.text());
-				
-				if (imgSrc.startsWith("/")) {
+				if (iconURL.startsWith("/")) {
 					iconURL = root + iconURL;
 				}
 				
-				sourceCodeUrl = "https://code.google.com/p/" + projectName + "/source/browse/";
+				String sourceCodeUrl = "https://code.google.com/p/" + projectName + "/source/browse/";
 				
 				Project forgeProject = new Project(projectName, description, iconURL, sourceCodeUrl);
+
+				int stars = Integer.parseInt(span.text());
 				forgeProject.setWatchersCount(stars);
 				forgeProject.setFollowersCount(stars);
 				projects.add(forgeProject);

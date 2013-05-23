@@ -62,7 +62,6 @@ public class TestMain {
 		logger.info("2 - Download 1st result...");
 		ForgeCrawler crawler = new CrawlGitHub(injector.getInstance(GitClient.class), downloadFolder);
 		List<Future<File>> futures = crawler.downloadProjects(projects);
-		crawler.shutdown();
 		File repositoryFolder = null;
 		for (Future<File> f : futures) { // wait for download
 			repositoryFolder = f.get();
@@ -111,7 +110,6 @@ public class TestMain {
 		
 		ForgeCrawler crawler = new CrawlSourceForge(requests, downloadFolder);
 		List<Future<File>> futures = crawler.downloadProjects(projects);
-		crawler.shutdown();
 		File repositoryFolder = null;
 		for (Future<File> f : futures) { // wait for download
 			repositoryFolder = f.get();
@@ -153,7 +151,6 @@ public class TestMain {
 		logger.info("2 - Download 1st result...");
 		ForgeCrawler crawler = new CrawlGoogleCode(injector.getInstance(GitClient.class), downloadFolder);
 		List<Future<File>> futures = crawler.downloadProjects(projects);
-		crawler.shutdown();
 		File repositoryFolder = null;
 		for (Future<File> f : futures) { // wait for download
 			repositoryFolder = f.get();
