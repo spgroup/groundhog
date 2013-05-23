@@ -23,15 +23,21 @@ public class SearchGitHubTest {
 	}
 
 	@Test
-	public void testSimpleSearch() {
+	public void testSearchByProjectName() {
 		try {
-			
-			long time = System.nanoTime();
 			List<Project> projects = searchGitHub.getProjects("groundhog", 1);
 			Assert.assertNotNull(projects);
-			
-			System.out.printf("Elapsed: %.2f",
-					(System.nanoTime() - time) / 1000000000.0);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail();
+		}
+	}
+
+	@Test
+	public void testSearchProjectsByUser() {
+		try {
+			List<Project> projects = searchGitHub.getProjects("groundhog", "spg", 1);
+			Assert.assertNotNull(projects);
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail();

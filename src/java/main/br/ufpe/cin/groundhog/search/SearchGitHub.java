@@ -24,7 +24,7 @@ import com.google.inject.Inject;
  * @author fjsj, gustavopinto, rodrigoalvesvieira
  */
 public class SearchGitHub implements ForgeSearch {
-	private final static String root = "https://api.github.com";
+	private final static String ROOT = "https://api.github.com";
 	private final Requests requests;
 	private final Gson gson;
 
@@ -34,15 +34,17 @@ public class SearchGitHub implements ForgeSearch {
 		this.gson = new Gson();
 	}
 
-	private List<Project> gatherProjects(String url) {
+	@Override
+	public List<Project> getProjects(String term, int page)
+			throws SearchException {
 		try {
-			List<Project> projects = new ArrayList<Project>();
-
+			String url = String.format("%s/legacy/repos/search/%s?start_page=%s&language=java", ROOT, requests.encodeURL(term), page);
 			String json = requests.get(url);
 			
 			JsonObject jsonObject = gson.fromJson(json, JsonElement.class).getAsJsonObject();
 			JsonArray jsonArray = jsonObject.get("repositories").getAsJsonArray();
 
+			List<Project> projects = new ArrayList<Project>();
 			for (int i = 0; i < jsonArray.size(); i++) {
 				String element = jsonArray.get(i).toString();
 				Project p = gson.fromJson(element, Project.class);
@@ -51,17 +53,11 @@ public class SearchGitHub implements ForgeSearch {
 				projects.add(p);
 			}
 			return projects;
+		
 		} catch (IOException | GroundhogException e) {
 			e.printStackTrace();
 			throw new SearchException(e);
 		}
-	}
-
-	public List<Project> getProjects(String term, int page)
-			throws SearchException {
-		term = requests.encodeURL(term);
-		String searchUrl = String.format("%s/legacy/repos/search/%s?start_page=%s&language=java", root, term, page);
-		return gatherProjects(searchUrl);
 	}
 
 	@Override
@@ -69,20 +65,23 @@ public class SearchGitHub implements ForgeSearch {
 			throws SearchException {
 		
 		try {
-			term = requests.encodeURL(term);
-			String url = String.format("%s/repos/%s/%s", root, username, term);
+			String url = String.format("%s/repos/%s/%s", ROOT, username, requests.encodeURL(term));
+			String json = requests.get(url);
 			
-			String 	json = requests.get(url);
+			Project p = new GsonBuilder()
+								.excludeFieldsWithModifiers(Modifier.VOLATILE)
+								.create()
+								.fromJson(json, Project.class);
 			
-			Project p = new GsonBuilder().excludeFieldsWithModifiers(Modifier.VOLATILE).create().fromJson(json, Project.class);
 			p.setSCM(SCM.GIT);
+			p.setOwner(username);
 			p.setScmURL(String.format("git@github.com:%s/%s.git", username, p.getName()));
 			
 			return Lists.newArrayList(p);
 		
 		} catch (Throwable e) {
 			e.printStackTrace();
-			return null;
+			throw new SearchException(e);
 		}
 	}
 }

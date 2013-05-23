@@ -9,8 +9,8 @@ import br.ufpe.cin.groundhog.Project;
  * A forge search must receive a search term and a page number (1-indexed) and
  * return a list of ForgeProjects objects. These projects can be used by a ForgeCrawler
  * to download source code.
- * @author fjsj
- *
+ * 
+ * @author fjsj, gustavopinto
  */
 public interface ForgeSearch {
 	
@@ -21,7 +21,7 @@ public interface ForgeSearch {
 	 * @param page 1-indexed page to get results (ie: starts with 1)
 	 * 
 	 * @return list of ForgeProject entities with projects info
-	 * @throws Exception when something nasty happens
+	 * @throws SearchException when something nasty happens
 	 */
 	public List<Project> getProjects(String term, int page) throws SearchException;
 	
@@ -33,7 +33,7 @@ public interface ForgeSearch {
 	 * @param page 1-indexed page to get results (ie: starts with 1)
 	 * 
 	 * @return list of ForgeProject entities with projects info
-	 * @throws Exception when something nasty happens
+	 * @throws SearchException when something nasty happens
 	 */
 	public List<Project> getProjects(String term, String username, int page) throws SearchException;
 

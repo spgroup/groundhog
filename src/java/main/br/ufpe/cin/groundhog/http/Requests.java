@@ -80,11 +80,4 @@ public class Requests {
 			throw new HttpException(e);
 		}
 	}
-	
-	/**
-	 * Closes the connection
-	 */
-	public void close() {
-		this.asyncClient.close();
-	}
 }

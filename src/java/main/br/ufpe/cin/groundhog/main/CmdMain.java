@@ -157,7 +157,7 @@ public final class CmdMain extends GroundhogMain {
 	 * @return the checked out repository
 	 */
 	public File downloadAndCheckoutProject(Project project,
-			Date datetime, Future<File> repositoryFolderFuture) {
+			Date datetime, Future<File> repositoryFolderFuture) throws EmptyProjectAtDateException {
 
 		String name = project.getName();
 		String datetimeStr = new Dates("yyyy-MM-dd").format(datetime);
@@ -182,12 +182,10 @@ public final class CmdMain extends GroundhogMain {
 
 			return checkedOutRepository;
 
-		} catch (EmptyProjectAtDateException e) {
-			logger.warn(format("Project %s was empty at specified date: %s", name, datetimeStr));
-			return null;
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(format("Error while downloading project %s: %s", name, e.getMessage()));
+			logger.error(format("Project %s can't be analyzed", project.getName()));
 			return null;
 		}
 	}
@@ -285,8 +283,6 @@ public final class CmdMain extends GroundhogMain {
 
 						if (checkedOutRepository != null) {
 							analyzeProject(project, checkedOutRepository, datetime, metricsFolder, metricsFormat);
-						} else {
-							logger.warn(format("Project %s can't be analyzed", project.getName()));
 						}
 					}
 				}));
@@ -309,13 +305,11 @@ public final class CmdMain extends GroundhogMain {
 		}
 	}
 
-	private void createTempFolders(File destinationFolder, File metricsFolder) {
-		if (!destinationFolder.exists()) {
-			destinationFolder.mkdirs();
-		}
-
-		if (!metricsFolder.exists()) {
-			metricsFolder.mkdirs();
+	private void createTempFolders(File... folders) {
+		for (File file : folders) {
+			if (!file.exists()) {
+				file.mkdirs();
+			}	
 		}
 	}
 }
