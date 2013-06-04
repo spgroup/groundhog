@@ -97,7 +97,7 @@ public class TestMain {
 		Injector injector = Guice.createInjector(new SearchModule(), new HttpModule(), new CodeHistoryModule());
 		SearchSourceForge search = injector.getInstance(SearchSourceForge.class);
 		
-		List<Project> projects = search.getProjects("facebook chat", 1);
+		List<Project> projects = search.getProjects("facebook chat", 1, -1);
 		if (projects.size() == 0) {
 			logger.info("Ooops, no projects found! Aborting.");
 			System.exit(0);

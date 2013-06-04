@@ -284,7 +284,7 @@ public class CmdMain {
 		List<Project> allProjects = null;
 		List<Project> projects = new ArrayList<Project>();
 		try {
-			allProjects = search.getProjects(term, 1);
+			allProjects = search.getProjects(term, 1,-1);
 		} catch (SearchException e) {
 			e.printStackTrace();
 			logger.error(e.getMessage());
