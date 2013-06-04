@@ -76,7 +76,10 @@ public class SearchGoogleCode implements ForgeSearch {
 		}
 	}
 	
-	public List<Project> getProjects(String term, int page) throws SearchException {
+	public List<Project> getProjects(String term, int page, int limit) throws SearchException {
+		if( term == null){
+			return getAllForgeProjects(page, limit);
+		}
 		try {
 			List<Project> projects = new ArrayList<Project>();
 			String paramsStr =
@@ -86,7 +89,11 @@ public class SearchGoogleCode implements ForgeSearch {
 				build();
 			
 			Document doc = Jsoup.parse(requests.get(root + "/hosting/search?" + paramsStr));
+			int cont = 0;
 			for (Element tr : doc.select("#serp table tbody tr")) {
+				
+				if( cont >= limit && limit >=0 ) break; 
+				
 				Element el = tr.child(0).child(0);
 				
 				// The span element within the main search result that contains the number
@@ -112,6 +119,7 @@ public class SearchGoogleCode implements ForgeSearch {
 				forgeProject.setWatchersCount(stars);
 				forgeProject.setFollowersCount(stars);
 				projects.add(forgeProject);
+				cont++;
 			}
 			
 			// get checkout commands for each project in parallel (asynchronously)
@@ -144,7 +152,7 @@ public class SearchGoogleCode implements ForgeSearch {
 	@Override
 	public List<Project> getAllForgeProjects(int start, int limit)
 			throws SearchException {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 }

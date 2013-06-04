@@ -287,6 +287,7 @@ public class CmdMain {
 			allProjects = search.getProjects(term, 1);
 		} catch (SearchException e) {
 			e.printStackTrace();
+			logger.error(e.getMessage());
 			return;
 		}
 		for (int i = 0; i < nProjects; i++) {

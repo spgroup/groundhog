@@ -20,11 +20,13 @@ public interface ForgeSearch {
 	 * @param term term to be searched (ex: a project name, like h2database). 
 	 * If the term is a null String then the method will return all the forge projects. 
 	 * @param page 1-indexed page to get results (ie: starts with 1).
+	 * @param limit Maximum number of projects to be returned. Negative values 
+	 * for this parameter will result in an unbounded search.
 	 * 
 	 * @return list of ForgeProject entities with projects info
 	 * @throws Exception when something nasty happens
 	 */
-	public List<Project> getProjects(String term, int page) throws SearchException;
+	public List<Project> getProjects(String term, int page, int limit) throws SearchException;
 
 	/**
 	 * Provides a dump of every projects in the forge.

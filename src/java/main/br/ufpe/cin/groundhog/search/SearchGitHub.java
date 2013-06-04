@@ -26,17 +26,29 @@ public class SearchGitHub implements ForgeSearch {
 	private final Requests requests;
 	private final Gson gson;
 
+	//used to increase the number of requests to github api per hour.
+	private String gitHubOauthAcessToken; 
+	
 	@Inject
 	public SearchGitHub(Requests requests) {
 		this.requests = requests;
 		this.gson = new Gson();
-	}	
+		this.gitHubOauthAcessToken = null;
+	}
 	
-	public List<Project> getProjects(String term, int page)
+	
+	public SearchGitHub(Requests requests, Gson gson,
+			String gitHubOauthAcessToken) {	
+		this.requests = requests;
+		this.gson = gson;
+		this.gitHubOauthAcessToken = gitHubOauthAcessToken; // TODO get this through command line parameter
+	}
+
+	public List<Project> getProjects(String term, int page, int limit)
 			throws SearchException {
 		try {
 			if( term == null ){
-				return getAllForgeProjects(0, -1);
+				return getAllForgeProjects(page, limit); 
 			}
 			List<Project> projects = new ArrayList<Project>();
 			String searchUrl  = null;					
@@ -49,7 +61,7 @@ public class SearchGitHub implements ForgeSearch {
 			JsonObject jsonObject = gson.fromJson(json, JsonElement.class).getAsJsonObject();			
 			JsonArray jsonArray = jsonObject.get("repositories").getAsJsonArray();
 			
-			for (int i = 0; i < jsonArray.size(); i++) {
+			for (int i = 0; i < jsonArray.size() && (i < limit || limit < 0); i++) {
 				String element = jsonArray.get(i).toString();
 				Project p = gson.fromJson(element, Project.class);
 				p.setSCM(SCM.GIT);
@@ -71,21 +83,40 @@ public class SearchGitHub implements ForgeSearch {
 			int totalRepositories = 0;
 			while(totalRepositories < limit || limit < 0){
 				searchUrl = root + String.format("/repositories?since=%s&language=java", since);
-				String json = requests.get(searchUrl);
-				JsonArray jsonArray = gson.fromJson(json, JsonElement.class).getAsJsonArray();
+				
+				if( this.gitHubOauthAcessToken != null){
+					searchUrl += String.format("&access_token=%s", this.gitHubOauthAcessToken);
+				}
+								
+				String jsonString = requests.get(searchUrl);
+				JsonElement jsonElement = gson.fromJson(jsonString, JsonElement.class);
+				if( jsonElement.isJsonObject() && jsonElement.getAsJsonObject().has("message") ){
+					throw new GroundhogException( jsonElement.getAsJsonObject().get("message").toString() );
+				}
+					
+				JsonArray jsonArray = jsonElement.getAsJsonArray();
 				for (int i = 0; i < jsonArray.size() && 
 						(totalRepositories + i < limit || limit < 0); i++) {
 					
-					//TODO - The v3 search and legacy search returns different information 
-					// regarding the project.
 					String repoName = jsonArray.get(i).getAsJsonObject().get("name").getAsString();					
 					
 					String searchUrlLegacy  = null;					
 					searchUrlLegacy = root
 							+ String.format(
 									"/legacy/repos/search/%s?language=java", repoName);
+					
+					if( this.gitHubOauthAcessToken != null){
+						searchUrlLegacy += String.format("&access_token=%s", this.gitHubOauthAcessToken);
+					}
+					
 					System.out.println(repoName + " " + searchUrlLegacy);
 					String jsonLegacy = requests.get(searchUrlLegacy);
+					
+
+					if( jsonElement.isJsonObject() && jsonElement.getAsJsonObject().has("message") ){
+						throw new GroundhogException( jsonElement.getAsJsonObject().get("message").toString() );
+					}
+					
 					JsonObject jsonObject = gson.fromJson(jsonLegacy, JsonElement.class).getAsJsonObject();			
 					JsonArray jsonArrayLegacy = jsonObject.get("repositories").getAsJsonArray();
 					
