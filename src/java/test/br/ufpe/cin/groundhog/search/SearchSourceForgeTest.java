@@ -20,7 +20,7 @@ public class SearchSourceForgeTest {
 	}
 
 	public void testSimpleSearch() {
-		List<Project> projects = searchSourceForge.getProjects("", 1);
+		List<Project> projects = searchSourceForge.getProjects("", 1, -1);
 		Assert.assertNotNull(projects);
 	}
 }

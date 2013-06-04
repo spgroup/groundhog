@@ -37,7 +37,7 @@ public class CrawlGitHubTest {
 
 		try {
 
-			Project playframework = searchGitHub.getProjects("playframework", 1).get(0);
+			Project playframework = searchGitHub.getProjects("playframework", 1,-1).get(0);
 			List<Project> projects = Arrays.asList(playframework);
 			CrawlGitHub crawl = new CrawlGitHub(gitClient, Files.createTempDir());
 			List<Future<File>> fs = crawl.downloadProjects(projects);

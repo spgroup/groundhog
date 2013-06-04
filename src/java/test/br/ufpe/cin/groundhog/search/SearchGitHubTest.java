@@ -22,7 +22,7 @@ public class SearchGitHubTest {
 		try {
 			
 			long time = System.nanoTime();
-			System.out.println(searchGitHub.getProjects("github api", 1));
+			System.out.println(searchGitHub.getProjects("github api", 1,-1));
 			System.out.printf("Elapsed: %.2f",
 					(System.nanoTime() - time) / 1000000000.0);
 		} catch (Exception e) {
