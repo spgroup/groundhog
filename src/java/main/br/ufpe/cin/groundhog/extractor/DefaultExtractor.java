@@ -11,6 +11,7 @@ import java.util.concurrent.Future;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import br.ufpe.cin.groundhog.GroundhogException;
 import br.ufpe.cin.groundhog.main.JsonInput;
 import br.ufpe.cin.groundhog.util.FileUtil;
 
@@ -69,7 +70,7 @@ public class DefaultExtractor implements Extractor {
 			try {
 				f.get();
 			} catch (InterruptedException | ExecutionException e) {
-				logger.warn("Unable to extract file");
+				logger.warn(String.format("Unable to extract file: %s", e.getMessage()));
 				e.printStackTrace();
 			}
 		}
@@ -95,14 +96,13 @@ public class DefaultExtractor implements Extractor {
 	public void extractFile(File file, File destinationFolder) {
 		if (file.isFile()) {
 			String fileName = file.getName();
-			boolean extracted = false;
-			
-			if(Formats.getInstance().isCompatible(fileName)) {
-				DefaultUncompressor.getInstance().uncompress(file, destinationFolder);
-				extracted = true;
-			}
-			
-			if (!extracted) {
+			try {
+				if(Formats.getInstance().isCompatible(fileName)) {
+					logger.info(String.format("Extracting the file %s..", fileName));
+					DefaultUncompressor.getInstance().uncompress(file, destinationFolder);
+				}
+			} catch (GroundhogException e) {
+				e.printStackTrace();
 				logger.warn("Unable to extract file (unkwown compression format): " + file.getAbsolutePath());
 			}
 		}

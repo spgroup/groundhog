@@ -10,6 +10,8 @@ import lzma.streams.LzmaInputStream;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 
+import br.ufpe.cin.groundhog.GroundhogException;
+
 /**
  * The default file uncompressor in Groundhog
  * @author fjsj
@@ -53,6 +55,7 @@ public class DefaultUncompressor {
 			} 
 		} catch (IOException e) {
 			e.printStackTrace();
+			throw new GroundhogException("Error when trying to extract the source code", e);
 		}
 	}
 
