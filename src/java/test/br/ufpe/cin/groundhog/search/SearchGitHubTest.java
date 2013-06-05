@@ -36,7 +36,7 @@ public class SearchGitHubTest {
 	@Test
 	public void testSearchProjectsByUser() {
 		try {
-			List<Project> projects = searchGitHub.getProjects("groundhog", "spg", 1);
+			List<Project> projects = searchGitHub.getProjects("groundhog", "spggroup", 1);
 			Assert.assertNotNull(projects);
 		} catch (Exception e) {
 			e.printStackTrace();

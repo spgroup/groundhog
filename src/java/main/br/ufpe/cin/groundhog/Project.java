@@ -11,7 +11,7 @@ import br.ufpe.cin.groundhog.util.Dates;
 public class Project {
 	private String name;
 	private String description;
-	private volatile String owner;
+	private User user;
 	private String iconURL;
 	private SCM scm;
 	private String scmURL;
@@ -108,16 +108,16 @@ public class Project {
 	 * Informs the project's author name
 	 * @return a String correspondent to the name of the author of the project
 	 */
-	public String getOwner() {
-		return this.owner;
+	public User getOwner() {
+		return this.user;
 	}
 
 	/**
 	 * Informs the project's author name
 	 * @param owner a {@link String} for the name of the project's author
 	 */
-	public void setOwner(String owner) {
-		this.owner = owner;
+	public void setOwner(User owner) {
+		this.user = owner;
 	}
 
 	/**
