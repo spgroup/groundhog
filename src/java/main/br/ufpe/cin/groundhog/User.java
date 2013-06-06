@@ -7,7 +7,7 @@ import java.util.Date;
  * @author gustavopinto, rodrigoalvesvieira
  */
 public class User {
-	private String username;
+	private String login;
 	private String company;
 	private String blog;
 	private boolean hirable;
@@ -18,11 +18,11 @@ public class User {
 	public int public_gists;
 	
 	public String getLogin() {
-		return this.username;
+		return this.login;
 	}
 
 	public void setLogin(String login) {
-		this.username = login;
+		this.login = login;
 	}
 
 	public String getCompany() {
