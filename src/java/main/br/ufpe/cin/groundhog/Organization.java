@@ -8,6 +8,9 @@ import java.util.Date;
  */
 public class Organization {
 	private String name;
+	private String location;
+	private int followers;
+	private int following;
 	private Date created_at;
 	public int public_repos;
 	public int public_gists;
@@ -42,5 +45,29 @@ public class Organization {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getLocation() {
+		return this.location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
+	}
+
+	public int getFollowers() {
+		return this.followers;
+	}
+
+	public void setFollowers(int followers) {
+		this.followers = followers;
+	}
+
+	public int getFollowing() {
+		return this.following;
+	}
+
+	public void setFollowing(int following) {
+		this.following = following;
 	}
 }
