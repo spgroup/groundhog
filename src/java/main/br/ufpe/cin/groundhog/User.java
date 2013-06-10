@@ -8,9 +8,11 @@ import java.util.Date;
  */
 public class User {
 	private String login;
+	private String email;
 	private String company;
+	private String location;
 	private String blog;
-	private boolean hirable;
+	private boolean hireable;
 	private int followers;
 	private int following;
 	private Date created_at;
@@ -41,12 +43,12 @@ public class User {
 		this.blog = blog;
 	}
 
-	public boolean isHirable() {
-		return this.hirable;
+	public boolean isHireable() {
+		return this.hireable;
 	}
 
-	public void setHirable(boolean hirable) {
-		this.hirable = hirable;
+	public void setHireable(boolean hireable) {
+		this.hireable = hireable;
 	}
 
 	public int getFollowers() {
@@ -87,5 +89,21 @@ public class User {
 
 	public void setPublic_gists(int public_gists) {
 		this.public_gists = public_gists;
+	}
+
+	public String getEmail() {
+		return this.email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getLocation() {
+		return this.location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
 	}
 }
