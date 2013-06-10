@@ -11,6 +11,7 @@ import br.ufpe.cin.groundhog.util.Dates;
 public class Project {
 	private String name;
 	private String description;
+	private String language;
 	private User user;
 	private String iconURL;
 	private SCM scm;
@@ -361,6 +362,21 @@ public class Project {
 	public void setLastPushedAt(String lastPushedAtParam){		
 		Date lastPushDate = new Dates("yyyy-MM-dd HH:mm:ss").format(lastPushedAtParam);
 		this.lastPushedAt = lastPushDate;
+	}
+	
+	/**
+	 * Informs the name of prevailing programming language in a project
+	 * @return name of programming language
+	 */
+	public String getLanguage() {
+		return this.language;
+	}
+
+	/**
+	 * Sets the name of prevailing programming language in a project
+	 */
+	public void setLanguage(String language) {
+		this.language = language;
 	}
 
 	@Override
