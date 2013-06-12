@@ -3,7 +3,6 @@ package br.ufpe.cin.groundhog.search;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import br.ufpe.cin.groundhog.GroundhogException;
 import br.ufpe.cin.groundhog.Project;
@@ -26,8 +25,8 @@ public class SearchGitHub implements ForgeSearch {
 	private final Requests requests;
 	private final Gson gson;
 
-	//used to increase the number of requests to github api per hour.
-	private String gitHubOauthAcessToken; 
+	//used to increase the number of github api requests per hour.
+	private String gitHubOauthAcessToken ; 
 	
 	@Inject
 	public SearchGitHub(Requests requests) {
@@ -41,7 +40,8 @@ public class SearchGitHub implements ForgeSearch {
 			String gitHubOauthAcessToken) {	
 		this.requests = requests;
 		this.gson = gson;
-		this.gitHubOauthAcessToken = gitHubOauthAcessToken; // TODO get this through command line parameter
+		//Personal API Access Tokens
+		this.gitHubOauthAcessToken = gitHubOauthAcessToken; // TODO get this through command line parameter		
 	}
 
 	public List<Project> getProjects(String term, int page, int limit)

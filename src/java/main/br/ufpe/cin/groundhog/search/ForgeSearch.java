@@ -28,6 +28,8 @@ public interface ForgeSearch {
 	 */
 	public List<Project> getProjects(String term, int page, int limit) throws SearchException;
 
+	//TODO define a better name for parameter'int start' because it has defferent meaning for different forges
+	
 	/**
 	 * Provides a dump of every projects in the forge.
 	 * 

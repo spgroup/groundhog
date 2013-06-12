@@ -240,9 +240,9 @@ public class CmdMain {
 		opt.setMetricsFormat(MetricsOutputFormat.JSON);
 		
 		List<String> terms = opt.getArguments();
-		String term = Joiner.on(" ").join(terms);
-		//TODO remove, only for testing 
-		term = null;
+		String term = Joiner.on(" ").join(terms);		
+		//term = null; // TODO use when there are no project name arguments
+		
 		File destinationFolder = opt.getDestinationFolder();
 		if (destinationFolder == null) {
 			destinationFolder = FileUtil.getInstance().createTempDir();
@@ -284,7 +284,7 @@ public class CmdMain {
 		List<Project> allProjects = null;
 		List<Project> projects = new ArrayList<Project>();
 		try {
-			allProjects = search.getProjects(term, 1,-1);
+			allProjects = search.getProjects(term, 1, -1);
 		} catch (SearchException e) {
 			e.printStackTrace();
 			logger.error(e.getMessage());
