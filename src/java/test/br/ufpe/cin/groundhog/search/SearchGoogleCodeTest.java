@@ -1,18 +1,15 @@
 package br.ufpe.cin.groundhog.search;
 
-import java.util.List;
+import br.ufpe.cin.groundhog.Project;
 
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import br.ufpe.cin.groundhog.Project;
-
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 public class SearchGoogleCodeTest {
-
 	private SearchGoogleCode searchGoogleCode;
 
 	@Before
@@ -23,8 +20,7 @@ public class SearchGoogleCodeTest {
 
 	@Test
 	public void testSimpleSearch() {
-		List<Project> projects = searchGoogleCode.getProjects("java", 1);
-		System.out.println(projects);
+		List<Project> projects = searchGoogleCode.getProjects("", 1, -1);
 		Assert.assertNotNull(projects);
 	}
 }

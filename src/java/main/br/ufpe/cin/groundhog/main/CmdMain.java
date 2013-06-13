@@ -234,7 +234,6 @@ public final class CmdMain extends GroundhogMain {
 	@Override
 	public void run(JsonInput input) {
 		try {
-
 			final File destinationFolder = input.getDest();
 			final File metricsFolder = input.getOut();
 
@@ -256,7 +255,7 @@ public final class CmdMain extends GroundhogMain {
 			if(username != null && !username.isEmpty()) {
 				allProjects = search.getProjects(term, username, 1);				
 			} else {
-				allProjects = search.getProjects(term, 1);
+				allProjects = search.getProjects(term, 1,-1);
 			}
 
 			List<Project> projects = new ArrayList<Project>();
@@ -288,7 +287,7 @@ public final class CmdMain extends GroundhogMain {
 					}
 				}));
 			}
-			
+
 			ex.shutdown();
 			for (int i = 0; i < analysisFutures.size(); i++) {
 				try {

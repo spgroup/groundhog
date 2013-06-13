@@ -34,7 +34,7 @@ public class CrawlSourceForgeTest {
 	@Test
 	public void testCrawlGithub() {
 		try {
-			Project project = searchSourceForge.getProjects("geom-java", 1).get(0);
+			Project project = searchSourceForge.getProjects("geom-java", 1, -1).get(0);
 			List<Project> projects = Arrays.asList(project);
 			
 			CrawlSourceForge crawl = new CrawlSourceForge(requests, Files.createTempDir());

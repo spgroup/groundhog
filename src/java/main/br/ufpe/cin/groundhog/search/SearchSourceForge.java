@@ -29,7 +29,10 @@ public class SearchSourceForge implements ForgeSearch {
 		this.requests = requests;
 	}
 	
-	public List<Project> getProjects(String term, int page) throws SearchException {
+	public List<Project> getProjects(String term, int page, int limit ) throws SearchException {
+		if( term == null){
+			return getAllForgeProjects(page, limit);
+		}
 		try {
 			String paramsStr = new ParamBuilder()
 									.add("q", term)
@@ -40,7 +43,10 @@ public class SearchSourceForge implements ForgeSearch {
 			Document doc = Jsoup.parse(requests.get("http://sourceforge.net/directory/language:java/?" + paramsStr));
 			
 			List<Project> projects = new ArrayList<Project>();
+			int cont = 0;
+			
 			for (Element li: doc.select(".projects > li")) {
+				if(cont >= limit && limit >=0 ) break;
 				Element a = li.select("[itemprop=url]").first();
 			    
 				if (a != null) {
@@ -56,7 +62,9 @@ public class SearchSourceForge implements ForgeSearch {
 					
 					projectURL = String.format("http://sourceforge.net/projects/%s/files/", projectName);
 					
-					projects.add(new Project(projectName, description, iconURL, SCM.SOURCE_FORGE, projectURL));
+					Project forgeProject = new Project(projectName, description, iconURL, SCM.SOURCE_FORGE, projectURL);
+					projects.add(forgeProject);
+					cont++;
 				}
 			}
 			return projects;
@@ -68,6 +76,13 @@ public class SearchSourceForge implements ForgeSearch {
 
 	@Override
 	public List<Project> getProjects(String term, String username, int page)
+			throws SearchException {
+		throw new UnsupportedOperationException("not implemented yet");
+	}
+	
+	// yet to be implemented
+	@Override
+	public List<Project> getAllForgeProjects(int start, int limit)
 			throws SearchException {
 		throw new UnsupportedOperationException("not implemented yet");
 	}

@@ -34,7 +34,7 @@ public class CrawGoogleCodeTest {
 	@Test
 	public void testCrawlGithub() {
 		try {
-			Project project = searchGoogleCode.getProjects("java", 1).get(0);
+			Project project = searchGoogleCode.getProjects("java", 1,-1).get(0);
 			List<Project> projects = Arrays.asList(project);
 			
 			CrawlGoogleCode crawl = new CrawlGoogleCode(gitClient, Files.createTempDir());

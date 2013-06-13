@@ -55,7 +55,7 @@ public class TestMain {
 		Injector injector = Guice.createInjector(new SearchModule(), new CodeHistoryModule(), new CodeHistoryModule(), new ScmModule());
 		SearchGitHub search = injector.getInstance(SearchGitHub.class);
 		
-		List<Project> projects = search.getProjects(term, 1);
+		List<Project> projects = search.getProjects(term, 1, -1);
 		Project project = projects.get(0);
 		projects = Arrays.asList(project); // analyze only the first project 
 		
@@ -97,7 +97,7 @@ public class TestMain {
 		Injector injector = Guice.createInjector(new SearchModule(), new HttpModule(), new CodeHistoryModule());
 		SearchSourceForge search = injector.getInstance(SearchSourceForge.class);
 		
-		List<Project> projects = search.getProjects("facebook chat", 1);
+		List<Project> projects = search.getProjects("facebook chat", 1, -1);
 		if (projects.size() == 0) {
 			logger.info("Ooops, no projects found! Aborting.");
 			System.exit(0);
@@ -144,7 +144,7 @@ public class TestMain {
 		Injector injector = Guice.createInjector(new SearchModule(), new CodeHistoryModule(), new ScmModule());
 		SearchGoogleCode search = injector.getInstance(SearchGoogleCode.class);
 		
-		List<Project> projects = search.getProjects(term, 1);
+		List<Project> projects = search.getProjects(term, 1, -1);
 		Project project = projects.get(0);
 		projects = Arrays.asList(project); // analyze only the first project 
 		
