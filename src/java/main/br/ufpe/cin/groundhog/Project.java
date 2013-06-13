@@ -2,9 +2,6 @@ package br.ufpe.cin.groundhog;
 
 import java.util.Date;
 import java.util.List;
-
-import com.google.common.collect.Lists;
-
 import br.ufpe.cin.groundhog.util.Dates;
 
 /**
@@ -67,6 +64,12 @@ public class Project {
 			String sourceCodeURL) {
 		this(name, description, scm, scmURL);
 		this.sourceCodeURL = sourceCodeURL;
+	}
+	
+	public Project(String name, String description, String sourceCodeURL, SCM scm, String scmURL) {
+		this(name, description, sourceCodeURL);
+		this.scm = scm;
+		this.scmURL = scmURL;
 	}
 
 	/**

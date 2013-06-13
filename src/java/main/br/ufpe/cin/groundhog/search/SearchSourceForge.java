@@ -57,7 +57,8 @@ public class SearchSourceForge implements ForgeSearch {
 					description = li.select("[itemprop=description]").first().text();
 					projectURL = String.format("http://sourceforge.net/projects/%s/files/", projectName);
 					
-					Project forgeProject = new Project(projectName, description, projectURL, SCM.SOURCE_FORGE, projectURL);					projects.add(forgeProject);
+					Project forgeProject = new Project(projectName, description, projectURL, SCM.SOURCE_FORGE, projectURL);
+					projects.add(forgeProject);
 					cont++;
 				}
 			}
