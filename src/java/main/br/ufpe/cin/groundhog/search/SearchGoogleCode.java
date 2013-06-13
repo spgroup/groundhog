@@ -25,7 +25,6 @@ import com.ning.http.client.Response;
  *
  */
 public class SearchGoogleCode implements ForgeSearch {
-	
 	private static String root = "http://code.google.com";
 	private final Requests requests;
 	
@@ -82,8 +81,7 @@ public class SearchGoogleCode implements ForgeSearch {
 			Document doc = Jsoup.parse(requests.get(root + "/hosting/search?" + params));
 			int cont = 0;
 			for (Element tr : doc.select("#serp table tbody tr")) {
-				
-				if( cont >= limit && limit >=0 ) break; 
+				if ( cont >= limit && limit >=0 ) break; 
 				
 				Element el = tr.child(0).child(0);
 				
@@ -93,16 +91,11 @@ public class SearchGoogleCode implements ForgeSearch {
 				
 				String projectName = el.attr("href").split("/")[2];
 				String description = tr.child(1).ownText();
-				String iconURL = el.child(0).attr("src");
-				
-				if (iconURL.startsWith("/")) {
-					iconURL = root + iconURL;
-				}
 				
 				String sourceCodeUrl = "https://code.google.com/p/" + projectName + "/source/browse/";
 				
-				Project forgeProject = new Project(projectName, description, iconURL, sourceCodeUrl);
-
+				Project forgeProject = new Project(projectName, description, sourceCodeUrl);
+				
 				int stars = Integer.parseInt(span.text());
 				forgeProject.setWatchersCount(stars);
 				forgeProject.setFollowersCount(stars);
