@@ -166,6 +166,8 @@ public final class CmdMain extends GroundhogMain {
 
 			File repositoryFolder = repositoryFolderFuture.get();
 			logger.info(format("Project %s was downloaded", name));
+			
+			logger.info(format("Project has %d forks", project.getForksCount()));
 
 			logger.info(format("Checking out project %s to %s...", name, datetimeStr));
 			CodeHistory codehistory = defineCodeHistory(project.getSCM());

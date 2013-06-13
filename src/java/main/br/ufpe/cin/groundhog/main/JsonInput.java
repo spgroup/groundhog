@@ -96,7 +96,7 @@ final class Search {
 
 	public Search(List<String> projects, String username) {
 		super();
-		this.projects = projects.size() > 0 ? projects : Lists.newArrayList("dagger");
+		this.projects = projects.size() > 0 ? projects : Lists.newArrayList("eclipse");
 		this.username = username;
 	}
 

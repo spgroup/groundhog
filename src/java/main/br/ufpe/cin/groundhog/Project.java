@@ -28,7 +28,7 @@ public class Project {
 
 	private int watchersCount;
 	private int followersCount;
-	private int forksCount;
+	private int forks_count;
 	private int issuesCount;
 
 	public Project() {
@@ -263,7 +263,7 @@ public class Project {
 	 * @return an integer correspondent to the number of forks
 	 */
 	public int getForksCount() {
-		return this.forksCount;
+		return this.forks_count;
 	}
 
 	/**
@@ -271,7 +271,7 @@ public class Project {
 	 * @param forksCount an integer for setting the number of forks the project has.
 	 */
 	public void setForksCount(int forksCount) {
-		this.forksCount = forksCount;
+		this.forks_count = forksCount;
 	}
 
 	/**
