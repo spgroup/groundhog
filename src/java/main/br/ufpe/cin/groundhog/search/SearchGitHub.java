@@ -58,6 +58,10 @@ public class SearchGitHub implements ForgeSearch {
 			String searchUrl = root + String.format("/legacy/repos/search/%s?start_page=%s&language=java",
 					requests.encodeURL(term), page);
 			
+			if( this.gitHubOauthAcessToken != null ){
+				searchUrl += String.format("&access_token=%s", this.gitHubOauthAcessToken);
+			}
+			
 			String json = requests.get(searchUrl);
 			JsonObject jsonObject = gson.fromJson(json, JsonElement.class).getAsJsonObject();			
 			JsonArray jsonArray = jsonObject.get("repositories").getAsJsonArray();
@@ -91,8 +95,13 @@ public class SearchGitHub implements ForgeSearch {
 			throws SearchException {
 		
 		try {
-			String url = String.format("%s/repos/%s/%s", REPO_API, username, requests.encodeURL(term));
-			String json = requests.get(url);
+			String searchUrl = String.format("%s/repos/%s/%s", REPO_API, username, requests.encodeURL(term));
+			
+			if( this.gitHubOauthAcessToken != null){
+				searchUrl += String.format("&access_token=%s", this.gitHubOauthAcessToken);
+			}
+			
+			String json = requests.get(searchUrl);
 			
 			Project p = gson.fromJson(json, Project.class);
 			p.setSCM(SCM.GIT);
