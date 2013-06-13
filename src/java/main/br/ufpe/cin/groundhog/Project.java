@@ -392,7 +392,7 @@ public class Project {
 		int projectsWithForks = 0, i = 0, listSize = projects.size();
 		
 		if (listSize == 0) {
-		    throw new IllegalArgumentException("List projects can't be empty");
+		    throw new IllegalArgumentException("List of projects can't be empty");
 		}
 		
 		for (; i < listSize; i++) {
@@ -413,6 +413,10 @@ public class Project {
 	public static double getProjectsThatAreForks(List<Project> projects) {
 		double result = 0.0;
 		int projectsAreForks = 0, i = 0, listSize = projects.size();
+		
+		if (listSize == 0) {
+		    throw new IllegalArgumentException("List of projects can't be empty");
+		}
 		
 		for (; i < listSize; i++) {
 			if (projects.get(i).isFork()) {
