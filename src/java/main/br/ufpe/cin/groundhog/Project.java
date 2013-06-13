@@ -1,5 +1,6 @@
 package br.ufpe.cin.groundhog;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import br.ufpe.cin.groundhog.util.Dates;
@@ -360,6 +361,59 @@ public class Project {
 	 */
 	public void setLanguage(String language) {
 		this.language = language;
+	}
+	
+	/**
+	 * Method to inform the median number of forks per project in a collection of projects
+	 * @param projects
+	 * @return
+	 */
+	public double getMedianForksRate(List<Project> projects) {
+		int i = 0, listSize = projects.size(), half = listSize/2;
+		double median = 0.0;
+		int[] forkStore = new int[listSize];
+		
+		if (listSize == 0) {
+		    throw new IllegalArgumentException("List of projects can't be empty");
+		}
+		
+		for (; i < listSize; i++) {
+			forkStore[i] = projects.get(i).getForksCount();
+		}
+		
+		Arrays.sort(forkStore);
+		
+		if (listSize % 2 == 0) {
+			median = (forkStore[half - 1] + forkStore[half])/2;
+		} else {
+			median = forkStore[half];
+		}
+		
+		return median;
+	}
+	
+	/**
+	 * Method to inform the average number of forks per project in a collection of projects
+	 * @param projects
+	 * @return
+	 */
+	public int getAverageForksRate(List<Project> projects) {
+		int i = 0, j = 0, total = 0, listSize = projects.size();
+		int[] forkStore = new int[listSize];
+		
+		if (listSize == 0) {
+		    throw new IllegalArgumentException("List of projects can't be empty");
+		}
+		
+		for (; i < listSize; i++) {
+			forkStore[i] = projects.get(i).getForksCount();
+		}
+		
+		for (; j < forkStore.length; j++) {
+			total += forkStore[j];
+		}
+		
+		return total/listSize;
 	}
 	
 	/**
