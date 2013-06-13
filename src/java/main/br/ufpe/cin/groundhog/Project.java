@@ -384,10 +384,10 @@ public class Project {
 	
 	/**
 	 * Method to discover the percentage of projects that have forks
-	 * @param projects
-	 * @return
+	 * @param The list of projects to be analyzed
+	 * @return a double result - such that 0 <= result <= 1 - indicating how many of the informed projects have forks (were forked at least once)
 	 */
-	public double getProjectsWithForksRate(List<Project> projects) {
+	public static double getProjectsWithForksRate(List<Project> projects) {
 		double result = 0.0;
 		int projectsWithForks = 0, i = 0, listSize = projects.size();
 		
@@ -402,6 +402,25 @@ public class Project {
 		}
 		
 		result = (projectsWithForks / listSize);		
+		return result;
+	}
+	
+	/**
+	 * Informs what is the overall percentage of the given projects that are forks
+	 * With this method we can answer the question "What is the overall percentage of Github projects that ARE forks?"
+	 * @return a double result - such that 0 <= result <= 1 - indicating how many of the informed projects are forks
+	 */
+	public static double getProjectsThatAreForks(List<Project> projects) {
+		double result = 0.0;
+		int projectsAreForks = 0, i = 0, listSize = projects.size();
+		
+		for (; i < listSize; i++) {
+			if (projects.get(i).isFork()) {
+				projectsAreForks++;
+			}
+		}
+		
+		result = (projectsAreForks / listSize);	
 		return result;
 	}
 
