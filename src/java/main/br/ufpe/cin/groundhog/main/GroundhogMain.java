@@ -14,14 +14,10 @@ import br.ufpe.cin.groundhog.GroundhogException;
 import br.ufpe.cin.groundhog.util.FileUtil;
 
 public abstract class GroundhogMain {
-
-	private final static Logger logger = LoggerFactory
-			.getLogger(GroundhogMain.class);
-
+	private final static Logger logger = LoggerFactory.getLogger(GroundhogMain.class);
 	public abstract void run(JsonInput input);
 
 	public static void main(String[] args) {
-
 		JsonInput input = null;
 		Options opt = new Options();
 		CmdLineParser parser = new CmdLineParser(opt);

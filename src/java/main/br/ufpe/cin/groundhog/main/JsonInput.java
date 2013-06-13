@@ -12,6 +12,11 @@ import br.ufpe.cin.groundhog.util.Dates;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
+/**
+ * Represents the input file parameters in Groundhog
+ * @author gustavopinto
+ *
+ */
 public final class JsonInput {
 	private String forge;
 	private String dest;
@@ -32,7 +37,7 @@ public final class JsonInput {
 		this.search = new Search(opt.getArguments(), opt.getUsername());
 	}
 
-	//TODO: this should be discovered dinamically
+	//TODO: this should be discovered dynamically
 	public SupportedForge getForge() {
 		if (forge.toLowerCase().equals("github")) {
 			return SupportedForge.GITHUB;
@@ -41,27 +46,27 @@ public final class JsonInput {
 		} else if (forge.equals("googlecode")) {
 			return SupportedForge.SOURCEFORGE;			
 		}
-		throw new UnsupportedForgeException("Sorry, currently groundhog only supports Github, Sourceforge and GoogleCode. We do not support: " + forge);
+		throw new UnsupportedForgeException("Sorry, currently Groundhog only supports Github, Sourceforge and GoogleCode. We do not support: " + forge);
 	}
 
 	public File getDest() {
-		return new File(dest);
+		return new File(this.dest);
 	}
 
 	public File getOut() { 
-		return new File(out);
+		return new File(this.out);
 	}
 
 	public Date getDatetime() {
-		return new Dates("yyyy-MM-dd HH:mm").format(datetime);
+		return new Dates("yyyy-MM-dd HH:mm").format(this.datetime);
 	}
 
 	public int getNprojects() {
-		return Integer.parseInt(nprojects);
+		return Integer.parseInt(this.nprojects);
 	}
 
 	public Formater getOutputformat() {
-		return FormaterFactory.get(outputformat.toLowerCase());
+		return FormaterFactory.get(this.outputformat.toLowerCase());
 	}
 
 	public static int getMaxThreads() {
@@ -69,7 +74,7 @@ public final class JsonInput {
 	}
 	
 	public Search getSearch() {
-		return search;
+		return this.search;
 	}
 
 	public String toString() {
@@ -91,22 +96,22 @@ final class Search {
 
 	public Search(List<String> projects, String username) {
 		super();
-		this.projects = projects.size() > 0 ? projects : Lists.newArrayList("jboss");
+		this.projects = projects.size() > 0 ? projects : Lists.newArrayList("dagger");
 		this.username = username;
 	}
 
 	public String getUsername() {
-		return username;
+		return this.username;
 	}
 
 	public List<String> getProjects() {
-		return projects;
+		return this.projects;
 	}
 
 	public String toString() {
 		return Objects.toStringHelper("")
-				.add("projects", projects)
-				.add("username", username)
+				.add("projects", this.projects)
+				.add("username", this.username)
 				.toString();
 	}
 }

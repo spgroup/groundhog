@@ -53,7 +53,6 @@ import com.google.inject.Injector;
  */
 
 public final class CmdMain extends GroundhogMain {
-
 	private static Logger logger = LoggerFactory.getLogger(CmdMain.class);
 
 	/**
@@ -308,7 +307,7 @@ public final class CmdMain extends GroundhogMain {
 		for (File file : folders) {
 			if (!file.exists()) {
 				file.mkdirs();
-			}	
+			}
 		}
 	}
 }
