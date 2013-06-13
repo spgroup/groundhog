@@ -1,6 +1,9 @@
 package br.ufpe.cin.groundhog;
 
 import java.util.Date;
+import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import br.ufpe.cin.groundhog.util.Dates;
 
@@ -377,6 +380,29 @@ public class Project {
 	 */
 	public void setLanguage(String language) {
 		this.language = language;
+	}
+	
+	/**
+	 * Method to discover the percentage of projects that have forks
+	 * @param projects
+	 * @return
+	 */
+	public double getProjectsWithForksRate(List<Project> projects) {
+		double result = 0.0;
+		int projectsWithForks = 0, i = 0, listSize = projects.size();
+		
+		if (listSize == 0) {
+		    throw new IllegalArgumentException("List projects can't be empty");
+		}
+		
+		for (; i < listSize; i++) {
+			if (projects.get(i).getForksCount() > 0) {
+				projectsWithForks++;
+			}
+		}
+		
+		result = (projectsWithForks / listSize);		
+		return result;
 	}
 
 	@Override
