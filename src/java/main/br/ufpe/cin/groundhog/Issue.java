@@ -1,8 +1,6 @@
-package br.ufpe.cin.groundhog.explorer;
+package br.ufpe.cin.groundhog;
 
 import java.util.Date;
-import br.ufpe.cin.groundhog.Project;
-import br.ufpe.cin.groundhog.User;
 
 public class Issue {
 	private int id;
