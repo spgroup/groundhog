@@ -162,6 +162,15 @@ public class PullRequest extends Issue {
 	public void setChangedFilesCount(int changedFilesCount) {
 		this.changedFilesCount = changedFilesCount;
 	}
+	
+	/**
+	 * Returns the PullRequest's API URL
+	 * @return
+	 */
+	public String getURL() {
+		return "https://api.github.com/repos/" + this.getProject().getOwner().getLogin() +
+				"/" + this.getProject().getName() + "/pulls/" + this.getNumber();
+	}
 
 	@Override
 	public String toString() {
