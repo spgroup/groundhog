@@ -7,7 +7,7 @@ public class Issue {
 	private int number;
 	private int commentsCount;
 	
-//	private PullRequest pullRequest;
+	private PullRequest pullRequest;
 //	private Milestone milestone;
 	
 	private Project project;
@@ -187,6 +187,19 @@ public class Issue {
 	}
 	
 	/**
+	 * Informs the PullRequest related to the Issue. Not all Issues are Pull Request Issues.
+	 * If this method return nulls then it means the Issue is not a PullRequest Issue
+	 * @return
+	 */
+	public PullRequest getPullRequest() {
+		return this.pullRequest;
+	}
+
+	public void setPullRequest(PullRequest pullRequest) {
+		this.pullRequest = pullRequest;
+	}
+	
+	/**
 	 * Returns true if the Issue is open. Returns false otherwise
 	 * @return
 	 */
@@ -194,6 +207,14 @@ public class Issue {
 		return this.getState() == "closed" ? true : false;
 	}
 	
+	/**
+	 * Returns true if the Issue is a Pull Request Issue. Returns false otherwise
+	 * @return
+	 */
+	public boolean isPullRequest() {
+		return this.getPullRequest() != null ? true : false;
+	}
+
 	/**
 	 * Returns the Issue's API URL
 	 * @return
