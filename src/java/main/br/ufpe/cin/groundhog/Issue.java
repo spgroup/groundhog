@@ -221,7 +221,7 @@ public class Issue {
 	 */
 	public String getURL() {
 		return "https://api.github.com/repos/" + this.getProject().getOwner().getLogin() +
-				"/" + this.getProject().getName() + "/issues/" + this.getId();
+				"/" + this.getProject().getName() + "/issues/" + this.getNumber();
 	}
 
 	@Override
