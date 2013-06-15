@@ -223,10 +223,11 @@ public class Issue {
 		return "https://api.github.com/repos/" + this.getProject().getOwner().getLogin() +
 				"/" + this.getProject().getName() + "/issues/" + this.getId();
 	}
-	
+
 	@Override
 	public String toString() {
-		return String.format("Issue\n number: %d, title: %s, url: %s)",
-				this.number, this.title, this.getURL());
+		return "Issue number = " + number + ", "
+				+ (title != null ? "title = " + title + ", " : "")
+				+ (getURL() != null ? "URL = " + getURL() : "");
 	}
 }

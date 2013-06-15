@@ -167,6 +167,6 @@ public class PullRequest extends Issue {
 	public String toString() {
 		return "PullRequest: number = " + this.getNumber() + ", "
 				+ (this.getTitle() != null ? "title = " + this.getTitle() + ", " : "")
-				+ (this.getURL() != null ? "URL = " + this.getURL() : "") + "]";
+				+ (this.getURL() != null ? "URL = " + this.getURL() : "");
 	}
 }
