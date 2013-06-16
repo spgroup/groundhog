@@ -23,7 +23,7 @@ enum SupportedForge {
 /**
  * The command-line options parsing class
  * 
- * @author fjsj, gustavopinto, rodrigoalvesvieira
+ * @author fjsj, gustavopinto, Rodrigo Alves
  */
 public class Options {
 

@@ -2,7 +2,7 @@ package br.ufpe.cin.groundhog;
 
 /**
  * The base {@link Exception} type for Groundhog. All Groundhog exceptions must extend this class.
- * @author fjsj, gustavopinto, rodrigoalvesvieira
+ * @author fjsj, gustavopinto, Rodrigo Alves
  *
  */
 public class GroundhogException extends RuntimeException {

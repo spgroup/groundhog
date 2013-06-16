@@ -14,7 +14,7 @@ import com.google.common.io.Files;
 /**
  * General utilities class for file operations
  * 
- * @author fjsj, gustavopinto, rodrigoalvesvieira
+ * @author fjsj, gustavopinto, Rodrigo Alves
  */
 public class FileUtil {
 	private static FileUtil instance;

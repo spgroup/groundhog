@@ -4,7 +4,7 @@ import br.ufpe.cin.groundhog.GroundhogException;
 
 /**
  * Exception thrown when an extraction operation is attempted to be performed on an unsupported format 
- * @author fjsj, gustavopinto, rodrigoalvesvieira
+ * @author fjsj, gustavopinto, Rodrigo Alves
  *
  */
 public class UncompressNotSupportedException extends GroundhogException {

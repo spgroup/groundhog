@@ -20,7 +20,7 @@ import com.google.inject.Inject;
 /**
  * Performs the project search on GitHub, via its official JSON API
  * 
- * @author fjsj, gustavopinto, rodrigoalvesvieira
+ * @author fjsj, gustavopinto, Rodrigo Alves
  */
 public class SearchGitHub implements ForgeSearch {
 	private static String root = "https://api.github.com";

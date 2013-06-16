@@ -7,7 +7,7 @@ import br.ufpe.cin.groundhog.util.Dates;
 
 /**
  * Represents a software project in Groundhog
- * @author fjsj, gustavopinto, rodrigoalvesvieira
+ * @author fjsj, gustavopinto, Rodrigo Alves
  */
 public class Project {
 	private String name;

@@ -21,7 +21,7 @@ import com.ning.http.client.Response;
 
 /**
  * Responsible for performing the project searches on Google Code
- * @author fjsj, gustavopinto, rodrigoalvesvieira
+ * @author fjsj, gustavopinto, Rodrigo Alves
  *
  */
 public class SearchGoogleCode implements ForgeSearch {

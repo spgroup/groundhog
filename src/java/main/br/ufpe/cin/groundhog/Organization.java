@@ -4,7 +4,7 @@ import java.util.Date;
 
 /**
  * Represents a GitHub Organization in Groundhog
- * @author gustavopinto, rodrigoalvesvieira
+ * @author gustavopinto, Rodrigo Alves
  */
 public class Organization {
 	private String name;
