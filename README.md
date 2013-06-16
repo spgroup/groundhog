@@ -85,7 +85,7 @@ $ javadoc -d src/src/groundhog br.cin.ufpe.groundhog
 
 * Gustavo Pinto {ghlp@cin.ufpe.br}
 
-* Rodrigo Alves Vieira {rav2@cin.ufpe.br}
+* Rodrigo Alves {rav2@cin.ufpe.br}
 
 * Danilo Neves Ribeiro {dnr2@cin.ufpe.br}
 
