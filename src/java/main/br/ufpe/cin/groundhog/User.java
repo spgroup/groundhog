@@ -137,4 +137,14 @@ public class User {
 	public void setLocation(String location) {
 		this.location = location;
 	}
+	
+	public String getURL() {
+		return "https://api.github.com/users/" + this.getLogin();
+	}
+
+	@Override
+	public String toString() {
+		return "User id = " + id + ", " + (login != null ? "login = " + login + ", " : "")
+				+ (getURL() != null ? "URL = " + getURL() : "");
+	}
 }
