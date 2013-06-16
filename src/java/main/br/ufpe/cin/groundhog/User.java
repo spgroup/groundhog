@@ -50,6 +50,10 @@ public class User {
 		this.login = login;
 	}
 
+	/**
+	 * Informs the {@link User}'s company name
+	 * @return
+	 */
 	public String getCompany() {
 		return this.company;
 	}
@@ -58,6 +62,10 @@ public class User {
 		this.company = company;
 	}
 
+	/**
+	 * Informs the {@link User}'s blog URL
+	 * @return
+	 */
 	public String getBlog() {
 		return this.blog;
 	}
@@ -66,6 +74,10 @@ public class User {
 		this.blog = blog;
 	}
 
+	/**
+	 * Informs whether a {@link User} is available for hire (hireable) or not.
+	 * @return true if the {@link User} is hireable. Returns false otherwise.
+	 */
 	public boolean isHireable() {
 		return this.hireable;
 	}
@@ -74,6 +86,10 @@ public class User {
 		this.hireable = hireable;
 	}
 
+	/**
+	 * Informs the sum of followers the User has
+	 * @return
+	 */
 	public int getFollowers() {
 		return this.followers;
 	}
@@ -82,6 +98,10 @@ public class User {
 		this.followers = followers;
 	}
 
+	/**
+	 * Informs how many other GitHub Users the User follows
+	 * @return
+	 */
 	public int getFollowing() {
 		return this.following;
 	}
@@ -90,6 +110,11 @@ public class User {
 		this.following = following;
 	}
 
+	/**
+	 * Informs the creation date of the {@link User}. In other words, the date
+	 * when the user signed up for GitHub
+	 * @return a {@link Date} object
+	 */
 	public Date getCreated_at() {
 		return this.created_at;
 	}
@@ -98,6 +123,10 @@ public class User {
 		this.created_at = created_at;
 	}
 
+	/**
+	 * Informs the last date when the {@link User} performed activity on GitHub
+	 * @return a {@link Date} object
+	 */
 	public Date getUpdatedAt() {
 		return this.updated_at;
 	}
@@ -106,6 +135,10 @@ public class User {
 		this.updated_at = updated_at;
 	}
 	
+	/**
+	 * Returns the sum of public repositories that the User has
+	 * @return
+	 */
 	public int getPublic_repos() {
 		return this.public_repos;
 	}
@@ -113,7 +146,11 @@ public class User {
 	public void setPublic_repos(int public_repos) {
 		this.public_repos = public_repos;
 	}
-
+	
+	/**
+	 * Returns the sum of public gists that the User has
+	 * @return
+	 */
 	public int getPublic_gists() {
 		return this.public_gists;
 	}
@@ -122,6 +159,10 @@ public class User {
 		this.public_gists = public_gists;
 	}
 
+	/**
+	 * Informs the email address of the {@link User}
+	 * @return a String representing an email address
+	 */
 	public String getEmail() {
 		return this.email;
 	}
@@ -130,6 +171,10 @@ public class User {
 		this.email = email;
 	}
 
+	/**
+	 * The location String of the {@link User}
+	 * @return
+	 */
 	public String getLocation() {
 		return this.location;
 	}
@@ -138,6 +183,10 @@ public class User {
 		this.location = location;
 	}
 	
+	/**
+	 * Returns the User's API URL
+	 * @return
+	 */
 	public String getURL() {
 		return "https://api.github.com/users/" + this.getLogin();
 	}
