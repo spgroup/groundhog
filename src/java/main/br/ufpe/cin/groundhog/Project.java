@@ -461,6 +461,22 @@ public class Project {
 		result = (projectsAreForks / listSize);	
 		return result;
 	}
+	
+	/**
+	 * Returns the {@link User} object who is the author of the Project
+	 * @return
+	 */
+	public User getUser() {
+		return this.user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public String getURL() {
+		return String.format("https://api.github.com/repos/%s/%s", this.getUser().getLogin(), this.getName());
+	}
 
 	@Override
 	public String toString() {
