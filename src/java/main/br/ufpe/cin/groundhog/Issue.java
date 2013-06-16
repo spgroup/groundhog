@@ -2,16 +2,19 @@ package br.ufpe.cin.groundhog;
 
 import java.util.Date;
 
+/**
+ * Represents an Issue object in Groundhog
+ * @author Rodrigo Alves
+ */
 public class Issue {
 	private int id;
 	private int number;
 	private int commentsCount;
 	
-	private PullRequest pullRequest;
-//	private Milestone milestone;
-	
 	private Project project;
-	
+	private PullRequest pullRequest;
+	private Milestone milestone;
+		
 	private String title;
 	private String body;
 	private String state;
@@ -84,6 +87,27 @@ public class Issue {
 
 	public void setProject(Project project) {
 		this.project = project;
+	}
+	
+	/**
+	 * Informs the PullRequest related to the Issue. Not all Issues are Pull Request Issues.
+	 * If this method return nulls then it means the Issue is not a PullRequest Issue
+	 * @return
+	 */
+	public PullRequest getPullRequest() {
+		return this.pullRequest;
+	}
+
+	public void setPullRequest(PullRequest pullRequest) {
+		this.pullRequest = pullRequest;
+	}
+
+	public Milestone getMilestone() {
+		return this.milestone;
+	}
+
+	public void setMilestone(Milestone milestone) {
+		this.milestone = milestone;
 	}
 
 	/**
@@ -184,19 +208,6 @@ public class Issue {
 
 	public void setClosedAt(Date closedAt) {
 		this.closedAt = closedAt;
-	}
-	
-	/**
-	 * Informs the PullRequest related to the Issue. Not all Issues are Pull Request Issues.
-	 * If this method return nulls then it means the Issue is not a PullRequest Issue
-	 * @return
-	 */
-	public PullRequest getPullRequest() {
-		return this.pullRequest;
-	}
-
-	public void setPullRequest(PullRequest pullRequest) {
-		this.pullRequest = pullRequest;
 	}
 	
 	/**
