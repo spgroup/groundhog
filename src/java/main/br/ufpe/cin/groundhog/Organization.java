@@ -6,12 +6,16 @@ import java.util.Date;
  * Represents a GitHub Organization in Groundhog
  * @author gustavopinto, Rodrigo Alves
  */
-public class Organization {
+public class Organization implements GitHubEntity {
+	private String login;
 	private String name;
 	private String location;
+	
 	private int followers;
 	private int following;
+	
 	private Date created_at;
+	
 	public int public_repos;
 	public int public_gists;
 
@@ -39,6 +43,14 @@ public class Organization {
 		this.public_gists = public_gists;
 	}
 
+	public String getLogin() {
+		return this.login;
+	}
+
+	public void setLogin(String login) {
+		this.login = login;
+	}
+	
 	public String getName() {
 		return this.name;
 	}
@@ -69,5 +81,10 @@ public class Organization {
 
 	public void setFollowing(int following) {
 		this.following = following;
+	}
+
+	@Override
+	public String getURL() {
+		return String.format("https://api.github.com/orgs/%s", this.getLogin());
 	}
 }
