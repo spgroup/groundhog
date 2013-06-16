@@ -87,4 +87,12 @@ public class Organization implements GitHubEntity {
 	public String getURL() {
 		return String.format("https://api.github.com/orgs/%s", this.getLogin());
 	}
+
+	@Override
+	public String toString() {
+		return "Organization" + (login != null ? "login = " + login + ", " : "")
+				+ "public repos = " + public_repos + ", public gists = "
+				+ public_gists + ", "
+				+ (getURL() != null ? "URL = " + getURL() : "");
+	}
 }
