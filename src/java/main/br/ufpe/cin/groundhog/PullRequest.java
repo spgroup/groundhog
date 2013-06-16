@@ -2,6 +2,10 @@ package br.ufpe.cin.groundhog;
 
 import java.util.Date;
 
+/**
+ * Represents a Pull Request object in Groundhog
+ * @author Rodrigo Alves
+ */
 public class PullRequest extends Issue {
 	private Date mergedAt;
 	private String mergeCommitSha;
