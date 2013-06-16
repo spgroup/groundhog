@@ -6,7 +6,7 @@ import java.util.Date;
  * Represents an Issue object in Groundhog
  * @author Rodrigo Alves
  */
-public class Issue {
+public class Issue implements GitHubEntity {
 	private int id;
 	private int number;
 	private int commentsCount;
@@ -226,10 +226,6 @@ public class Issue {
 		return this.getPullRequest() != null ? true : false;
 	}
 
-	/**
-	 * Returns the Issue's API URL
-	 * @return
-	 */
 	public String getURL() {
 		return "https://api.github.com/repos/" + this.getProject().getOwner().getLogin() +
 				"/" + this.getProject().getName() + "/issues/" + this.getNumber();

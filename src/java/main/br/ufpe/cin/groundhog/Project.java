@@ -9,7 +9,7 @@ import br.ufpe.cin.groundhog.util.Dates;
  * Represents a software project in Groundhog
  * @author fjsj, gustavopinto, Rodrigo Alves
  */
-public class Project {
+public class Project implements GitHubEntity {
 	private String name;
 	private String description;
 	private String language;

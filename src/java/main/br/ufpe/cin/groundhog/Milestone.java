@@ -6,7 +6,7 @@ import java.util.Date;
  * Represents a Milestone object in Groundhog
  * @author Rodrigo Alves
  */
-public class Milestone {
+public class Milestone implements GitHubEntity {
 	private int id;
 	private int number;
 	
@@ -185,10 +185,6 @@ public class Milestone {
 		this.dueOn = dueOn;
 	}
 
-	/**
-	 * Returns the Milestone's API URL
-	 * @return
-	 */
 	public String getURL() {
 		return "https://api.github.com/repos/" + this.getProject().getOwner().getLogin() + "/" +
 				this.getProject().getName() + "/issues/" + this.getNumber();

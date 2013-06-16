@@ -6,7 +6,7 @@ import java.util.Date;
  * Represents a Pull Request object in Groundhog
  * @author Rodrigo Alves
  */
-public class PullRequest extends Issue {
+public class PullRequest extends Issue implements GitHubEntity {
 	private Date mergedAt;
 	private String mergeCommitSha;
 	
@@ -167,10 +167,6 @@ public class PullRequest extends Issue {
 		this.changedFilesCount = changedFilesCount;
 	}
 	
-	/**
-	 * Returns the PullRequest's API URL
-	 * @return
-	 */
 	public String getURL() {
 		return "https://api.github.com/repos/" + this.getProject().getOwner().getLogin() +
 				"/" + this.getProject().getName() + "/pulls/" + this.getNumber();

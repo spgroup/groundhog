@@ -6,7 +6,7 @@ import java.util.Date;
  * Represents a GitHub User in Groundhog
  * @author gustavopinto, Rodrigo Alves
  */
-public class User {
+public class User implements GitHubEntity {
 	private int id;
 	
 	private String login;
@@ -183,10 +183,6 @@ public class User {
 		this.location = location;
 	}
 	
-	/**
-	 * Returns the User's API URL
-	 * @return
-	 */
 	public String getURL() {
 		return "https://api.github.com/users/" + this.getLogin();
 	}
