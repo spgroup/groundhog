@@ -184,7 +184,7 @@ public class User implements GitHubEntity {
 	}
 	
 	public String getURL() {
-		return "https://api.github.com/users/" + this.getLogin();
+		return String.format("https://api.github.com/users/%s", this.getLogin());
 	}
 
 	@Override

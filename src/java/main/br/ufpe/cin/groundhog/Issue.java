@@ -227,8 +227,8 @@ public class Issue implements GitHubEntity {
 	}
 
 	public String getURL() {
-		return "https://api.github.com/repos/" + this.getProject().getOwner().getLogin() +
-				"/" + this.getProject().getName() + "/issues/" + this.getNumber();
+		return String.format("https://api.github.com/repos/%s/%s/issues/%d",
+				this.getProject().getOwner().getLogin(), this.getProject().getName(), this.getNumber());
 	}
 
 	@Override
