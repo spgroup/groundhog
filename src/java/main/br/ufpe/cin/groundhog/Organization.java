@@ -11,9 +11,6 @@ public class Organization implements GitHubEntity {
 	private String name;
 	private String location;
 	
-	private int followers;
-	private int following;
-	
 	private Date created_at;
 	
 	public int public_repos;
@@ -65,22 +62,6 @@ public class Organization implements GitHubEntity {
 
 	public void setLocation(String location) {
 		this.location = location;
-	}
-
-	public int getFollowers() {
-		return this.followers;
-	}
-
-	public void setFollowers(int followers) {
-		this.followers = followers;
-	}
-
-	public int getFollowing() {
-		return this.following;
-	}
-
-	public void setFollowing(int following) {
-		this.following = following;
 	}
 
 	@Override
