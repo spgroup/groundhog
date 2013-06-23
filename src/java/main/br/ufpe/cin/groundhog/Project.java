@@ -12,7 +12,10 @@ import br.ufpe.cin.groundhog.util.Dates;
 public class Project implements GitHubEntity {
 	private String name;
 	private String description;
+	
 	private String language;
+	private List<Language> languages;
+	
 	private User user;
 	private SCM scm;
 	private String scmURL;
@@ -361,6 +364,22 @@ public class Project implements GitHubEntity {
 	 */
 	public void setLanguage(String language) {
 		this.language = language;
+	}
+	
+	/**
+	 * Returns the list of languages that compose the Project
+	 * @return a {@link List} of {@link Language} objects
+	 */
+	public List<Language> getLanguages() {
+		return this.languages;
+	}
+	
+	/**
+	 * Sets the list of languages that compose the Project
+	 * @param a {@link List} of {@link Language} objects
+	 */
+	public void setLanguages(List<Language> langs) {
+		this.languages = langs;
 	}
 	
 	/**
