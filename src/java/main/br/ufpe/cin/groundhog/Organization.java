@@ -43,6 +43,10 @@ public class Organization implements GitHubEntity {
 		this.created_at = created_at;
 	}
 
+	/**
+	 * Informs how many public projects the Organization has
+	 * @return an integer value
+	 */
 	public int getPublic_repos() {
 		return this.public_repos;
 	}
@@ -51,6 +55,10 @@ public class Organization implements GitHubEntity {
 		this.public_repos = public_repos;
 	}
 
+	/**
+	 * Informs how many public gists the Organization has
+	 * @return an integer value
+	 */
 	public int getPublic_gists() {
 		return this.public_gists;
 	}
@@ -59,6 +67,10 @@ public class Organization implements GitHubEntity {
 		this.public_gists = public_gists;
 	}
 
+	/**
+	 * Informs the login (username) of the Organization
+	 * @return a {@link String} object
+	 */
 	public String getLogin() {
 		return this.login;
 	}
@@ -67,6 +79,10 @@ public class Organization implements GitHubEntity {
 		this.login = login;
 	}
 	
+	/**
+	 * Informs the login (username) of the Organization
+	 * @return a {@link String} object
+	 */
 	public String getName() {
 		return this.name;
 	}
@@ -75,6 +91,10 @@ public class Organization implements GitHubEntity {
 		this.name = name;
 	}
 
+	/**
+	 * Informs the location of the Organization
+	 * @return a {@link String} object
+	 */
 	public String getLocation() {
 		return this.location;
 	}
