@@ -1,7 +1,9 @@
 package br.ufpe.cin.groundhog.search;
 
+import java.io.IOException;
 import java.util.List;
 
+import br.ufpe.cin.groundhog.Issue;
 import br.ufpe.cin.groundhog.Project;
 
 /**
@@ -52,5 +54,6 @@ public interface ForgeSearch {
 	 * @throws Exception when something nasty happens
 	 */
 	public List<Project> getAllForgeProjects(int since , int limit) throws SearchException;
-	
+
+	public List<Issue> getAllProjectIssues(Project gr) throws IOException;
 }

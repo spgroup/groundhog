@@ -1,5 +1,6 @@
 package br.ufpe.cin.groundhog.search;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -11,6 +12,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import br.ufpe.cin.groundhog.Issue;
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.SCM;
 import br.ufpe.cin.groundhog.http.ParamBuilder;
@@ -139,5 +141,11 @@ public class SearchGoogleCode implements ForgeSearch {
 	public List<Project> getAllForgeProjects(int start, int limit)
 			throws SearchException {
 		throw new UnsupportedOperationException("not implemented yet");		
+	}
+
+	@Override
+	public List<Issue> getAllProjectIssues(Project gr) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
