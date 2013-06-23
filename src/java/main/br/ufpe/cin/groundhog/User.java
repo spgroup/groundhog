@@ -25,6 +25,10 @@ public class User implements GitHubEntity {
 	private Date created_at;
 	private Date updated_at;
 	
+	public User(String login) {
+		this.login = login;
+	}
+	
 	/**
 	 * Informs the GitHub ID for the {@link User} object in question
 	 * This ID is unique in GitHub, which means no two users can have the same ID on GitHub

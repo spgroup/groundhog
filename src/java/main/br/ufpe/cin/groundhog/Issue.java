@@ -2,29 +2,52 @@ package br.ufpe.cin.groundhog;
 
 import java.util.Date;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Represents an Issue object in Groundhog
  * @author Rodrigo Alves
  */
 public class Issue implements GitHubEntity {
-	private int id;
-	private int number;
-	private int commentsCount;
+    @SerializedName("id")
+    private int id;
+
+    @SerializedName("number")
+    private int number;
 	
-	private Project project;
-	private PullRequest pullRequest;
-	private Milestone milestone;
-		
-	private String title;
-	private String body;
-	private String state;
+    @SerializedName("comments")
+    private int commentsCount;
 	
-	private User assignee;
-	private User closedBy;
+    private Project project;
+
+    @SerializedName("pull_request")
+    private PullRequest pullRequest;
 	
-	private Date createdAt;
-	private Date updatedAt;
-	private Date closedAt;
+    private Milestone milestone;
+
+    @SerializedName("state")
+    private String title;
+	
+    @SerializedName("state")
+    private String body;
+	
+    @SerializedName("state")
+    private String state;
+	
+    @SerializedName("assignee")
+    private User assignee;
+	
+    @SerializedName("closed_by")
+    private User closedBy;
+	
+    @SerializedName("created_at")
+    private Date createdAt;
+    
+    @SerializedName("updated_at")
+    private Date updatedAt;
+    
+    @SerializedName("closed_at")
+    private Date closedAt;
 	
 	public Issue(Project project, int number, String state) {
 		this.number = number;
