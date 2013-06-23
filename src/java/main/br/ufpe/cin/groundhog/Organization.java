@@ -7,6 +7,8 @@ import java.util.Date;
  * @author gustavopinto, Rodrigo Alves
  */
 public class Organization implements GitHubEntity {
+	private int id;
+
 	private String login;
 	private String name;
 	private String location;
@@ -16,6 +18,23 @@ public class Organization implements GitHubEntity {
 	public int public_repos;
 	public int public_gists;
 
+	/**
+	 * Informs the GitHub ID for the {@link Organization} object in question
+	 * This ID is unique in GitHub, which means no two organizations can have the same ID on GitHub
+	 * @return the integer ID
+	 */
+	public int getId() {
+		return this.id;
+	}
+	
+	public void setId(int id) {
+		this.id = id;
+	}
+	
+	/**
+	 * Informs the creation date of the Organization
+	 * @return a {@link Date} object correspondent to the Organization's creation date
+	 */
 	public Date getCreated_at() {
 		return this.created_at;
 	}
