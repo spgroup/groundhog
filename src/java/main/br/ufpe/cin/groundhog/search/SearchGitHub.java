@@ -132,12 +132,14 @@ public class SearchGitHub implements ForgeSearch {
 		String searchUrl = String.format("%s/repos/%s/%s/languages",
 				REPO_API, project.getUser().getLogin(), project.getName());
 		
-		String jsonString = requests.get(searchUrl);
-		jsonString = jsonString.substring(1, jsonString.length() -1 );
+		String json = requests.get(searchUrl);
+		json = json.substring(1, json.length() -1 );
 		
-		for (String str: jsonString.split(",")) {
+		for (String str: json.split(",")) {
 			String[] hash = str.split(":");
-			Language lang = new Language(hash[0].trim().replaceAll("\"", ""), Integer.parseInt(hash[1].trim()));
+			String key = hash[0].trim().replaceAll("\"", "");
+			Integer value = Integer.parseInt(hash[1].trim());
+			Language lang = new Language(key, value);
 			languages.add(lang);
 		}
 		
