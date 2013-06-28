@@ -17,9 +17,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.inject.Guice;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 
 /**
  * Performs the project search on GitHub, via its official JSON API
@@ -129,7 +127,7 @@ public class SearchGitHub implements ForgeSearch {
 	 * @throws IOException
 	 */
 	public List<Language> fetchProjectLanguages(Project project) throws IOException {
-		List<Language> languages = null;
+		List<Language> languages = new ArrayList<>();
 		
 		String searchUrl = String.format("%s/repos/%s/%s/languages",
 				REPO_API, project.getUser().getLogin(), project.getName());
@@ -139,7 +137,7 @@ public class SearchGitHub implements ForgeSearch {
 		
 		for (String str: jsonString.split(",")) {
 			String[] hash = str.split(":");
-			Language lang = new Language(hash[0].trim(), Integer.parseInt(hash[1].trim()));
+			Language lang = new Language(hash[0].trim().replaceAll("\"", ""), Integer.parseInt(hash[1].trim()));
 			languages.add(lang);
 		}
 		
