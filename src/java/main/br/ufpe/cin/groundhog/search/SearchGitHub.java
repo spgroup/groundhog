@@ -2,6 +2,7 @@ package br.ufpe.cin.groundhog.search;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import br.ufpe.cin.groundhog.GroundhogException;
@@ -17,6 +18,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.inject.Inject;
 
 /**
@@ -53,7 +55,7 @@ public class SearchGitHub implements ForgeSearch {
 	public List<Project> getProjects(String term, int page, int limit) throws SearchException {
 		try {
 			if (term == null) {
-				return getAllForgeProjects(page, limit); 
+				return getAllForgeProjects(page, limit);
 			}
 			
 			List<Project> projects = new ArrayList<Project>();
@@ -90,6 +92,105 @@ public class SearchGitHub implements ForgeSearch {
 			e.printStackTrace();
 			throw new SearchException(e);
 		}
+	}
+	
+	public List<Project> getProjectsWithMoreThanOneLanguage(int page, int limit) throws SearchException {
+		try {
+			
+			List<Project> projects = new ArrayList<Project>();
+			List<Project> rawData = getAllProjects(page, limit);
+			List<Language> languages;
+			
+			for (Iterator<Project> iterator = rawData.iterator(); iterator.hasNext();) {
+				Project project = iterator.next();
+				
+				languages = fetchProjectLanguages(project);
+				
+				if(languages.size() > 1){
+					
+					projects.add(project);
+				}
+			}
+			
+			return projects;
+		
+		} catch (GroundhogException | IOException e) {
+			e.printStackTrace();
+			throw new SearchException(e);
+		}
+	}
+	
+	public List<Project> getAllProjects(int start, int limit) throws SearchException{
+		String searchUrl  = null;
+		List<Project> projects = new ArrayList<Project>();
+		JsonParser parser = new JsonParser();
+		try{
+			int since = start;
+			int totalRepositories = 0;
+			while(totalRepositories < limit || limit < 0){
+				searchUrl = root + String.format("/repositories?since=%s", since);
+				
+				if( this.gitHubOauthAcessToken != null){
+					searchUrl += String.format("&access_token=%s", this.gitHubOauthAcessToken);
+				}
+				
+				String jsonString = requests.get(searchUrl);
+				JsonElement jsonElement = parser.parse(jsonString);
+				if( jsonElement.isJsonObject() && jsonElement.getAsJsonObject().has("message") ){
+					throw new GroundhogException( jsonElement.getAsJsonObject().get("message").toString() );
+				}
+					
+				JsonArray jsonArray = jsonElement.getAsJsonArray();
+				for (int i = 0; i < jsonArray.size() && 
+						(totalRepositories + i < limit || limit < 0); i++) {
+					
+					String repoName = jsonArray.get(i).getAsJsonObject().get("name").getAsString();					
+					
+					String searchUrlLegacy  = null;					
+					searchUrlLegacy = root
+							+ String.format(
+									"/legacy/repos/search/%s?", repoName);
+					
+					if( this.gitHubOauthAcessToken != null){
+						searchUrlLegacy += String.format("&access_token=%s", this.gitHubOauthAcessToken);
+					}
+					
+					String jsonLegacy = requests.get(searchUrlLegacy);
+					
+
+					if( jsonElement.isJsonObject() && jsonElement.getAsJsonObject().has("message") ){
+						throw new GroundhogException( jsonElement.getAsJsonObject().get("message").toString() );
+					}
+					
+					JsonObject jsonObject = parser.parse(jsonLegacy).getAsJsonObject();			
+					JsonArray jsonArrayLegacy = jsonObject.get("repositories").getAsJsonArray();
+					
+					JsonObject rawJsonObject = jsonArrayLegacy.get(0).getAsJsonObject();
+					
+					String element = rawJsonObject.toString();
+					Project p = gson.fromJson(element, Project.class);
+					
+					p.setSCM(SCM.GIT);
+					p.setScmURL(String.format("git://github.com/%s/%s.git", p.getOwner(), p.getName()));
+					
+					String owner = rawJsonObject.getAsJsonObject().get("owner").getAsString();
+					
+					String userJson = requests.get(USERS_API + owner);
+					User user = gson.fromJson(userJson, User.class);
+					
+					p.setOwner(user);
+					
+					projects.add(p);
+					totalRepositories++;
+				}				
+				JsonElement lastPagesRepository = jsonArray.get(jsonArray.size() -1);
+				since = lastPagesRepository.getAsJsonObject().get("id").getAsInt();
+			}
+		} catch (IOException | GroundhogException e) {
+			e.printStackTrace();
+			throw new SearchException(e);
+		}
+		return projects;
 	}
 
 	@Override
@@ -200,7 +301,7 @@ public class SearchGitHub implements ForgeSearch {
 						searchUrlLegacy += String.format("&access_token=%s", this.gitHubOauthAcessToken);
 					}
 					
-					System.out.println(repoName + " " + searchUrlLegacy);
+					//System.out.println(repoName + " " + searchUrlLegacy);
 					String jsonLegacy = requests.get(searchUrlLegacy);
 					
 
