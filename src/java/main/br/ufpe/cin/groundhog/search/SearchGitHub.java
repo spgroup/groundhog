@@ -192,11 +192,7 @@ public class SearchGitHub implements ForgeSearch {
 				String jsonString = requests.get(searchUrl);
 				JsonElement jsonElement = parser.parse(jsonString);
 				
-				if( jsonElement.isJsonObject() && jsonElement.getAsJsonObject().has("message") ){
-					
-					throw new GroundhogException( jsonElement.getAsJsonObject()
-							.get("message").toString() );
-				}
+				checkAPIErrorMessage(jsonElement);
 					
 				JsonArray jsonArray = jsonElement.getAsJsonArray();
 				
@@ -219,13 +215,9 @@ public class SearchGitHub implements ForgeSearch {
 					}
 					
 					String jsonLegacy = requests.get(searchUrlLegacy);
-					
+					jsonElement = parser.parse(jsonLegacy);
 
-					if( jsonElement.isJsonObject() && jsonElement.getAsJsonObject().has("message") ){
-						
-						throw new GroundhogException( jsonElement.getAsJsonObject().
-								get("message").toString() );
-					}
+					checkAPIErrorMessage(jsonElement);
 					
 					JsonObject jsonObject = parser.parse(jsonLegacy).getAsJsonObject();			
 					JsonArray jsonArrayLegacy = jsonObject.get("repositories").getAsJsonArray();
@@ -303,15 +295,29 @@ public class SearchGitHub implements ForgeSearch {
 		String searchUrl = String.format("%s/repos/%s/%s/languages",
 				REPO_API, project.getUser().getLogin(), project.getName());
 		
+		JsonParser parser = new JsonParser();
+		
 		String json = requests.get(searchUrl);
+		
+		JsonElement jsonElement = parser.parse(json);
+		
+		checkAPIErrorMessage(jsonElement);
+		
 		json = json.substring(1, json.length() -1 );
 		
-		for (String str: json.split(",")) {
-			String[] hash = str.split(":");
-			String key = hash[0].trim().replaceAll("\"", "");
-			Integer value = Integer.parseInt(hash[1].trim());
-			Language lang = new Language(key, value);
-			languages.add(lang);
+		/*
+		 * I could not find a more elegant solution
+		 * If you can think of something please feel
+		 * Invited to change this if
+		 */
+		if(!json.equalsIgnoreCase("{}")){
+			for (String str: json.split(",")) {
+				String[] hash = str.split(":");
+				String key = hash[0].trim().replaceAll("\"", "");
+				Integer value = Integer.parseInt(hash[1].trim());
+				Language lang = new Language(key, value);
+				languages.add(lang);
+			}
 		}
 		
 		return languages;
@@ -374,10 +380,7 @@ public class SearchGitHub implements ForgeSearch {
 					System.out.println(repoName + " " + searchUrlLegacy);
 					String jsonLegacy = requests.get(searchUrlLegacy);
 					
-
-					if( jsonElement.isJsonObject() && jsonElement.getAsJsonObject().has("message") ){
-						throw new GroundhogException( jsonElement.getAsJsonObject().get("message").toString() );
-					}
+					checkAPIErrorMessage(jsonElement);
 					
 					JsonObject jsonObject = gson.fromJson(jsonLegacy, JsonElement.class).getAsJsonObject();			
 					JsonArray jsonArrayLegacy = jsonObject.get("repositories").getAsJsonArray();
@@ -400,5 +403,14 @@ public class SearchGitHub implements ForgeSearch {
 			throw new SearchException(e);
 		}
 		return projects;
-	}	
+	}
+	
+	public void checkAPIErrorMessage(JsonElement jsonElement) throws GroundhogException{
+		
+		if( jsonElement.isJsonObject() && jsonElement.getAsJsonObject().has("message") ){
+			
+			throw new GroundhogException( jsonElement.getAsJsonObject().
+					get("message").toString() );
+		}
+	}
 }

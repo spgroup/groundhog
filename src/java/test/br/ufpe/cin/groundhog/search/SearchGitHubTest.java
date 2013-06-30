@@ -20,7 +20,7 @@ public class SearchGitHubTest {
 		Injector injector = Guice.createInjector(new SearchModule());
 		searchGitHub = injector.getInstance(SearchGitHub.class);
 	}
-
+	
 	@Test
 	public void testSearchByProjectName() {
 		try {
@@ -78,7 +78,7 @@ public class SearchGitHubTest {
 			 * for the answer of the issue #45
 			 */
 			
-			System.out.println(searchGitHub.getProjectsWithMoreThanOneLanguageString(1, 5));
+			System.out.println(searchGitHub.getProjectsWithMoreThanOneLanguageString(1, 8));
 			
 			// This line will get all the projects in raw and print them
 			//System.out.println(searchGitHub.getProjectsWithMoreThanOneLanguage(1, 5));
