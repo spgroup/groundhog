@@ -33,6 +33,7 @@ public class SearchGitHubTest {
 		}
 	}
 	
+	@Test
 	public void testFetchByProjectLanguages() {
 		try {
 			List<Project> projects = searchGitHub.getProjects("groundhog", 1, 3);
@@ -44,6 +45,7 @@ public class SearchGitHubTest {
 		}
 	}
 	
+	@Test
 	public void testSearchProjectsByUser() {
 		try {
 			List<Project> projects = searchGitHub.getProjects("groundhog", "spggroup", 1);
@@ -54,6 +56,7 @@ public class SearchGitHubTest {
 		}
 	}
 	
+	@Test
 	public void testSimpleSearch() {
 		try {
 			long time = System.nanoTime();
@@ -69,7 +72,17 @@ public class SearchGitHubTest {
 	public void testSearchMoreThenOneLanguage() {
 		try {
 			long time = System.nanoTime();
-			System.out.println(searchGitHub.getProjectsWithMoreThanOneLanguage(1, 5));
+			
+			/*
+			 * This line will get the first five and print one processed string with all the info
+			 * for the answer of the issue #45
+			 */
+			
+			System.out.println(searchGitHub.getProjectsWithMoreThanOneLanguageString(1, 5));
+			
+			// This line will get all the projects in raw and print them
+			//System.out.println(searchGitHub.getProjectsWithMoreThanOneLanguage(1, 5));
+			
 			System.out.printf("Elapsed: %.2f", (System.nanoTime() - time) / 1000000000.0);
 		} catch (Exception e) {
 			e.printStackTrace();

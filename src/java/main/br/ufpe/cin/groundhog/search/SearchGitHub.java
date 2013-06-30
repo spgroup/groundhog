@@ -35,7 +35,7 @@ public class SearchGitHub implements ForgeSearch {
 	private final Gson gson;
 
 	// Used to increase the number of GitHub API requests per hour
-	private String gitHubOauthAcessToken;
+	private String gitHubOauthAcessToken = "092837537a2bbb2365823cff3b977291e8bc078e";
 	
 	@Inject
 	public SearchGitHub(Requests requests) {
@@ -93,7 +93,12 @@ public class SearchGitHub implements ForgeSearch {
 			throw new SearchException(e);
 		}
 	}
-	
+	/**
+	 * Obtains from the GitHub API the set of projects with more than one language
+	 * @param Start indicates the desired page
+	 * @param limit is the total of projects that are going to me returned 
+	 * @throws IOException
+	 */
 	public List<Project> getProjectsWithMoreThanOneLanguage(int page, int limit) throws SearchException {
 		try {
 			
@@ -119,47 +124,107 @@ public class SearchGitHub implements ForgeSearch {
 			throw new SearchException(e);
 		}
 	}
-	
+	/**
+	 * Obtains from the GitHub API a string indicating how many projects have more than one language
+	 * @param page indicates the desired page
+	 * @param limit is the total of projects that are going to me returned 
+	 * @throws IOException
+	 */
+	public String getProjectsWithMoreThanOneLanguageString(int page, int limit) throws SearchException {
+		try {
+			
+			String result = "";
+			
+			List<Project> projects = new ArrayList<Project>();
+			List<Project> rawData = getAllProjects(page, limit);
+			List<Language> languages;
+			
+			for (Iterator<Project> iterator = rawData.iterator(); iterator.hasNext();) {
+				Project project = iterator.next();
+				
+				languages = fetchProjectLanguages(project);
+				
+				if(languages.size() > 1){
+					
+					projects.add(project);
+				}
+			}
+			
+			float percent = ((Float.intBitsToFloat(projects.size())/Float.intBitsToFloat(rawData.size()))*100);
+			
+			result = "There are " + rawData.size() + " projects in github \n" +
+					"There are " + projects.size() +" projects with more than one language \n" +
+					"This is " + percent + "% of the total";
+			
+			return result;
+		
+		} catch (GroundhogException | IOException e) {
+			e.printStackTrace();
+			throw new SearchException(e);
+		}
+	}
+	/**
+	 * Obtains from the GitHub API the set of projects
+	 * @param Start indicates the desired page
+	 * @param limit is the total of projects that are going to me returned 
+	 * @throws IOException
+	 */
 	public List<Project> getAllProjects(int start, int limit) throws SearchException{
+		
 		String searchUrl  = null;
 		List<Project> projects = new ArrayList<Project>();
 		JsonParser parser = new JsonParser();
+		
 		try{
+			
 			int since = start;
 			int totalRepositories = 0;
+			
 			while(totalRepositories < limit || limit < 0){
+				
 				searchUrl = root + String.format("/repositories?since=%s", since);
 				
 				if( this.gitHubOauthAcessToken != null){
+					
 					searchUrl += String.format("&access_token=%s", this.gitHubOauthAcessToken);
 				}
 				
 				String jsonString = requests.get(searchUrl);
 				JsonElement jsonElement = parser.parse(jsonString);
+				
 				if( jsonElement.isJsonObject() && jsonElement.getAsJsonObject().has("message") ){
-					throw new GroundhogException( jsonElement.getAsJsonObject().get("message").toString() );
+					
+					throw new GroundhogException( jsonElement.getAsJsonObject()
+							.get("message").toString() );
 				}
 					
 				JsonArray jsonArray = jsonElement.getAsJsonArray();
-				for (int i = 0; i < jsonArray.size() && 
-						(totalRepositories + i < limit || limit < 0); i++) {
+				
+				int counter = 0;
+				
+				for (Iterator<JsonElement> iterator = jsonArray.iterator(); (iterator
+						.hasNext() && (totalRepositories + counter < limit || limit < 0));) {
 					
-					String repoName = jsonArray.get(i).getAsJsonObject().get("name").getAsString();					
+					JsonElement element = (JsonElement) iterator.next();
 					
+					String repoName = element.getAsJsonObject().get("name").getAsString();	
 					String searchUrlLegacy  = null;					
 					searchUrlLegacy = root
 							+ String.format(
 									"/legacy/repos/search/%s?", repoName);
 					
 					if( this.gitHubOauthAcessToken != null){
-						searchUrlLegacy += String.format("&access_token=%s", this.gitHubOauthAcessToken);
+						searchUrlLegacy += 
+								String.format("&access_token=%s", this.gitHubOauthAcessToken);
 					}
 					
 					String jsonLegacy = requests.get(searchUrlLegacy);
 					
 
 					if( jsonElement.isJsonObject() && jsonElement.getAsJsonObject().has("message") ){
-						throw new GroundhogException( jsonElement.getAsJsonObject().get("message").toString() );
+						
+						throw new GroundhogException( jsonElement.getAsJsonObject().
+								get("message").toString() );
 					}
 					
 					JsonObject jsonObject = parser.parse(jsonLegacy).getAsJsonObject();			
@@ -167,29 +232,34 @@ public class SearchGitHub implements ForgeSearch {
 					
 					JsonObject rawJsonObject = jsonArrayLegacy.get(0).getAsJsonObject();
 					
-					String element = rawJsonObject.toString();
-					Project p = gson.fromJson(element, Project.class);
+					String stringElement = rawJsonObject.toString();
+					Project p = gson.fromJson(stringElement, Project.class);
 					
 					p.setSCM(SCM.GIT);
 					p.setScmURL(String.format("git://github.com/%s/%s.git", p.getOwner(), p.getName()));
 					
 					String owner = rawJsonObject.getAsJsonObject().get("owner").getAsString();
 					
-					String userJson = requests.get(USERS_API + owner);
-					User user = gson.fromJson(userJson, User.class);
+					User user = new User(owner);
 					
 					p.setOwner(user);
 					
 					projects.add(p);
+					
+					counter++;
 					totalRepositories++;
-				}				
+				}
+				
 				JsonElement lastPagesRepository = jsonArray.get(jsonArray.size() -1);
 				since = lastPagesRepository.getAsJsonObject().get("id").getAsInt();
 			}
+			
 		} catch (IOException | GroundhogException e) {
+			
 			e.printStackTrace();
 			throw new SearchException(e);
 		}
+		
 		return projects;
 	}
 
@@ -301,7 +371,7 @@ public class SearchGitHub implements ForgeSearch {
 						searchUrlLegacy += String.format("&access_token=%s", this.gitHubOauthAcessToken);
 					}
 					
-					//System.out.println(repoName + " " + searchUrlLegacy);
+					System.out.println(repoName + " " + searchUrlLegacy);
 					String jsonLegacy = requests.get(searchUrlLegacy);
 					
 
