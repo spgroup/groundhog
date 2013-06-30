@@ -35,7 +35,7 @@ public class SearchGitHub implements ForgeSearch {
 	private final Gson gson;
 
 	// Used to increase the number of GitHub API requests per hour
-	private String gitHubOauthAcessToken = "092837537a2bbb2365823cff3b977291e8bc078e";
+	private String gitHubOauthAcessToken;
 	
 	@Inject
 	public SearchGitHub(Requests requests) {
