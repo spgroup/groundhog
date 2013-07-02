@@ -36,7 +36,7 @@ public class SearchGitHub implements ForgeSearch {
 
 	// Used to increase the number of GitHub API requests per hour
 	private String gitHubOauthAcessToken;
-	
+
 	@Inject
 	public SearchGitHub(Requests requests) {
 		this.requests = requests;
@@ -395,4 +395,13 @@ public class SearchGitHub implements ForgeSearch {
 					get("message").toString() );
 		}
 	}
+	
+	public String getGitHubOauthAcessToken() {
+		return gitHubOauthAcessToken;
+	}
+
+	public void setGitHubOauthAcessToken(String gitHubOauthAcessToken) {
+		this.gitHubOauthAcessToken = gitHubOauthAcessToken;
+	}
+	
 }

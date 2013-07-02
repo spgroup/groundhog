@@ -19,11 +19,12 @@ public class SearchGitHubTest {
 	public void setup() {
 		Injector injector = Guice.createInjector(new SearchModule());
 		searchGitHub = injector.getInstance(SearchGitHub.class);
+		this.searchGitHub.setGitHubOauthAcessToken("269a932b28b54cc4520a6f042a0da5f8e149da34");
 	}
 	
 	@Test
 	public void testSearchByProjectName() {
-		try {
+		try {			
 			List<Project> projects = searchGitHub.getProjects("groundhog", 1, 3);
 			searchGitHub.fetchProjectLanguages(projects.get(0));
 			Assert.assertNotNull(projects);
