@@ -27,7 +27,7 @@ import com.google.inject.Inject;
  * @author fjsj, gustavopinto, Rodrigo Alves
  */
 public class SearchGitHub implements ForgeSearch {
-	private static String root = "https://api.github.com";
+	private static final String ROOT = "https://api.github.com";
 	private static final String REPO_API = "https://api.github.com";
 	private static final String USERS_API = "https://api.github.com/users/";
 	
@@ -44,14 +44,6 @@ public class SearchGitHub implements ForgeSearch {
 		this.gitHubOauthAcessToken = null;
 	}
 	
-	public SearchGitHub(Requests requests, Gson gson, String gitHubOauthAcessToken) {	
-		this.requests = requests;
-		this.gson = gson;
-		//Personal API Access Tokens
-		this.gitHubOauthAcessToken = gitHubOauthAcessToken;
-		// TODO get this through command line parameter
-	}
-	
 	public List<Project> getProjects(String term, int page, int limit) throws SearchException {
 		try {
 			if (term == null) {
@@ -59,7 +51,7 @@ public class SearchGitHub implements ForgeSearch {
 			}
 			
 			List<Project> projects = new ArrayList<Project>();
-			String searchUrl = root + String.format("/legacy/repos/search/%s?start_page=%s&language=java",
+			String searchUrl = ROOT + String.format("/legacy/repos/search/%s?start_page=%s&language=java",
 					requests.encodeURL(term), page);
 			
 			if( this.gitHubOauthAcessToken != null ){
@@ -97,22 +89,18 @@ public class SearchGitHub implements ForgeSearch {
 	 * Obtains from the GitHub API the set of projects with more than one language
 	 * @param Start indicates the desired page
 	 * @param limit is the total of projects that are going to me returned 
-	 * @throws IOException
+	 * @throws SearchException
 	 */
 	public List<Project> getProjectsWithMoreThanOneLanguage(int page, int limit) throws SearchException {
 		try {
 			
 			List<Project> projects = new ArrayList<Project>();
 			List<Project> rawData = getAllProjects(page, limit);
-			List<Language> languages;
 			
-			for (Iterator<Project> iterator = rawData.iterator(); iterator.hasNext();) {
-				Project project = iterator.next();
-				
-				languages = fetchProjectLanguages(project);
+			for (Project project : rawData) {
+				List<Language> languages = fetchProjectLanguages(project);
 				
 				if(languages.size() > 1){
-					
 					projects.add(project);
 				}
 			}
@@ -128,7 +116,7 @@ public class SearchGitHub implements ForgeSearch {
 	 * Obtains from the GitHub API a string indicating how many projects have more than one language
 	 * @param page indicates the desired page
 	 * @param limit is the total of projects that are going to me returned 
-	 * @throws IOException
+	 * @throws SearchException
 	 */
 	public String getProjectsWithMoreThanOneLanguageString(int page, int limit) throws SearchException {
 		try {
@@ -167,7 +155,7 @@ public class SearchGitHub implements ForgeSearch {
 	 * Obtains from the GitHub API the set of projects
 	 * @param Start indicates the desired page
 	 * @param limit is the total of projects that are going to me returned 
-	 * @throws IOException
+	 * @throws SearchException
 	 */
 	public List<Project> getAllProjects(int start, int limit) throws SearchException{
 		
@@ -182,15 +170,15 @@ public class SearchGitHub implements ForgeSearch {
 			
 			while(totalRepositories < limit || limit < 0){
 				
-				searchUrl = root + String.format("/repositories?since=%s", since);
+				searchUrl = ROOT + String.format("/repositories?since=%s", since);
 				
 				if( this.gitHubOauthAcessToken != null){
 					
 					searchUrl += String.format("&access_token=%s", this.gitHubOauthAcessToken);
 				}
 				
-				String jsonString = requests.get(searchUrl);
-				JsonElement jsonElement = parser.parse(jsonString);
+				String response = requests.get(searchUrl);
+				JsonElement jsonElement = parser.parse(response);
 				
 				checkAPIErrorMessage(jsonElement);
 					
@@ -205,9 +193,7 @@ public class SearchGitHub implements ForgeSearch {
 					
 					String repoName = element.getAsJsonObject().get("name").getAsString();	
 					String searchUrlLegacy  = null;					
-					searchUrlLegacy = root
-							+ String.format(
-									"/legacy/repos/search/%s?", repoName);
+					searchUrlLegacy = String.format("%s/legacy/repos/search/%s?", ROOT , repoName);
 					
 					if( this.gitHubOauthAcessToken != null){
 						searchUrlLegacy += 
@@ -324,7 +310,7 @@ public class SearchGitHub implements ForgeSearch {
 	}
 	
 	public List<Issue> getAllProjectIssues(Project project) throws IOException {
-		List<Issue> collection = null;
+		List<Issue> collection = new ArrayList<Issue>();
 
 		String searchUrl = String.format("%s/repos/%s/%s/issues",
 				REPO_API, project.getUser().getLogin(), project.getName());
@@ -350,7 +336,7 @@ public class SearchGitHub implements ForgeSearch {
 			int since = start;
 			int totalRepositories = 0;
 			while(totalRepositories < limit || limit < 0){
-				searchUrl = root + String.format("/repositories?since=%s&language=java", since);
+				searchUrl = ROOT + String.format("/repositories?since=%s&language=java", since);
 				
 				if( this.gitHubOauthAcessToken != null){
 					searchUrl += String.format("&access_token=%s", this.gitHubOauthAcessToken);
@@ -369,7 +355,7 @@ public class SearchGitHub implements ForgeSearch {
 					String repoName = jsonArray.get(i).getAsJsonObject().get("name").getAsString();					
 					
 					String searchUrlLegacy  = null;					
-					searchUrlLegacy = root
+					searchUrlLegacy = ROOT
 							+ String.format(
 									"/legacy/repos/search/%s?language=java", repoName);
 					

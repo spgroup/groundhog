@@ -1,4 +1,5 @@
 {
+    "githubtoken": "aaaa"
     "forge": "github",
     "dest": "/opt/groundhog/dest",
     "out": "/opt/groundhog/metrics",

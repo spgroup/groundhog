@@ -48,6 +48,9 @@ public class Options {
 	@Option(name = "-user", usage = "determine the output format of the metrics")
 	private String username = "";
 
+	@Option(name = "-githubtoken", usage = "use authenticated requests to github api")
+	private String gitHubOauthAcessToken;
+	
 	private JsonInput input = null;
 
 	@Argument
@@ -160,6 +163,14 @@ public class Options {
 
 	public void setUsername(String username) {
 		this.username = username;
+	}
+	
+	public String getGitHubOauthAcessToken() {
+		return gitHubOauthAcessToken;
+	}
+
+	public void setGitHubOauthAcessToken(String gitHubOauthAcessToken) {
+		this.gitHubOauthAcessToken = gitHubOauthAcessToken;
 	}
 
 	@Option(name = "-in", usage = "all inputs together in one json file")

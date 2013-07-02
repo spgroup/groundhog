@@ -25,6 +25,7 @@ public final class JsonInput {
 	private String nprojects;
 	private String outputformat;
 	private Search search;
+	private String gitHubOauthAcessToken;
 
 	public JsonInput(Options opt) {
 		super();
@@ -35,6 +36,7 @@ public final class JsonInput {
 		this.nprojects = opt.getnProjects();
 		this.outputformat = opt.getMetricsFormat();
 		this.search = new Search(opt.getArguments(), opt.getUsername());
+		this.gitHubOauthAcessToken = opt.getGitHubOauthAcessToken();
 	}
 
 	//TODO: this should be discovered dynamically
@@ -73,6 +75,10 @@ public final class JsonInput {
 		return 4;
 	}
 	
+	public String getGitHubOauthAcessToken() {
+		return gitHubOauthAcessToken;
+	}
+
 	public Search getSearch() {
 		return this.search;
 	}
