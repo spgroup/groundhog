@@ -125,15 +125,11 @@ public class SearchGitHub implements ForgeSearch {
 			
 			List<Project> projects = new ArrayList<Project>();
 			List<Project> rawData = getAllProjects(page, limit);
-			List<Language> languages;
 			
-			for (Iterator<Project> iterator = rawData.iterator(); iterator.hasNext();) {
-				Project project = iterator.next();
-				
-				languages = fetchProjectLanguages(project);
+			for (Project project : rawData) {
+				List<Language> languages = fetchProjectLanguages(project);
 				
 				if(languages.size() > 1){
-					
 					projects.add(project);
 				}
 			}
