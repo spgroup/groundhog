@@ -1,4 +1,4 @@
-package br.ufpe.cin.groundhog.parser;
+package br.ufpe.cin.groundhog.parser.java;
 
 import br.ufpe.cin.groundhog.GroundhogException;
 

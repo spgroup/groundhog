@@ -1,4 +1,4 @@
-package br.ufpe.cin.groundhog.parser;
+package br.ufpe.cin.groundhog.parser.java;
 
 import java.util.HashMap;
 import java.util.Set;

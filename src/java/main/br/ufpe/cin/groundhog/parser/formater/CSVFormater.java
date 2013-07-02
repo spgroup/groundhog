@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import au.com.bytecode.opencsv.CSVWriter;
-import br.ufpe.cin.groundhog.parser.MutableInt;
+import br.ufpe.cin.groundhog.parser.java.MutableInt;
 
 public class CSVFormater extends Formater {
 

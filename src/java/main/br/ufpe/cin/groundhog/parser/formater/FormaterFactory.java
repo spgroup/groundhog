@@ -1,6 +1,6 @@
 package br.ufpe.cin.groundhog.parser.formater;
 
-import br.ufpe.cin.groundhog.parser.UnsupportedMetricsFormatException;
+import br.ufpe.cin.groundhog.parser.java.UnsupportedMetricsFormatException;
 
 public class FormaterFactory {
 

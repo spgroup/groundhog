@@ -2,7 +2,7 @@ package br.ufpe.cin.groundhog.parser.formater;
 
 import java.util.HashMap;
 
-import br.ufpe.cin.groundhog.parser.MutableInt;
+import br.ufpe.cin.groundhog.parser.java.MutableInt;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

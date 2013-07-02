@@ -1,4 +1,4 @@
-package br.ufpe.cin.groundhog.parser;
+package br.ufpe.cin.groundhog.parser.java;
 
 import java.io.File;
 import java.io.IOException;
@@ -87,7 +87,7 @@ public class JavaParser {
 	 * @throws IOException if something wrong happens when closing source file manager
 	 */
 	public HashMap<String, HashMap<String, MutableInt>> parse() throws IOException {
-		logger.info("Running parser..");
+		logger.info("Running java parser..");
 		recursiveSearch(folder);
 		if (!filesList.isEmpty()) {
 			return invokeProcessor();
