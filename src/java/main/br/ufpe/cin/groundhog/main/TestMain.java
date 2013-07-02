@@ -42,7 +42,9 @@ import com.google.inject.Injector;
  */
 public class TestMain {
 	private static Logger logger = LoggerFactory.getLogger(TestMain.class);
-	
+	static Injector injector = Guice.createInjector(new SearchModule());
+	static SearchGitHub searchGitHub = injector.getInstance(SearchGitHub.class);
+
 	/**
 	 * Test method for search the GitHub forge
 	 * @param term the search term (project name)
@@ -181,9 +183,44 @@ public class TestMain {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		gitHubExample("jsoup");
-//		sourceForgeExample();
-//		googleCodeExample("facebook-java-api"); // Google Code SVN
-//		googleCodeExample("guava-libraries"); // Google Code Git
+		// gitHubExample("jsoup");
+		
+		/**
+		 * Testing issue 22 - getProjectsThatAreForks
+		 * How many are forks
+		 * Algorithm:
+		 *   Search: the first two projects, of the first page for projects named "opencv"
+		 *   get ratio: get the number of the projects returned from the search above that are forks
+		 */
+		int n = 1, m = 15;
+		List<Project> projects = searchGitHub.getProjects("opencv", 1, 15);
+		
+		System.out.println("Searching GitHub for 'opencv': the first " + m + " results of the " + n + " page...");
+		System.out.println(projects.size() + " projects returned");
+		double ratio = Project.getProjectsThatAreForks(projects);
+		
+		System.out.println("Are forks: " + ratio);
+		
+		/**
+		 * If we want - hypothetically - to find out how many projects on GitHub are forks
+		 * List<Project> projects = searchGitHub.getProjects(1, -1);
+		 * Beware, this will zero your API limit!
+		 */
+		
+		/**
+		 * Testing issue 22 - getProjectsWithForksRate
+		 * Find out how many have forks
+		 * 
+		 */
+		
+		double nratio = Project.getProjectsWithForksRate(projects);
+		System.out.println("Have forks: " + nratio);
+		
+		int aratio = Project.getAverageForksRate(projects);
+		System.out.println("Average number of forks between the searched projects: " + nratio);
+		
+        // sourceForgeExample();
+		// googleCodeExample("facebook-java-api"); // Google Code SVN
+		// googleCodeExample("guava-libraries"); // Google Code Git
 	}
 }
