@@ -416,7 +416,7 @@ public class Project implements GitHubEntity {
 	 * @param projects
 	 * @return
 	 */
-	public int getAverageForksRate(List<Project> projects) {
+	public static int getAverageForksRate(List<Project> projects) {
 		int i = 0, j = 0, total = 0, listSize = projects.size();
 		int[] forkStore = new int[listSize];
 		
