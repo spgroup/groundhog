@@ -3,6 +3,9 @@ package br.ufpe.cin.groundhog;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
+import com.google.gson.annotations.SerializedName;
+
 import br.ufpe.cin.groundhog.util.Dates;
 
 /**
@@ -10,28 +13,53 @@ import br.ufpe.cin.groundhog.util.Dates;
  * @author fjsj, gustavopinto, Rodrigo Alves
  */
 public class Project implements GitHubEntity {
+	@SerializedName("name")
 	private String name;
+
+	@SerializedName("description")
 	private String description;
-	
+
+	@SerializedName("language")
 	private String language;
 	private List<Language> languages;
-	
+
 	private User user;
 	private SCM scm;
+
+	@SerializedName("clone_url")
 	private String scmURL;
+
+	@SerializedName("html_url")
 	private String sourceCodeURL;
 
+	@SerializedName("created_at")
 	private Date createdAt;
+
+	@SerializedName("pushed_at")
 	private Date lastPushedAt;
 
+	@SerializedName("fork")
 	private boolean isFork;
+
+	@SerializedName("has_downloads")
 	private boolean hasDownloads;
+
+	@SerializedName("has_issues")
 	private boolean hasIssues;
+
+	@SerializedName("has_wiki")
 	private boolean hasWiki;
 
+	@SerializedName("watchers_count")
 	private int watchersCount;
+
+	@SerializedName("followers")
 	private int followersCount;
+
+	@SerializedName("forks")
 	private int forks_count;
+
+	@SerializedName("open_issues_count")
 	private int issuesCount;
 
 	public Project() {
@@ -69,7 +97,7 @@ public class Project implements GitHubEntity {
 		this(name, description, scm, scmURL);
 		this.sourceCodeURL = sourceCodeURL;
 	}
-	
+
 	public Project(String name, String description, String sourceCodeURL, SCM scm, String scmURL) {
 		this(name, description, sourceCodeURL);
 		this.scm = scm;
@@ -137,7 +165,7 @@ public class Project implements GitHubEntity {
 	}
 	/**
 	 * Informs the project's SCM URL
-	 * @return 
+	 * @return
 	 */
 	public String getScmURL() {
 		return this.scmURL;
@@ -199,7 +227,7 @@ public class Project implements GitHubEntity {
 
 	/**
 	 * Informs whether the project has its own Wiki or not.
-	 * @return true if the project has a Wiki. Returns false otherwise. 
+	 * @return true if the project has a Wiki. Returns false otherwise.
 	 */
 	public boolean hasWiki() {
 		return this.hasWiki;
@@ -230,7 +258,7 @@ public class Project implements GitHubEntity {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return an integer informing the number of people following the project on its forge
 	 */
 	public int getFollowersCount() {
@@ -262,7 +290,7 @@ public class Project implements GitHubEntity {
 	}
 
 	/**
-	 * 
+	 *
 	 * Informs the number of open issues of the project
 	 * @return an integer value correspondent to the amount of open issues
 	 */
@@ -346,11 +374,11 @@ public class Project implements GitHubEntity {
 	 * @param lastPushedAtParam the String correspondent to the date of the last push to the project
 	 * in question. e.g: 2012-04-28T15:40:35Z
 	 */
-	public void setLastPushedAt(String lastPushedAtParam){		
+	public void setLastPushedAt(String lastPushedAtParam){
 		Date lastPushDate = new Dates("yyyy-MM-dd HH:mm:ss").format(lastPushedAtParam);
 		this.lastPushedAt = lastPushDate;
 	}
-	
+
 	/**
 	 * Informs the name of prevailing programming language in a project
 	 * @return name of programming language
@@ -365,7 +393,7 @@ public class Project implements GitHubEntity {
 	public void setLanguage(String language) {
 		this.language = language;
 	}
-	
+
 	/**
 	 * Returns the list of languages that compose the Project
 	 * @return a {@link List} of {@link Language} objects
@@ -373,7 +401,7 @@ public class Project implements GitHubEntity {
 	public List<Language> getLanguages() {
 		return this.languages;
 	}
-	
+
 	/**
 	 * Sets the list of languages that compose the Project
 	 * @param a {@link List} of {@link Language} objects
@@ -381,7 +409,7 @@ public class Project implements GitHubEntity {
 	public void setLanguages(List<Language> langs) {
 		this.languages = langs;
 	}
-	
+
 	/**
 	 * Method to inform the median number of forks per project in a collection of projects
 	 * @param projects
@@ -391,26 +419,26 @@ public class Project implements GitHubEntity {
 		int i = 0, listSize = projects.size(), half = listSize/2;
 		double median = 0.0;
 		int[] forkStore = new int[listSize];
-		
+
 		if (listSize == 0) {
 		    throw new IllegalArgumentException("List of projects can't be empty");
 		}
-		
+
 		for (; i < listSize; i++) {
 			forkStore[i] = projects.get(i).getForksCount();
 		}
-		
+
 		Arrays.sort(forkStore);
-		
+
 		if (listSize % 2 == 0) {
 			median = (forkStore[half - 1] + forkStore[half])/2;
 		} else {
 			median = forkStore[half];
 		}
-		
+
 		return median;
 	}
-	
+
 	/**
 	 * Method to inform the average number of forks per project in a collection of projects
 	 * @param projects
@@ -419,22 +447,22 @@ public class Project implements GitHubEntity {
 	public static int getAverageForksRate(List<Project> projects) {
 		int i = 0, j = 0, total = 0, listSize = projects.size();
 		int[] forkStore = new int[listSize];
-		
+
 		if (listSize == 0) {
 		    throw new IllegalArgumentException("List of projects can't be empty");
 		}
-		
+
 		for (; i < listSize; i++) {
 			forkStore[i] = projects.get(i).getForksCount();
 		}
-		
+
 		for (; j < forkStore.length; j++) {
 			total += forkStore[j];
 		}
-		
+
 		return total/listSize;
 	}
-	
+
 	/**
 	 * Method to discover the percentage of projects that have forks
 	 * @param The list of projects to be analyzed
@@ -443,21 +471,21 @@ public class Project implements GitHubEntity {
 	public static double getProjectsWithForksRate(List<Project> projects) {
 		double result = 0.0;
 		int projectsWithForks = 0, i = 0, listSize = projects.size();
-		
+
 		if (listSize == 0) {
 		    throw new IllegalArgumentException("List of projects can't be empty");
 		}
-		
+
 		for (; i < listSize; i++) {
 			if (projects.get(i).getForksCount() > 0) {
 				projectsWithForks++;
 			}
 		}
-		
-		result = (projectsWithForks / listSize);		
+
+		result = (projectsWithForks / listSize);
 		return result;
 	}
-	
+
 	/**
 	 * Informs what is the overall percentage of the given projects that are forks
 	 * With this method we can answer the question "What is the overall percentage of Github projects that ARE forks?"
@@ -466,21 +494,21 @@ public class Project implements GitHubEntity {
 	public static double getProjectsThatAreForks(List<Project> projects) {
 		double result = 0.0;
 		int projectsAreForks = 0, i = 0, listSize = projects.size();
-		
+
 		if (listSize == 0) {
 		    throw new IllegalArgumentException("List of projects can't be empty");
 		}
-		
+
 		for (; i < listSize; i++) {
 			if (projects.get(i).isFork()) {
 				projectsAreForks++;
 			}
 		}
-		
-		result = (projectsAreForks / listSize);	
+
+		result = (projectsAreForks / listSize);
 		return result;
 	}
-	
+
 	/**
 	 * Returns the {@link User} object who is the author of the Project
 	 * @return
