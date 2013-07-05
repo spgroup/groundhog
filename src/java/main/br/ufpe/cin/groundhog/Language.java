@@ -8,7 +8,7 @@ package br.ufpe.cin.groundhog;
  * @author Rodrigo Alves
  *
  */
-public class Language {
+public class Language implements Comparable<Language> {
 	private String name;
 	private int loc;
 	
@@ -40,4 +40,17 @@ public class Language {
 	public void setLoc(int loc) {
 		this.loc = loc;
 	}
+
+	@Override
+	public int compareTo(Language o) {
+		if( this.getLoc() < o.getLoc()){
+			return -1;
+		} 
+		if( this.getLoc() > o.getLoc()){
+			return 1;
+		}
+		return 0;
+	}
+	
+	
 }
