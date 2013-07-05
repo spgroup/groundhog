@@ -1,28 +1,45 @@
 package br.ufpe.cin.groundhog;
 
 import java.util.Date;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Represents a Pull Request object in Groundhog
  * @author Rodrigo Alves
  */
 public class PullRequest extends Issue implements GitHubEntity {
+	@SerializedName("merged_at")
 	private Date mergedAt;
+	
+	@SerializedName("merge_commit_sha")
 	private String mergeCommitSha;
 	
+	@SerializedName("review_comments_url")
 	private int reviewCommentsCount;
+	
+	@SerializedName("commits")
 	private int commitsCount;
 	
+	@SerializedName("merged")
 	private boolean merged;
+	
+	@SerializedName("mergeable")
 	private boolean mergeable;
 	
+	@SerializedName("mergeable_state")
 	private String mergeableState;
 	
+	@SerializedName("merged_by")
 	private User mergedBy;
 	
 	// Code content
+	@SerializedName("additions")
 	private int additionsCount;
+	
+	@SerializedName("deletions")
 	private int deletionsCount;
+	
+	@SerializedName("changed_files")
 	private int changedFilesCount;
   	
 	public PullRequest(int number, Project project, String state) {
