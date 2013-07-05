@@ -53,9 +53,6 @@ public class Project implements GitHubEntity {
 	@SerializedName("watchers_count")
 	private int watchersCount;
 
-	@SerializedName("followers")
-	private int followersCount;
-
 	@SerializedName("forks")
 	private int forks_count;
 
@@ -255,22 +252,6 @@ public class Project implements GitHubEntity {
 	 */
 	public void setWatchersCount(int watchersCount) {
 		this.watchersCount = watchersCount;
-	}
-
-	/**
-	 *
-	 * @return an integer informing the number of people following the project on its forge
-	 */
-	public int getFollowersCount() {
-		return this.followersCount;
-	}
-
-	/**
-	 * Sets how many followers the project has on its forge
-	 * @param followersCount an integer, the number of people following the project
-	 */
-	public void setFollowersCount(int followersCount) {
-		this.followersCount = followersCount;
 	}
 
 	/**
