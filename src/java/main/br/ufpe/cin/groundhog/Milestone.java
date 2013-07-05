@@ -1,27 +1,46 @@
 package br.ufpe.cin.groundhog;
 
 import java.util.Date;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Represents a Milestone object in Groundhog
  * @author Rodrigo Alves
  */
 public class Milestone implements GitHubEntity {
+	@SerializedName("id")
 	private int id;
+	
+	@SerializedName("number")
 	private int number;
 	
 	private Project project;
 
+	@SerializedName("state")
 	private String state;
+	
+	@SerializedName("title")
 	private String title;
+	
+	@SerializedName("description")
 	private String description;
 	
+	@SerializedName("creator")
 	private User creator;
 	
+	@SerializedName("open_issues")
 	private int openIssuesCount;
+	
+	@SerializedName("closed_issues")
 	private int closedIssuesCount;
 	
+	@SerializedName("created_at")
 	private Date createdAt;
+	
+	@SerializedName("updated_at")
+	private Date updatedAt;
+	
+	@SerializedName("due_on")
 	private Date dueOn;
 	
 	/**
@@ -171,6 +190,18 @@ public class Milestone implements GitHubEntity {
 
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
+	}
+	
+	/**
+	 * Informs the update date of the Milestone
+	 * @return a {@link Date} object
+	 */
+	public Date getUpdatedAt() {
+		return this.updatedAt;
+	}
+	
+	public void setUpdateAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
 	}
 	
 	/**
