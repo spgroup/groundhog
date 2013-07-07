@@ -1,21 +1,31 @@
 package br.ufpe.cin.groundhog;
 
 import java.util.Date;
-
+import com.google.gson.annotations.SerializedName;
 /**
  * Represents a GitHub Organization in Groundhog
  * @author gustavopinto, Rodrigo Alves
  */
 public class Organization implements GitHubEntity {
+	@SerializedName("id")
 	private int id;
 
+	@SerializedName("login")
 	private String login;
+	
+	@SerializedName("name")
 	private String name;
+	
+	@SerializedName("location")
 	private String location;
 	
+	@SerializedName("created_at")
 	private Date created_at;
 	
+	@SerializedName("public_repos")
 	public int public_repos;
+	
+	@SerializedName("public_gists")
 	public int public_gists;
 
 	/**
