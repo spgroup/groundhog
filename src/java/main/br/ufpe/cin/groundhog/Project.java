@@ -22,6 +22,8 @@ public class Project implements GitHubEntity {
 	@SerializedName("language")
 	private String language;
 	private List<Language> languages;
+	
+	private List<Milestone> milestones;
 
 	private User user;
 	private SCM scm;
@@ -70,6 +72,16 @@ public class Project implements GitHubEntity {
 	public Project(String name, String description) {
 		this.name = name;
 		this.description = description;
+	}
+	
+	/**
+	 * 2-parameter complimentary constructor
+	 * @param user the {@link User} to who the project belongs
+	 * @param name the name of the {@link Project}
+	 */
+	public Project(User user, String name) {
+		this.user = user;
+		this.name = name;
 	}
 
 	/**
@@ -389,6 +401,18 @@ public class Project implements GitHubEntity {
 	 */
 	public void setLanguages(List<Language> langs) {
 		this.languages = langs;
+	}
+	
+	/**
+	 * Returns the list of milestones of the Project
+	 * @return a {@link List} of {@link Milestone} objects
+	 */
+	public List<Milestone> getMilestones() {
+		return this.milestones;
+	}
+
+	public void setMilestones(List<Milestone> milestones) {
+		this.milestones = milestones;
 	}
 
 	/**

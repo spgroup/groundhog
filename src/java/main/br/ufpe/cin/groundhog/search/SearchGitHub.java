@@ -8,6 +8,7 @@ import java.util.List;
 import br.ufpe.cin.groundhog.GroundhogException;
 import br.ufpe.cin.groundhog.Issue;
 import br.ufpe.cin.groundhog.Language;
+import br.ufpe.cin.groundhog.Milestone;
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.SCM;
 import br.ufpe.cin.groundhog.User;
@@ -304,7 +305,7 @@ public class SearchGitHub implements ForgeSearch {
 		
 		return languages;
 	}
-	
+
 	public List<Issue> getAllProjectIssues(Project project) throws IOException {
 		List<Issue> collection = new ArrayList<Issue>();
 
@@ -320,6 +321,32 @@ public class SearchGitHub implements ForgeSearch {
 		for (; i < jsonArray.size(); i++) {
 			issue = gson.fromJson(jsonArray.get(i), Issue.class);
 			collection.add(issue);
+		}
+		
+		return collection;
+	}
+	
+	/**
+	 * Fetches all the Milestones of the given {@link Project} from the GitHub API
+	 * @param project the @{link Project} of which the Milestones are about
+	 * @return a {@link List} of {@link Milestone} objects
+	 * @throws IOException
+	 */
+	public List<Milestone> getAllProjectMilestones(Project project) throws IOException {
+		List<Milestone> collection = new ArrayList<Milestone>();
+		String searchUrl = String.format("%s/repos/%s/%s/milestones",
+				REPO_API, project.getUser().getLogin(), project.getName());
+		String jsonString = requests.get(searchUrl);
+		
+		JsonElement jsonElement = gson.fromJson(jsonString, JsonElement.class);
+		JsonArray jsonArray = jsonElement.getAsJsonArray();
+		
+		int i = 0;
+		Milestone milestone;
+		
+		for (; i < jsonArray.size(); i++) {
+			milestone = gson.fromJson(jsonArray.get(i), Milestone.class);
+			collection.add(milestone);
 		}
 		
 		return collection;
@@ -397,11 +424,10 @@ public class SearchGitHub implements ForgeSearch {
 	}
 	
 	public String getGitHubOauthAcessToken() {
-		return gitHubOauthAcessToken;
+		return this.gitHubOauthAcessToken;
 	}
 
 	public void setGitHubOauthAcessToken(String gitHubOauthAcessToken) {
 		this.gitHubOauthAcessToken = gitHubOauthAcessToken;
 	}
-	
 }

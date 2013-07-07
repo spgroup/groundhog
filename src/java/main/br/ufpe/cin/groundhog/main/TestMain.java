@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.SCM;
+import br.ufpe.cin.groundhog.User;
 import br.ufpe.cin.groundhog.codehistory.CodeHistoryModule;
 import br.ufpe.cin.groundhog.codehistory.GitCodeHistory;
 import br.ufpe.cin.groundhog.codehistory.SFCodeHistory;
@@ -217,7 +218,20 @@ public class TestMain {
 		System.out.println("Have forks: " + nratio);
 		
 		int aratio = Project.getAverageForksRate(projects);
-		System.out.println("Average number of forks between the searched projects: " + nratio);
+		System.out.println("Average number of forks between the searched projects: " + aratio);
+		
+		// Fun with Milestones:
+		
+		User spg = new User("spgroup");
+		Project pr = new Project(spg, "groundhog");
+		
+		pr.setMilestones(searchGitHub.getAllProjectMilestones(pr));
+		
+		System.out.println("Searching for Milestones...");
+		
+		for (int h = 0; h < pr.getMilestones().size(); h++) {
+			System.out.println(pr.getMilestones().get(h).getTitle());
+		}
 		
         // sourceForgeExample();
 		// googleCodeExample("facebook-java-api"); // Google Code SVN
