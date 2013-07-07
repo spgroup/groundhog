@@ -22,6 +22,9 @@ public class Organization implements GitHubEntity {
 	@SerializedName("created_at")
 	private Date created_at;
 	
+	@SerializedName("updated_at")
+	private Date updatedAt;
+	
 	@SerializedName("public_repos")
 	public int public_repos;
 	
@@ -51,6 +54,19 @@ public class Organization implements GitHubEntity {
 
 	public void setCreated_at(Date created_at) {
 		this.created_at = created_at;
+	}
+	
+	/**
+	 * Informs the updated at of the Organization.
+	 * That means the date when the last activity occurred in one of the projects of the Organization
+	 * @return a {@link Date} object correspondent to the Organization's update (last activity) date
+	 */
+	public Date getUpdatedAt() {
+		return this.updatedAt;
+	}
+	
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
 	}
 
 	/**
