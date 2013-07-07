@@ -1,28 +1,50 @@
 package br.ufpe.cin.groundhog;
 
 import java.util.Date;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Represents a GitHub User in Groundhog
  * @author gustavopinto, Rodrigo Alves
  */
 public class User implements GitHubEntity {
+	@SerializedName("id")
 	private int id;
 	
+	@SerializedName("login")
 	private String login;
+	
+	@SerializedName("email")
 	private String email;
+	
+	@SerializedName("company")
 	private String company;
+	
+	@SerializedName("location")
 	private String location;
+	
+	@SerializedName("blog")
 	private String blog;
 	
+	@SerializedName("hireable")
 	private boolean hireable;
 	
+	@SerializedName("followers")
 	private int followers;
+	
+	@SerializedName("following")
 	private int following;
+	
+	@SerializedName("public_repos")
 	public int public_repos;
+	
+	@SerializedName("public_gists")
 	public int public_gists;
 	
+	@SerializedName("created_at")
 	private Date created_at;
+	
+	@SerializedName("updated_at")
 	private Date updated_at;
 	
 	public User(String login) {
