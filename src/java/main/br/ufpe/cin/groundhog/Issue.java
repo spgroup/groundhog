@@ -21,14 +21,14 @@ public class Issue implements GitHubEntity {
     private Project project;
 
     @SerializedName("pull_request")
-    private PullRequest pullRequest;
+    private transient PullRequest pullRequest;
 	
     private Milestone milestone;
 
-    @SerializedName("state")
+    @SerializedName("title")
     private String title;
 	
-    @SerializedName("state")
+    @SerializedName("body")
     private String body;
 	
     @SerializedName("state")

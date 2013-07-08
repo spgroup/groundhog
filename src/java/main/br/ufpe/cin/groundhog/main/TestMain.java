@@ -233,6 +233,15 @@ public class TestMain {
 			System.out.println(pr.getMilestones().get(h).getTitle());
 		}
 		
+		// Fun with Issues:
+		
+		pr.setIssues(searchGitHub.getAllProjectIssues(pr));
+		
+		System.out.println("Searching for Issues...");
+		for (int k = 0; k < pr.getIssues().size(); k++) {
+			System.out.println(pr.getIssues().get(k).getTitle());
+		}
+		
         // sourceForgeExample();
 		// googleCodeExample("facebook-java-api"); // Google Code SVN
 		// googleCodeExample("guava-libraries"); // Google Code Git

@@ -23,6 +23,7 @@ public class Project implements GitHubEntity {
 	private String language;
 	private List<Language> languages;
 	
+	private List<Issue> issues;
 	private List<Milestone> milestones;
 
 	private User user;
@@ -413,6 +414,18 @@ public class Project implements GitHubEntity {
 
 	public void setMilestones(List<Milestone> milestones) {
 		this.milestones = milestones;
+	}
+	
+	/**
+	 * Returns the list of issues of the project
+	 * @return a {@link List} of {@link Issue} objects
+	 */
+	public List<Issue> getIssues() {
+		return this.issues;
+	}
+	
+	public void setIssues(List<Issue> issues) {
+		this.issues = issues;
 	}
 
 	/**
