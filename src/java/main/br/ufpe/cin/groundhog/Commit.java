@@ -151,21 +151,21 @@ public class Commit implements GitHubEntity {
 		this.additionsCount = additionsCount;
 	}
 
-	public int getDeletionsCount() {
-		return this.deletionsCount;
-	}
-
 	/**
 	 * Informs the sum of deleted lines among the files committed
 	 * @param deletionsCount
 	 */
+	public int getDeletionsCount() {
+		return this.deletionsCount;
+	}
+
 	public void setDeletionsCount(int deletionsCount) {
 		this.deletionsCount = deletionsCount;
 	}
 
 	@Override
 	public String getURL() {
-		return String.format("https://api.github.com/repos/%s/%s/commits",
-				this.project.getUser().getLogin(), this.project.getName());
+		return String.format("https://api.github.com/repos/%s/%s/commits/%s",
+				this.project.getUser().getLogin(), this.project.getName(), this.sha);
 	}
 }
