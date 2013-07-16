@@ -183,7 +183,7 @@ public class Options {
 			this.input = args;
 		} catch (JsonSyntaxException e) {
 			throw new GroundhogException(
-					"The format of the json file seems strangy. Do you have already looked at one of ours examples?");
+					"The format of the json file seems strange. Do you have looked at one of our examples?");
 		} catch (IOException e) {
 			throw new GroundhogException("I do not found this file "
 					+ inputFile.getName()
