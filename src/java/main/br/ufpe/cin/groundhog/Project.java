@@ -1,11 +1,13 @@
 package br.ufpe.cin.groundhog;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-
 import com.google.gson.annotations.SerializedName;
-
+import java.util.Map.Entry;
 import br.ufpe.cin.groundhog.util.Dates;
 
 /**
@@ -539,7 +541,70 @@ public class Project implements GitHubEntity {
 		result = (projectsAreForks / listSize);
 		return result;
 	}
+	
+	
+	/**
+	 * Gets the top most Used languages among the projects considering the most used language
+	 * in each project. 
+	 * @param projects List of projects into consideration
+	 * @param limit Limits the size of the returning list
+	 * @return sorted list with the top most used languages
+	 */
+	public static List<Language> getTopMostUsedLanguages(List<Project> projects, int limit){
+		List<Language> topLanguages = new ArrayList<Language>();
+		HashMap<String, Integer> LanguageMap = new HashMap<String, Integer>(); 
+		for( Project project: projects){			
+			String language = project.getLanguage();
+			Integer count = 1;
+			if ( LanguageMap.containsKey(language) ){ 
+				count += LanguageMap.get(language);
+			}						   
+			LanguageMap.put(language, count);
+			
+		}
+		for( Entry<String, Integer> language : LanguageMap.entrySet() ){
+			topLanguages.add(new Language(language.getKey(), language.getValue()));
+		}
+		
+		Collections.sort(topLanguages);
+		if( limit < 0 ) limit = 0;
+		topLanguages = topLanguages.subList(0, Math.min( limit, topLanguages.size() ));
+		return topLanguages;		
+	}
+	
 
+	/**
+	 * Gets the top most Used languages among the projects according to the number 
+	 * of LOC (lines of code) that they apper. 
+	 * @param projects List of projects into consideration
+	 * @param limit Limits the size of the returning list
+	 * @return sorted list with the top most used languages
+	 */
+	public static List<Language> getTopMostUsedLanguagesLoc(List<Project> projects, int limit){
+		List<Language> topLanguages = new ArrayList<Language>();
+		HashMap<String, Integer> LanguageMap = new HashMap<String, Integer>(); 
+		for( Project project: projects){
+			if( project.getLanguages() == null) {
+				throw new GroundhogException("languages information required");
+			}
+			for( Language language : project.getLanguages()){
+				Integer newLoc = language.getLoc();
+				if ( LanguageMap.containsKey(language.getName()) ){ 
+					newLoc += LanguageMap.get(language.getName());
+				}						   
+				LanguageMap.put(language.getName(), newLoc);
+			}
+		}
+		for( Entry<String, Integer> language : LanguageMap.entrySet() ){
+			topLanguages.add(new Language(language.getKey(), language.getValue()));
+		}
+		
+		Collections.sort(topLanguages);
+		if( limit < 0 ) limit = 0;
+		topLanguages = topLanguages.subList(0, Math.min( limit, topLanguages.size() ));
+		return topLanguages;		
+	}
+	
 	/**
 	 * Returns the {@link User} object who is the author of the Project
 	 * @return

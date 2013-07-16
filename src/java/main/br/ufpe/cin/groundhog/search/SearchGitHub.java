@@ -42,7 +42,7 @@ public class SearchGitHub implements ForgeSearch {
 	public SearchGitHub(Requests requests) {
 		this.requests = requests;
 		this.gson = new Gson();
-		this.gitHubOauthAcessToken = null;
+		this.gitHubOauthAcessToken = "269a932b28b54cc4520a6f042a0da5f8e149da34";
 	}
 	
 	public List<Project> getProjects(String term, int page, int limit) throws SearchException {
