@@ -15,7 +15,7 @@ Groundhog was built using Maven, so to build the project you will need to run th
 
 In order for it to behave like an Eclipse project, you'll need to install the Maven plugin and then run:
 
-`$ mvn eclipse:eclipse
+`$ mvn eclipse:eclipse`
 
 ## Usage
 
