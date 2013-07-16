@@ -1,7 +1,7 @@
 # Groundhog
 [![Build Status](https://travis-ci.org/spgroup/groundhog.png?branch=master)](https://travis-ci.org/spgroup/groundhog)
 
-A simple pure Java tool to crawl software development projects from popular forges and to extract metrics from them.
+A Java project to crawl raw GitHub data and to extract metrics from it
 
 ## Usage
 
