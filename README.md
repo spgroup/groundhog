@@ -1,27 +1,23 @@
 # Groundhog
 [![Build Status](https://travis-ci.org/spgroup/groundhog.png?branch=master)](https://travis-ci.org/spgroup/groundhog)
 
-A Java project to crawl raw GitHub data and to extract metrics from it
+A framework for crawling raw GitHub data and to extract metrics from it
 
-## Usage
+## Build
 
 Groundhog uses Java 7 features, so you must have it installed before build.
 
-### Building in your machine
-
 Groundhog was built using Maven, so to build the project you will need to run the tool and let it fetch all the dependencies:
 
-```
-$ mvn package
-```
+`$ mvn package`
 
-### Bulding for Eclipse
+#### Bulding for Eclipse
 
 In order for it to behave like an Eclipse project, you'll need to install the Maven plugin and then run:
 
-```
-$ mvn eclipse:eclipse
-```
+`$ mvn eclipse:eclipse
+
+## Usage
 
 ### Generating the JAR
 
@@ -50,8 +46,6 @@ $ mvn test
 * GitHub
 * Google Code
 * SourceForge
-
-### Crawlers
 
 ### Supported Programming Languages
 
@@ -91,11 +85,11 @@ $ javadoc -d src/src/groundhog br.cin.ufpe.groundhog
 
 * Fernando Castor {myfamilyname@cin.ufpe.br}
 
-## How to contribute
+## Contributions
 
 Want to contribute with code, documentation or bug report? That's great, check out the [Issues] page.
 
-Preferably, your contribution is followed by JUnit tests and the submitted code is in agreement
+Preferably, your contribution should be backed by JUnit tests.
 
 Stability and maintainability are important goals of the Groundhog project. Well-written, tested code and proper documentation are very welcome.
 
