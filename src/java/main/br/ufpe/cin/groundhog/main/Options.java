@@ -187,7 +187,7 @@ public class Options {
 		} catch (IOException e) {
 			throw new GroundhogException("I do not found this file "
 					+ inputFile.getName()
-					+ ". Does it actually exists?");
+					+ ". Does it actually exist?");
 		}
 	}
 }

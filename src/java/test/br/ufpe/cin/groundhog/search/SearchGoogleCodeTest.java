@@ -1,6 +1,7 @@
 package br.ufpe.cin.groundhog.search;
 
 import br.ufpe.cin.groundhog.Project;
+import br.ufpe.cin.groundhog.http.HttpModule;
 
 import java.util.List;
 import org.junit.Assert;
@@ -14,7 +15,7 @@ public class SearchGoogleCodeTest {
 
 	@Before
 	public void setup() {
-		Injector injector = Guice.createInjector(new SearchModule());
+		Injector injector = Guice.createInjector(new SearchModule(), new HttpModule());
 		searchGoogleCode = injector.getInstance(SearchGoogleCode.class);
 	}
 

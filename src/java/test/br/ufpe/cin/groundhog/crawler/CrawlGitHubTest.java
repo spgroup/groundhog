@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import br.ufpe.cin.groundhog.Project;
+import br.ufpe.cin.groundhog.http.HttpModule;
 import br.ufpe.cin.groundhog.scmclient.GitClient;
 import br.ufpe.cin.groundhog.scmclient.ScmModule;
 import br.ufpe.cin.groundhog.search.SearchGitHub;
@@ -26,7 +27,7 @@ public class CrawlGitHubTest {
 
 	@Before
 	public void setup() {
-		Injector injector = Guice.createInjector(new SearchModule(), new ScmModule());
+		Injector injector = Guice.createInjector(new SearchModule(), new ScmModule(), new HttpModule());
 		searchGitHub = injector.getInstance(SearchGitHub.class);
 		gitClient = injector.getInstance(GitClient.class);
 	}

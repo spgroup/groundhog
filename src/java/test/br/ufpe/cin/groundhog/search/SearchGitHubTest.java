@@ -8,18 +8,19 @@ import org.junit.Test;
 
 import br.ufpe.cin.groundhog.Language;
 import br.ufpe.cin.groundhog.Project;
+import br.ufpe.cin.groundhog.http.HttpModule;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 public class SearchGitHubTest {
+	
 	private SearchGitHub searchGitHub;
 
 	@Before
 	public void setup() {
-		Injector injector = Guice.createInjector(new SearchModule());
+		Injector injector = Guice.createInjector(new SearchModule(), new HttpModule());
 		searchGitHub = injector.getInstance(SearchGitHub.class);
-		this.searchGitHub.setGitHubOauthAcessToken("269a932b28b54cc4520a6f042a0da5f8e149da34");
 	}
 	
 	@Test
@@ -60,9 +61,8 @@ public class SearchGitHubTest {
 	@Test
 	public void testSimpleSearch() {
 		try {
-			long time = System.nanoTime();
-			System.out.println(searchGitHub.getProjects("github api", 1,-1));
-			System.out.printf("Elapsed: %.2f", (System.nanoTime() - time) / 1000000000.0);
+			List<Project> projects = searchGitHub.getProjects("github api", 1,-1);
+			Assert.assertNotNull(projects);
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail();
@@ -72,19 +72,12 @@ public class SearchGitHubTest {
 	@Test
 	public void testSearchMoreThenOneLanguage() {
 		try {
-			long time = System.nanoTime();
+			String result = searchGitHub.getProjectsWithMoreThanOneLanguageString(1, 8);
+			Assert.assertNotNull(result);
 			
-			/*
-			 * This line will get the first five and print one processed string with all the info
-			 * for the answer of the issue #45
-			 */
-			
-			System.out.println(searchGitHub.getProjectsWithMoreThanOneLanguageString(1, 8));
-			
+			// System.out.println(result);
 			// This line will get all the projects in raw and print them
-			//System.out.println(searchGitHub.getProjectsWithMoreThanOneLanguage(1, 5));
-			
-			System.out.printf("Elapsed: %.2f", (System.nanoTime() - time) / 1000000000.0);
+			// System.out.println(searchGitHub.getProjectsWithMoreThanOneLanguage(1, 5));
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail();
