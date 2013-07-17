@@ -36,10 +36,10 @@ public class CrawlGoogleCodeTest {
 	public void testCrawlGithub() {
 		try {
 			Project project = searchGoogleCode.getProjects("java", 1,-1).get(0);
-			List<Project> projects = Arrays.asList(project);
 			
 			CrawlGoogleCode crawl = new CrawlGoogleCode(gitClient, Files.createTempDir());
-			List<Future<File>> fs = crawl.downloadProjects(projects);
+			
+			List<Future<File>> fs = crawl.downloadProjects(Arrays.asList(project));
 			for (Future<File> f : fs) {
 				File file = f.get();
 				Assert.assertNotNull(file);

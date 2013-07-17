@@ -21,7 +21,7 @@ public class SearchGoogleCodeTest {
 
 	@Test
 	public void testSimpleSearch() {
-		List<Project> projects = searchGoogleCode.getProjects("", 1, -1);
+		List<Project> projects = searchGoogleCode.getProjects("java", 1, -1);
 		Assert.assertNotNull(projects);
 	}
 }
