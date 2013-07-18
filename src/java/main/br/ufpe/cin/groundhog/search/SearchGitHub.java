@@ -30,7 +30,9 @@ import com.google.inject.name.Named;
  * @author fjsj, gustavopinto, Rodrigo Alves
  */
 public class SearchGitHub implements ForgeSearch {
-	private static final String ROOT = "https://api.github.com";
+    public static int INFINITY = -1;
+
+    private static final String ROOT = "https://api.github.com";
 	private static final String REPO_API = "https://api.github.com";
 	private static final String USERS_API = "https://api.github.com/users/";
 	
