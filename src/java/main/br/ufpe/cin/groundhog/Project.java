@@ -28,6 +28,7 @@ public class Project implements GitHubEntity {
 	private List<Issue> issues;
 	private List<Milestone> milestones;
 	private List<Commit> commits;
+	private List<User> contributors;
 
 	private User user;
 	private SCM scm;
@@ -441,6 +442,18 @@ public class Project implements GitHubEntity {
 	
 	public void setCommits(List<Commit> commits) {
 		this.commits = commits;
+	}
+	
+	/**
+	 * Returns the list of contributors of the project as GitHub users
+	 * @return
+	 */
+	public List<User> getContributors() {
+		return this.contributors;
+	}
+	
+	public void setContributors(List<User> contributors) {
+		this.contributors = contributors;
 	}
 
 	/**
