@@ -50,6 +50,7 @@ import com.google.inject.Injector;
  * The groundhog entry point
  * 
  * @author fjsj, gustavopinto
+ * @since 0.0.1
  */
 
 public final class CmdMain extends GroundhogMain {

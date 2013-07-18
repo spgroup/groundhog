@@ -10,7 +10,7 @@ import org.apache.http.message.BasicNameValuePair;
 /**
  * The URL parameter builder class
  * @author fjsj
- *
+ * @since 0.0.1
  */
 public class ParamBuilder {
 	private List<NameValuePair> params;

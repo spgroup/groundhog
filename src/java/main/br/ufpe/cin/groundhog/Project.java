@@ -10,6 +10,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Represents a software project in Groundhog
  * @author fjsj, gustavopinto, Rodrigo Alves
+ * @since 0.0.1
  */
 public class Project implements GitHubEntity {
 	@SerializedName("name")
@@ -469,6 +470,19 @@ public class Project implements GitHubEntity {
 		this.user = user;
 	}
 
+	/**
+	 * Returns true if the project is considered mature, and false otherwise.
+	 * 
+	 * A project is considered mature if it has at least three watchers, plus
+	 * one fork, plus more than 100 commits in its own history, and more than
+	 * five issues created in its own history.
+	 * 
+	 * @return
+	 */
+	public boolean isMature() {
+		return ((watchersCount > 3) && (forks_count > 1) && (commits.size() > 100) && (issues.size() > 5));
+	}
+	
 	/**
 	 * Returns the well-formated github rest-api for this project
 	 * @return 
