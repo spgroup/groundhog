@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import br.ufpe.cin.groundhog.Commit;
 import br.ufpe.cin.groundhog.GroundhogException;
 import br.ufpe.cin.groundhog.Issue;
 import br.ufpe.cin.groundhog.Language;
@@ -14,7 +15,6 @@ import br.ufpe.cin.groundhog.SCM;
 import br.ufpe.cin.groundhog.User;
 import br.ufpe.cin.groundhog.http.Requests;
 
-import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -313,6 +313,55 @@ public class SearchGitHub implements ForgeSearch {
 		for (int i = 0; i < jsonArray.size(); i++) {
 			Milestone milestone = gson.fromJson(jsonArray.get(i), Milestone.class);
 			collection.add(milestone);
+		}
+		
+		return collection;
+	}
+	
+	/**
+	 * Fetches all the Commits of the given {@link Project} from the GitHub API
+	 * @param project the @{link Project} to which the commits belong
+	 * @return a {@link List} of {@link Commit} objects
+	 * @throws IOException
+	 */
+	public List<Commit> getAllProjectCommits(Project project) throws IOException {
+		List<Commit> collection = new ArrayList<Commit>();
+		
+		String searchUrl = String.format("%s/repos/%s/%s/commits",
+				REPO_API, project.getUser().getLogin(), project.getName());
+		
+		JsonElement jsonElement = gson.fromJson(requests.get(searchUrl), JsonElement.class);
+		JsonArray jsonArray = jsonElement.getAsJsonArray();
+		
+		int i = 0;
+		Commit commit;
+		
+		for (; i < jsonArray.size(); i++) {
+			commit = gson.fromJson(jsonArray.get(i), Commit.class);
+			collection.add(commit);
+		}
+		
+		return collection;
+	}
+	
+	/**
+	 * Fetches all the contributors of the given {@link Project} from the GitHub API
+	 * @param project the @{link Project} to get the contributors from
+	 * @return a {@link List} of {@link User} objects
+	 * @throws IOException
+	 */
+	public List<User> getAllProjectContributors(Project project) throws IOException {
+		List<User> collection = new ArrayList<User>();
+		
+		String searchUrl = String.format("%s/repos/%s/%s/contributors", REPO_API, project.getUser().getLogin(), project.getName());
+		String jsonString = requests.get(searchUrl);
+		
+		JsonElement jsonElement = gson.fromJson(jsonString, JsonElement.class);
+		JsonArray jsonArray = jsonElement.getAsJsonArray();
+		
+		for (int i = 0; i < jsonArray.size(); i++) {
+			User contributor = gson.fromJson(jsonArray.get(i), User.class);
+			collection.add(contributor);
 		}
 		
 		return collection;
