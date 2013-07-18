@@ -43,7 +43,7 @@ import com.google.inject.Injector;
  */
 public class TestMain {
 	private static Logger logger = LoggerFactory.getLogger(TestMain.class);
-	static Injector injector = Guice.createInjector(new SearchModule());
+	static Injector injector = Guice.createInjector(new SearchModule(), new HttpModule());
 	static SearchGitHub searchGitHub = injector.getInstance(SearchGitHub.class);
 
 	/**
