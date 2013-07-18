@@ -41,13 +41,13 @@ Injector injector = Guice.createInjector(new SearchModule());
 SearchGitHub searchGitHub = injector.getInstance(SearchGitHub.class);
 
 // Search for projects named "opencv" starting in page 1 and stoping and going until the 3rd project
-searchGitHub.getProjects("opencv", 1, 3);
+List<Project> projects = searchGitHub.getProjects("opencv", 1, 3);
 ```
 
 Alternatively, you can search for projects without setting the limiting point. In this case Groundhog will fetch projects until your API limit is exceeded.
 
 ```java
-searchGitHub.getProjects("eclipse", 1, SearchGitHub.INFINITY)
+List<Project> projects = searchGitHub.getProjects("eclipse", 1, SearchGitHub.INFINITY)
 ```
 
 #### Issues
@@ -64,7 +64,7 @@ Project pr = new Project(user, "node"); // Create the Project object
 List<Issue> issues = searchGitHub.getAllProjectIssues(pr);
 
 System.out.println("Listing 'em Issues...");
-for (Issue issue: Issues) {
+for (Issue issue: issues) {
   System.out.println(issue.getTitle());
 }
 ```
