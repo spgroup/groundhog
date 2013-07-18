@@ -1,6 +1,8 @@
 package br.ufpe.cin.groundhog;
 
 import java.util.Date;
+import java.util.List;
+
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -46,6 +48,8 @@ public class User implements GitHubEntity {
 	
 	@SerializedName("updated_at")
 	private Date updated_at;
+	
+	private List<String> emailAddresses;
 	
 	public User(String login) {
 		this.login = login;
@@ -207,6 +211,19 @@ public class User implements GitHubEntity {
 
 	public void setLocation(String location) {
 		this.location = location;
+	}
+	
+	/**
+	 * Informs the list of email addresses that belongs to the user.
+	 * This is useful for matching critical {@link Commit} authorship data
+	 * @return
+	 */
+	public List<String> getEmailAddresses() {
+		return this.emailAddresses;
+	}
+	
+	public void setEmailAddresses(List<String> emails) {
+		this.emailAddresses = emails;
 	}
 	
 	public String getURL() {
