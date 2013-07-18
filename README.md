@@ -134,6 +134,8 @@ $ javadoc -d src/src/groundhog br.cin.ufpe.groundhog
 
 * Fernando Castor {myfamilyname@cin.ufpe.br}
 
+* Jesus Silva {jjss@cin.ufpe.br}
+
 ## Contributions
 
 Want to contribute with code, documentation or bug report? That's great, check out the [Issues] page.
