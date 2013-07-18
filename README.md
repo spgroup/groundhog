@@ -61,11 +61,11 @@ User user = new User("joyent");         // Create the User object
 Project pr = new Project(user, "node"); // Create the Project object
 
 // Tell Groundhog to fetch all Issues of that project and assign them the the Project object:
-pr.setIssues(searchGitHub.getAllProjectIssues(pr));
+List<Issue> issues = searchGitHub.getAllProjectIssues(pr);
 
 System.out.println("Listing 'em Issues...");
-for (int k = 0; k < pr.getIssues().size(); k++) {
-  System.out.println(pr.getIssues().get(k).getTitle());
+for (Issue issue: Issues) {
+  System.out.println(issue.getTitle());
 }
 ```
 
@@ -74,7 +74,7 @@ for (int k = 0; k < pr.getIssues().size(); k++) {
 Just like Issues, Groundhog lets you fetch the list of Milestones of a project, too.
 
 ```java
-pr.setIssues(searchGitHub.getAllProjectMilestones(pr));
+List<Milestone> milestones = searchGitHub.getAllProjectMilestones(pr);
 ```
 
 #### Languages
@@ -83,7 +83,7 @@ Software projects are often composed of more than one programming language. Grou
 
 ```java
 // Returns a List of Language objects for each language of project "pr"
-searchGitHub.fetchProjectLanguages(pr);
+List<Language> languages = searchGitHub.fetchProjectLanguages(pr);
 ```
 
 #### Contributors
@@ -94,7 +94,7 @@ You can also get the list of people who contributed to a project on GitHub:
 User user = new User("rails");
 Project project = new Project(user, "rails"); // project github.com/rails/rails
 
-searchGitHub.getAllProjectContributors(project);
+List<User> contributors = searchGitHub.getAllProjectContributors(project);
 ```
 
 ### Running Groundhog
