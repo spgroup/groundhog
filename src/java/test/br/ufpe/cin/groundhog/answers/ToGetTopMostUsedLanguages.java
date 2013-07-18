@@ -29,7 +29,7 @@ public class ToGetTopMostUsedLanguages {
 			List<Project> projects = searchGitHub.getProjects("facebook", 1, 10);
 			Assert.assertNotNull(projects);
 			
-			List<Language> languages = Project.getTopMostUsedLanguages(projects, 10);
+			List<Language> languages = Projects.getTopMostUsedLanguages(projects, 10);
 			Assert.assertNotNull(languages);
 		} catch (Exception e) {
 			e.printStackTrace();

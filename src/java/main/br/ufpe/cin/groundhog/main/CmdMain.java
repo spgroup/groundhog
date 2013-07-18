@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.ufpe.cin.groundhog.GroundhogException;
-import br.ufpe.cin.groundhog.Language;
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.SCM;
 import br.ufpe.cin.groundhog.codehistory.CodeHistory;
@@ -258,11 +257,6 @@ public final class CmdMain extends GroundhogMain {
 			} else {
 				allProjects = search.getProjects(term, 1,-1);
 			}
-			
-			//TODO delete, this is only a test
-			
-			List<Language> languages = Project.getTopMostUsedLanguages(allProjects, 10);
-			
 			
 			//TODO the getProjects method already limits the number of searched projects
 			List<Project> projects = new ArrayList<Project>();
