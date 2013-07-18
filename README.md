@@ -41,13 +41,13 @@ Injector injector = Guice.createInjector(new SearchModule());
 SearchGitHub searchGitHub = injector.getInstance(SearchGitHub.class);
 
 // Search for projects named "opencv" starting in page 1 and stoping and going until the 3rd project
-searchGitHub.getProjects("opencv", 1, 3);
+List<Project> projects = searchGitHub.getProjects("opencv", 1, 3);
 ```
 
 Alternatively, you can search for projects without setting the limiting point. In this case Groundhog will fetch projects until your API limit is exceeded.
 
 ```java
-searchGitHub.getProjects("eclipse", 1, SearchGitHub.INFINITY)
+List<Project> projects = searchGitHub.getProjects("eclipse", 1, SearchGitHub.INFINITY)
 ```
 
 #### Issues
@@ -61,11 +61,11 @@ User user = new User("joyent");         // Create the User object
 Project pr = new Project(user, "node"); // Create the Project object
 
 // Tell Groundhog to fetch all Issues of that project and assign them the the Project object:
-pr.setIssues(searchGitHub.getAllProjectIssues(pr));
+List<Issue> issues = searchGitHub.getAllProjectIssues(pr);
 
 System.out.println("Listing 'em Issues...");
-for (int k = 0; k < pr.getIssues().size(); k++) {
-  System.out.println(pr.getIssues().get(k).getTitle());
+for (Issue issue: issues) {
+  System.out.println(issue.getTitle());
 }
 ```
 
@@ -74,7 +74,7 @@ for (int k = 0; k < pr.getIssues().size(); k++) {
 Just like Issues, Groundhog lets you fetch the list of Milestones of a project, too.
 
 ```java
-pr.setIssues(searchGitHub.getAllProjectMilestones(pr));
+List<Milestone> milestones = searchGitHub.getAllProjectMilestones(pr);
 ```
 
 #### Languages
@@ -83,7 +83,7 @@ Software projects are often composed of more than one programming language. Grou
 
 ```java
 // Returns a List of Language objects for each language of project "pr"
-searchGitHub.fetchProjectLanguages(pr);
+List<Language> languages = searchGitHub.fetchProjectLanguages(pr);
 ```
 
 #### Contributors
@@ -94,7 +94,7 @@ You can also get the list of people who contributed to a project on GitHub:
 User user = new User("rails");
 Project project = new Project(user, "rails"); // project github.com/rails/rails
 
-searchGitHub.getAllProjectContributors(project);
+List<User> contributors = searchGitHub.getAllProjectContributors(project);
 ```
 
 ### Running Groundhog
@@ -133,6 +133,8 @@ $ javadoc -d src/src/groundhog br.cin.ufpe.groundhog
 * Danilo Neves Ribeiro {dnr2@cin.ufpe.br}
 
 * Fernando Castor {myfamilyname@cin.ufpe.br}
+
+* Jesus Silva {jjss@cin.ufpe.br}
 
 ## Contributions
 
