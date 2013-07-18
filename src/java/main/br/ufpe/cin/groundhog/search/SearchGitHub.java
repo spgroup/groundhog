@@ -87,7 +87,7 @@ public class SearchGitHub implements ForgeSearch {
 	/**
 	 * Obtains from the GitHub API the set of projects with more than one language
 	 * @param Start indicates the desired page
-	 * @param limit is the total of projects that are going to me returned 
+	 * @param limit the total of projects that will be returned
 	 * @throws SearchException
 	 */
 	public List<Project> getProjectsWithMoreThanOneLanguage(int page, int limit) throws SearchException {
