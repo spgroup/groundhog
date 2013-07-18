@@ -45,11 +45,25 @@ Alternatively, you can search for projects without setting the limiting point. I
 ```java
 searchGitHub.getProjects("eclipse", 1, SearchGitHub.INFINITY)
 ```
-### Generating the JAR
 
-Generate the JAR file for the Groundhog project.
+### Issues
 
-Eclipse users can go to `File > Export > Runnable Jar File` and enter the `CmdMain` class for the option "Launch Configuration".
+Issues are objects that only make sense from a Project perspective.
+
+To fetch the Issues of a given project using Groundhog you should first create the Project and then tell Groundhog to hit the API and get the data.
+
+```java
+User user = new User("joyent");         // Create the User object
+Project pr = new Project(user, "node"); // Create the Project object
+
+// Tell Groundhog to fetch all Issues of that project and assign them the the Project object:
+pr.setIssues(searchGitHub.getAllProjectIssues(pr));
+
+System.out.println("Listing 'em Issues...");
+for (int k = 0; k < pr.getIssues().size(); k++) {
+		System.out.println(pr.getIssues().get(k).getTitle());
+}
+```
 
 ### Running Groundhog
 
