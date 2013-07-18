@@ -17,8 +17,34 @@ In order for it to behave like an Eclipse project, you'll need to install the Ma
 
 `$ mvn eclipse:eclipse`
 
+### Generating the JAR
+
+Generate the JAR file for the Groundhog project.
+
+Eclipse users can go to `File > Export > Runnable Jar File` and enter the `CmdMain` class for the option "Launch Configuration".
+
 ## Usage
 
+### Fetching Metadata
+
+#### Project
+
+You can use Groundhog to fetch metadata on a list of projects that attend to a criteria
+
+```java
+// Create a GitHub search object
+Injector injector = Guice.createInjector(new SearchModule());
+SearchGitHub searchGitHub = injector.getInstance(SearchGitHub.class);
+
+// Search for projects named "opencv" starting in page 1 and stoping and going until the 3rd project
+searchGitHub.getProjects("opencv", 1, 3);
+```
+
+Alternatively, you can search for projects without setting the limiting point. In this case Groundhog will fetch projects until your API limit is exceeded.
+
+```java
+searchGitHub.getProjects("eclipse", 1, SearchGitHub.INFINITY)
+```
 ### Generating the JAR
 
 Generate the JAR file for the Groundhog project.
