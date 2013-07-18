@@ -1,12 +1,14 @@
 package br.ufpe.cin.groundhog;
 
 /**
- * Represents languages - an important set of components of a {@link Project} - in Groundhog.
- * This class is only important/meaningful in the context of Projects. As a representation of 
- * the programming language composition of such objects.
+ * Represents languages - an important set of components of a {@link Project} -
+ * in Groundhog. This class is only important/meaningful in the context of
+ * Projects. As a representation of the programming language composition of such
+ * objects.
  * 
  * @author Rodrigo Alves
- *
+ * @since 0.0.1
+ * 
  */
 public class Language implements Comparable<Language> {
 	private String name;
@@ -52,5 +54,7 @@ public class Language implements Comparable<Language> {
 		return 0;
 	}
 	
-	
+	public String toString() {
+		return name;
+	}
 }

@@ -6,6 +6,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Represents a Commit object in Groundhog
  * @author Rodrigo Alves
+ * @since 0.0.1
  */
 public class Commit implements GitHubEntity {
 	@SerializedName("sha")
@@ -30,15 +31,8 @@ public class Commit implements GitHubEntity {
 	
 	private int deletionsCount;
 	
-	public Commit() {	
-	}
-	
-	public Commit(String sha) {
-		this.sha = sha;
-	}
-	
 	public Commit(String sha, Project project) {
-		this(sha);
+		this.sha = sha;
 		this.project = project;
 	}
 	

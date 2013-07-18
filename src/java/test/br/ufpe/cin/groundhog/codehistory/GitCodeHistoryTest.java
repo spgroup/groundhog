@@ -1,7 +1,6 @@
 package br.ufpe.cin.groundhog.codehistory;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.Date;
@@ -22,10 +21,11 @@ public class GitCodeHistoryTest {
 		calendar = new GregorianCalendar(2012, 5, 23).getTime();
 	}
 	
-	@Test(expected=AssertionError.class)
+	@Test
 	public void main() throws Exception {
-		assertTrue(file.exists());
-		File result = codeHistory.checkoutToDate("javacv", file, calendar);
-		assertNotNull(result);
+		if(file.exists()){
+			File result = codeHistory.checkoutToDate("javacv", file, calendar);
+			assertNotNull(result);
+		}
 	}
 }

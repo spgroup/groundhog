@@ -13,6 +13,7 @@ import br.ufpe.cin.groundhog.Milestone;
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.SCM;
 import br.ufpe.cin.groundhog.User;
+import br.ufpe.cin.groundhog.http.HttpException;
 import br.ufpe.cin.groundhog.http.Requests;
 
 import com.google.common.collect.Lists;
@@ -106,46 +107,12 @@ public class SearchGitHub implements ForgeSearch {
 			
 			return projects;
 		
-		} catch (GroundhogException | IOException e) {
+		} catch (GroundhogException e) {
 			e.printStackTrace();
 			throw new SearchException(e);
 		}
 	}
-	/**
-	 * Obtains from the GitHub API a string indicating how many projects have more than one language
-	 * @param page indicates the desired page
-	 * @param limit is the total of projects that are going to me returned 
-	 * @throws SearchException
-	 */
-	public String getProjectsWithMoreThanOneLanguageString(int page, int limit) throws SearchException {
-		try {
-			
-			String result = "";
-			
-			List<Project> projects = new ArrayList<Project>();
-			List<Project> rawData = getAllProjects(page, limit);
-			
-			for (Project project : rawData) {
-				List<Language> languages = fetchProjectLanguages(project);
-				
-				if(languages.size() > 1){
-					projects.add(project);
-				}
-			}
-			
-			float percent = ((Float.intBitsToFloat(projects.size())/Float.intBitsToFloat(rawData.size()))*100);
-			
-			result = "There are " + rawData.size() + " projects in github \n" +
-					"There are " + projects.size() +" projects with more than one language \n" +
-					"This is " + percent + "% of the total";
-			
-			return result;
-		
-		} catch (GroundhogException | IOException e) {
-			e.printStackTrace();
-			throw new SearchException(e);
-		}
-	}
+
 	/**
 	 * Obtains from the GitHub API the set of projects
 	 * @param Start indicates the desired page
@@ -256,10 +223,16 @@ public class SearchGitHub implements ForgeSearch {
 	 * @param project a {@link Project} object to have its languages fetched
 	 * @throws IOException
 	 */
-	public List<Language> fetchProjectLanguages(Project project) throws IOException {
+	public List<Language> fetchProjectLanguages(Project project) {
 		
 		String searchUrl = String.format("%s/repos/%s/%s/languages", REPO_API, project.getUser().getLogin(), project.getName());
-		String json = requests.get(searchUrl).replace("{", "").replace("}", "");
+		String json = null;
+		try {
+			json = requests.get(searchUrl).replace("{", "").replace("}", "");
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new HttpException("Unable to download json file. Is it the correct path?" + searchUrl, e);
+		}
 		
 		List<Language> languages = new ArrayList<>();
 		if(!json.equalsIgnoreCase("{}")){

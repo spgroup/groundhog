@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import br.ufpe.cin.groundhog.Language;
 import br.ufpe.cin.groundhog.Project;
+import br.ufpe.cin.groundhog.http.HttpModule;
 import br.ufpe.cin.groundhog.search.SearchGitHub;
 import br.ufpe.cin.groundhog.search.SearchModule;
 
@@ -19,7 +20,7 @@ public class ToGetTopMostUsedLanguages {
 
 	@Before
 	public void setup() {
-		Injector injector = Guice.createInjector(new SearchModule());
+		Injector injector = Guice.createInjector(new SearchModule(), new HttpModule());
 		searchGitHub = injector.getInstance(SearchGitHub.class);
 	}
 	
