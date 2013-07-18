@@ -46,7 +46,7 @@ Alternatively, you can search for projects without setting the limiting point. I
 searchGitHub.getProjects("eclipse", 1, SearchGitHub.INFINITY)
 ```
 
-### Issues
+#### Issues
 
 Issues are objects that only make sense from a Project perspective.
 
@@ -61,8 +61,25 @@ pr.setIssues(searchGitHub.getAllProjectIssues(pr));
 
 System.out.println("Listing 'em Issues...");
 for (int k = 0; k < pr.getIssues().size(); k++) {
-		System.out.println(pr.getIssues().get(k).getTitle());
+  System.out.println(pr.getIssues().get(k).getTitle());
 }
+```
+
+#### Milestones
+
+Just like Issues, Groundhog lets you fetch the list of Milestones of a project, too.
+
+```java
+pr.setIssues(searchGitHub.getAllProjectMilestones(pr));
+```
+
+#### Languages
+
+Software projects are often composed of more than one programming language. Groundhog lets you fetch the list of languages of a project among its LoC (lines of code) count.
+
+```java
+// Returns a List of Language objects for each language of project "pr"
+searchGitHub.fetchProjectLanguages(pr);
 ```
 
 ### Running Groundhog
