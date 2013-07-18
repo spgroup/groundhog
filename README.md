@@ -21,11 +21,15 @@ In order for it to behave like an Eclipse project, you'll need to install the Ma
 
 Generate the JAR file for the Groundhog project.
 
-Eclipse users can go to `File > Export > Runnable Jar File` and enter the `CmdMain` class for the option "Launch Configuration".
+Eclipse users can go to `File > Export > Runnable JAR File` and enter the `CmdMain` class for the option "Launch Configuration".
 
 ## Usage
 
+You can use Groundhog in two ways: as an executable JAR from the command line or as a library in your own Java project.
+
 ### Fetching Metadata
+
+Metadata is fetched from GitHub's API. In order to be able to fetch more objects, you need to  [obtain your GitHub API token](https://github.com/settings/applications) and use it in Groundhog.
 
 #### Project
 
@@ -82,6 +86,17 @@ Software projects are often composed of more than one programming language. Grou
 searchGitHub.fetchProjectLanguages(pr);
 ```
 
+#### Contributors
+
+You can also get the list of people who contributed to a project on GitHub:
+
+```java
+User user = new User("rails");
+Project project = new Project(user, "rails"); // project github.com/rails/rails
+
+searchGitHub.getAllProjectContributors(project);
+```
+
 ### Running Groundhog
 
 Search GitHub for projects matching "phonegap-facebook-plugin" and place the results (if any) in a folder called metrics:
@@ -95,29 +110,6 @@ $ java -jar groundhog.jar -forge github -out metrics phonegap-facebook-plugin
 ```
 $ mvn test
 ```
-
-## Info
-
-### Supported Forges
-
-* GitHub
-* Google Code
-* SourceForge
-
-### Supported Programming Languages
-
-* Java, parsing only (more to be added later)
-
-### Forge Search
-
-* **GitHub**:
-Groundhog uses the [GitHub API v3] to search for repositories on GitHub
-
-* **Google Code**:
-to be written
-
-* **SourceForge**:
-to be written
 
 ## Documentation
 
