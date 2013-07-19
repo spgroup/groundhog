@@ -10,11 +10,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import br.ufpe.cin.groundhog.Project;
-import br.ufpe.cin.groundhog.http.HttpModule;
+import br.ufpe.cin.groundhog.SCM;
 import br.ufpe.cin.groundhog.scmclient.GitClient;
 import br.ufpe.cin.groundhog.scmclient.ScmModule;
-import br.ufpe.cin.groundhog.search.SearchGoogleCode;
-import br.ufpe.cin.groundhog.search.SearchModule;
 
 import com.google.common.io.Files;
 import com.google.inject.Guice;
@@ -22,21 +20,18 @@ import com.google.inject.Injector;
 
 public class CrawlGoogleCodeTest {
 
-	private SearchGoogleCode searchGoogleCode;
 	private GitClient gitClient;
 
 	@Before
 	public void setup() {
-		Injector injector = Guice.createInjector(new SearchModule(), new ScmModule(), new HttpModule());
-		searchGoogleCode = injector.getInstance(SearchGoogleCode.class);
+		Injector injector = Guice.createInjector(new ScmModule());
 		gitClient = injector.getInstance(GitClient.class);
 	}
 
 	@Test
 	public void testCrawlGithub() {
 		try {
-			Project project = searchGoogleCode.getProjects("java", 1,-1).get(0);
-			
+			Project project = new Project("fake", "fake", "https://code.google.com/p/googletransitdatafeed/source/browse/", SCM.SVN, "http://googletransitdatafeed.googlecode.com/svn/trunk/");
 			CrawlGoogleCode crawl = new CrawlGoogleCode(gitClient, Files.createTempDir());
 			
 			List<Future<File>> fs = crawl.downloadProjects(Arrays.asList(project));

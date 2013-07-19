@@ -17,13 +17,85 @@ In order for it to behave like an Eclipse project, you'll need to install the Ma
 
 `$ mvn eclipse:eclipse`
 
-## Usage
-
 ### Generating the JAR
 
 Generate the JAR file for the Groundhog project.
 
-Eclipse users can go to `File > Export > Runnable Jar File` and enter the `CmdMain` class for the option "Launch Configuration".
+Eclipse users can go to `File > Export > Runnable JAR File` and enter the `CmdMain` class for the option "Launch Configuration".
+
+## Usage
+
+You can use Groundhog in two ways: as an executable JAR from the command line or as a library in your own Java project.
+
+### Fetching Metadata
+
+Metadata is fetched from GitHub's API. In order to be able to fetch more objects, you need to  [obtain your GitHub API token](https://github.com/settings/applications) and use it in Groundhog.
+
+#### Project
+
+You can use Groundhog to fetch metadata on a list of projects that attend to a criteria
+
+```java
+// Create a GitHub search object
+Injector injector = Guice.createInjector(new SearchModule());
+SearchGitHub searchGitHub = injector.getInstance(SearchGitHub.class);
+
+// Search for projects named "opencv" starting in page 1 and stoping and going until the 3rd project
+List<Project> projects = searchGitHub.getProjects("opencv", 1, 3);
+```
+
+Alternatively, you can search for projects without setting the limiting point. In this case Groundhog will fetch projects until your API limit is exceeded.
+
+```java
+List<Project> projects = searchGitHub.getProjects("eclipse", 1, SearchGitHub.INFINITY)
+```
+
+#### Issues
+
+Issues are objects that only make sense from a Project perspective.
+
+To fetch the Issues of a given project using Groundhog you should first create the Project and then tell Groundhog to hit the API and get the data.
+
+```java
+User user = new User("joyent");         // Create the User object
+Project pr = new Project(user, "node"); // Create the Project object
+
+// Tell Groundhog to fetch all Issues of that project and assign them the the Project object:
+List<Issue> issues = searchGitHub.getAllProjectIssues(pr);
+
+System.out.println("Listing 'em Issues...");
+for (Issue issue: issues) {
+  System.out.println(issue.getTitle());
+}
+```
+
+#### Milestones
+
+Just like Issues, Groundhog lets you fetch the list of Milestones of a project, too.
+
+```java
+List<Milestone> milestones = searchGitHub.getAllProjectMilestones(pr);
+```
+
+#### Languages
+
+Software projects are often composed of more than one programming language. Groundhog lets you fetch the list of languages of a project among its LoC (lines of code) count.
+
+```java
+// Returns a List of Language objects for each language of project "pr"
+List<Language> languages = searchGitHub.fetchProjectLanguages(pr);
+```
+
+#### Contributors
+
+You can also get the list of people who contributed to a project on GitHub:
+
+```java
+User user = new User("rails");
+Project project = new Project(user, "rails"); // project github.com/rails/rails
+
+List<User> contributors = searchGitHub.getAllProjectContributors(project);
+```
 
 ### Running Groundhog
 
@@ -38,29 +110,6 @@ $ java -jar groundhog.jar -forge github -out metrics phonegap-facebook-plugin
 ```
 $ mvn test
 ```
-
-## Info
-
-### Supported Forges
-
-* GitHub
-* Google Code
-* SourceForge
-
-### Supported Programming Languages
-
-* Java, parsing only (more to be added later)
-
-### Forge Search
-
-* **GitHub**:
-Groundhog uses the [GitHub API v3] to search for repositories on GitHub
-
-* **Google Code**:
-to be written
-
-* **SourceForge**:
-to be written
 
 ## Documentation
 
@@ -84,6 +133,8 @@ $ javadoc -d src/src/groundhog br.cin.ufpe.groundhog
 * Danilo Neves Ribeiro {dnr2@cin.ufpe.br}
 
 * Fernando Castor {myfamilyname@cin.ufpe.br}
+
+* Jesus Silva {jjss@cin.ufpe.br}
 
 ## Contributions
 

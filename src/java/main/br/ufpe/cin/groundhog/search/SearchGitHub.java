@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import br.ufpe.cin.groundhog.Commit;
 import br.ufpe.cin.groundhog.GroundhogException;
 import br.ufpe.cin.groundhog.Issue;
 import br.ufpe.cin.groundhog.Language;
@@ -12,9 +13,9 @@ import br.ufpe.cin.groundhog.Milestone;
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.SCM;
 import br.ufpe.cin.groundhog.User;
+import br.ufpe.cin.groundhog.http.HttpException;
 import br.ufpe.cin.groundhog.http.Requests;
 
-import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -30,7 +31,9 @@ import com.google.inject.name.Named;
  * @author fjsj, gustavopinto, Rodrigo Alves
  */
 public class SearchGitHub implements ForgeSearch {
-	private static final String ROOT = "https://api.github.com";
+    public static int INFINITY = -1;
+
+    private static final String ROOT = "https://api.github.com";
 	private static final String REPO_API = "https://api.github.com";
 	private static final String USERS_API = "https://api.github.com/users/";
 	
@@ -85,7 +88,7 @@ public class SearchGitHub implements ForgeSearch {
 	/**
 	 * Obtains from the GitHub API the set of projects with more than one language
 	 * @param Start indicates the desired page
-	 * @param limit is the total of projects that are going to me returned 
+	 * @param limit the total of projects that will be returned
 	 * @throws SearchException
 	 */
 	public List<Project> getProjectsWithMoreThanOneLanguage(int page, int limit) throws SearchException {
@@ -104,46 +107,12 @@ public class SearchGitHub implements ForgeSearch {
 			
 			return projects;
 		
-		} catch (GroundhogException | IOException e) {
+		} catch (GroundhogException e) {
 			e.printStackTrace();
 			throw new SearchException(e);
 		}
 	}
-	/**
-	 * Obtains from the GitHub API a string indicating how many projects have more than one language
-	 * @param page indicates the desired page
-	 * @param limit is the total of projects that are going to me returned 
-	 * @throws SearchException
-	 */
-	public String getProjectsWithMoreThanOneLanguageString(int page, int limit) throws SearchException {
-		try {
-			
-			String result = "";
-			
-			List<Project> projects = new ArrayList<Project>();
-			List<Project> rawData = getAllProjects(page, limit);
-			
-			for (Project project : rawData) {
-				List<Language> languages = fetchProjectLanguages(project);
-				
-				if(languages.size() > 1){
-					projects.add(project);
-				}
-			}
-			
-			float percent = ((Float.intBitsToFloat(projects.size())/Float.intBitsToFloat(rawData.size()))*100);
-			
-			result = "There are " + rawData.size() + " projects in github \n" +
-					"There are " + projects.size() +" projects with more than one language \n" +
-					"This is " + percent + "% of the total";
-			
-			return result;
-		
-		} catch (GroundhogException | IOException e) {
-			e.printStackTrace();
-			throw new SearchException(e);
-		}
-	}
+
 	/**
 	 * Obtains from the GitHub API the set of projects
 	 * @param Start indicates the desired page
@@ -254,10 +223,16 @@ public class SearchGitHub implements ForgeSearch {
 	 * @param project a {@link Project} object to have its languages fetched
 	 * @throws IOException
 	 */
-	public List<Language> fetchProjectLanguages(Project project) throws IOException {
+	public List<Language> fetchProjectLanguages(Project project) {
 		
 		String searchUrl = String.format("%s/repos/%s/%s/languages", REPO_API, project.getUser().getLogin(), project.getName());
-		String json = requests.get(searchUrl).replace("{", "").replace("}", "");
+		String json = null;
+		try {
+			json = requests.get(searchUrl).replace("{", "").replace("}", "");
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new HttpException("Unable to download json file. Is it the correct path?" + searchUrl, e);
+		}
 		
 		List<Language> languages = new ArrayList<>();
 		if(!json.equalsIgnoreCase("{}")){
@@ -311,6 +286,55 @@ public class SearchGitHub implements ForgeSearch {
 		for (int i = 0; i < jsonArray.size(); i++) {
 			Milestone milestone = gson.fromJson(jsonArray.get(i), Milestone.class);
 			collection.add(milestone);
+		}
+		
+		return collection;
+	}
+	
+	/**
+	 * Fetches all the Commits of the given {@link Project} from the GitHub API
+	 * @param project the @{link Project} to which the commits belong
+	 * @return a {@link List} of {@link Commit} objects
+	 * @throws IOException
+	 */
+	public List<Commit> getAllProjectCommits(Project project) throws IOException {
+		List<Commit> collection = new ArrayList<Commit>();
+		
+		String searchUrl = String.format("%s/repos/%s/%s/commits",
+				REPO_API, project.getUser().getLogin(), project.getName());
+		
+		JsonElement jsonElement = gson.fromJson(requests.get(searchUrl), JsonElement.class);
+		JsonArray jsonArray = jsonElement.getAsJsonArray();
+		
+		int i = 0;
+		Commit commit;
+		
+		for (; i < jsonArray.size(); i++) {
+			commit = gson.fromJson(jsonArray.get(i), Commit.class);
+			collection.add(commit);
+		}
+		
+		return collection;
+	}
+	
+	/**
+	 * Fetches all the contributors of the given {@link Project} from the GitHub API
+	 * @param project the @{link Project} to get the contributors from
+	 * @return a {@link List} of {@link User} objects
+	 * @throws IOException
+	 */
+	public List<User> getAllProjectContributors(Project project) throws IOException {
+		List<User> collection = new ArrayList<User>();
+		
+		String searchUrl = String.format("%s/repos/%s/%s/contributors", REPO_API, project.getUser().getLogin(), project.getName());
+		String jsonString = requests.get(searchUrl);
+		
+		JsonElement jsonElement = gson.fromJson(jsonString, JsonElement.class);
+		JsonArray jsonArray = jsonElement.getAsJsonArray();
+		
+		for (int i = 0; i < jsonArray.size(); i++) {
+			User contributor = gson.fromJson(jsonArray.get(i), User.class);
+			collection.add(contributor);
 		}
 		
 		return collection;

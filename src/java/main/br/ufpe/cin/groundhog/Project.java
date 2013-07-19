@@ -1,18 +1,16 @@
 package br.ufpe.cin.groundhog;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import com.google.gson.annotations.SerializedName;
-import java.util.Map.Entry;
+
 import br.ufpe.cin.groundhog.util.Dates;
+
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Represents a software project in Groundhog
  * @author fjsj, gustavopinto, Rodrigo Alves
+ * @since 0.0.1
  */
 public class Project implements GitHubEntity {
 	@SerializedName("name")
@@ -28,6 +26,7 @@ public class Project implements GitHubEntity {
 	private List<Issue> issues;
 	private List<Milestone> milestones;
 	private List<Commit> commits;
+	private List<User> contributors;
 
 	private User user;
 	private SCM scm;
@@ -442,169 +441,19 @@ public class Project implements GitHubEntity {
 	public void setCommits(List<Commit> commits) {
 		this.commits = commits;
 	}
-
+	
 	/**
-	 * Method to inform the median number of forks per project in a collection of projects
-	 * @param projects
+	 * Returns the list of contributors of the project as GitHub users
 	 * @return
 	 */
-	public double getMedianForksRate(List<Project> projects) {
-		int i = 0, listSize = projects.size(), half = listSize/2;
-		double median = 0.0;
-		int[] forkStore = new int[listSize];
-
-		if (listSize == 0) {
-		    throw new IllegalArgumentException("List of projects can't be empty");
-		}
-
-		for (; i < listSize; i++) {
-			forkStore[i] = projects.get(i).getForksCount();
-		}
-
-		Arrays.sort(forkStore);
-
-		if (listSize % 2 == 0) {
-			median = (forkStore[half - 1] + forkStore[half])/2;
-		} else {
-			median = forkStore[half];
-		}
-
-		return median;
-	}
-
-	/**
-	 * Method to inform the average number of forks per project in a collection of projects
-	 * @param projects
-	 * @return
-	 */
-	public static int getAverageForksRate(List<Project> projects) {
-		int i = 0, j = 0, total = 0, listSize = projects.size();
-		int[] forkStore = new int[listSize];
-
-		if (listSize == 0) {
-		    throw new IllegalArgumentException("List of projects can't be empty");
-		}
-
-		for (; i < listSize; i++) {
-			forkStore[i] = projects.get(i).getForksCount();
-		}
-
-		for (; j < forkStore.length; j++) {
-			total += forkStore[j];
-		}
-
-		return total/listSize;
-	}
-
-	/**
-	 * Method to discover the percentage of projects that have forks
-	 * @param The list of projects to be analyzed
-	 * @return a double result - such that 0 <= result <= 1 - indicating how many of the informed projects have forks (were forked at least once)
-	 */
-	public static double getProjectsWithForksRate(List<Project> projects) {
-		double result = 0.0;
-		int projectsWithForks = 0, i = 0, listSize = projects.size();
-
-		if (listSize == 0) {
-		    throw new IllegalArgumentException("List of projects can't be empty");
-		}
-
-		for (; i < listSize; i++) {
-			if (projects.get(i).getForksCount() > 0) {
-				projectsWithForks++;
-			}
-		}
-
-		result = (projectsWithForks / listSize);
-		return result;
-	}
-
-	/**
-	 * Informs what is the overall percentage of the given projects that are forks
-	 * With this method we can answer the question "What is the overall percentage of Github projects that ARE forks?"
-	 * @return a double result - such that 0 <= result <= 1 - indicating how many of the informed projects are forks
-	 */
-	public static double getProjectsThatAreForks(List<Project> projects) {
-		double result = 0.0;
-		int projectsAreForks = 0, i = 0, listSize = projects.size();
-
-		if (listSize == 0) {
-		    throw new IllegalArgumentException("List of projects can't be empty");
-		}
-
-		for (; i < listSize; i++) {
-			if (projects.get(i).isFork()) {
-				projectsAreForks++;
-			}
-		}
-
-		result = (projectsAreForks / listSize);
-		return result;
+	public List<User> getContributors() {
+		return this.contributors;
 	}
 	
-	
-	/**
-	 * Gets the top most Used languages among the projects considering the most used language
-	 * in each project. 
-	 * @param projects List of projects into consideration
-	 * @param limit Limits the size of the returning list
-	 * @return sorted list with the top most used languages
-	 */
-	public static List<Language> getTopMostUsedLanguages(List<Project> projects, int limit){
-		List<Language> topLanguages = new ArrayList<Language>();
-		HashMap<String, Integer> LanguageMap = new HashMap<String, Integer>(); 
-		for( Project project: projects){			
-			String language = project.getLanguage();
-			Integer count = 1;
-			if ( LanguageMap.containsKey(language) ){ 
-				count += LanguageMap.get(language);
-			}						   
-			LanguageMap.put(language, count);
-			
-		}
-		for( Entry<String, Integer> language : LanguageMap.entrySet() ){
-			topLanguages.add(new Language(language.getKey(), language.getValue()));
-		}
-		
-		Collections.sort(topLanguages);
-		if( limit < 0 ) limit = 0;
-		topLanguages = topLanguages.subList(0, Math.min( limit, topLanguages.size() ));
-		return topLanguages;		
+	public void setContributors(List<User> contributors) {
+		this.contributors = contributors;
 	}
-	
 
-	/**
-	 * Gets the top most Used languages among the projects according to the number 
-	 * of LOC (lines of code) that they apper. 
-	 * @param projects List of projects into consideration
-	 * @param limit Limits the size of the returning list
-	 * @return sorted list with the top most used languages
-	 */
-	public static List<Language> getTopMostUsedLanguagesLoc(List<Project> projects, int limit){
-		List<Language> topLanguages = new ArrayList<Language>();
-		HashMap<String, Integer> LanguageMap = new HashMap<String, Integer>(); 
-		for( Project project: projects){
-			if( project.getLanguages() == null) {
-				throw new GroundhogException("languages information required");
-			}
-			for( Language language : project.getLanguages()){
-				Integer newLoc = language.getLoc();
-				if ( LanguageMap.containsKey(language.getName()) ){ 
-					newLoc += LanguageMap.get(language.getName());
-				}						   
-				LanguageMap.put(language.getName(), newLoc);
-			}
-		}
-		for( Entry<String, Integer> language : LanguageMap.entrySet() ){
-			topLanguages.add(new Language(language.getKey(), language.getValue()));
-		}
-		
-		Collections.sort(topLanguages);
-		if( limit < 0 ) limit = 0;
-		topLanguages = topLanguages.subList(0, Math.min( limit, topLanguages.size() ));
-		return topLanguages;		
-	}
-	
 	/**
 	 * Returns the {@link User} object who is the author of the Project
 	 * @return
@@ -613,10 +462,31 @@ public class Project implements GitHubEntity {
 		return this.user;
 	}
 
+	/**
+	 * Sets the {@link User} object who is the author of the Project
+	 * @param user
+	 */
 	public void setUser(User user) {
 		this.user = user;
 	}
 
+	/**
+	 * Returns true if the project is considered mature, and false otherwise.
+	 * 
+	 * A project is considered mature if it has at least three watchers, plus
+	 * one fork, plus more than 100 commits in its own history, and more than
+	 * five issues created in its own history.
+	 * 
+	 * @return
+	 */
+	public boolean isMature() {
+		return ((watchersCount > 3) && (forks_count > 1) && (commits.size() > 100) && (issues.size() > 5));
+	}
+	
+	/**
+	 * Returns the well-formated github rest-api for this project
+	 * @return 
+	 */
 	public String getURL() {
 		return String.format("https://api.github.com/repos/%s/%s", this.getUser().getLogin(), this.getName());
 	}

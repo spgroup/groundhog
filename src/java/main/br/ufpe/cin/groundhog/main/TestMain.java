@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.SCM;
 import br.ufpe.cin.groundhog.User;
+import br.ufpe.cin.groundhog.answers.Projects;
 import br.ufpe.cin.groundhog.codehistory.CodeHistoryModule;
 import br.ufpe.cin.groundhog.codehistory.GitCodeHistory;
 import br.ufpe.cin.groundhog.codehistory.SFCodeHistory;
@@ -40,10 +41,11 @@ import com.google.inject.Injector;
 /**
  * The main test class
  * @author fjsj, gustavopinto, Rodrigo Alves
+ * @since 0.0.1
  */
 public class TestMain {
 	private static Logger logger = LoggerFactory.getLogger(TestMain.class);
-	static Injector injector = Guice.createInjector(new SearchModule());
+	static Injector injector = Guice.createInjector(new SearchModule(), new HttpModule());
 	static SearchGitHub searchGitHub = injector.getInstance(SearchGitHub.class);
 
 	/**
@@ -198,7 +200,7 @@ public class TestMain {
 		
 		System.out.println("Searching GitHub for 'opencv': the first " + m + " results of the " + n + " page...");
 		System.out.println(projects.size() + " projects returned");
-		double ratio = Project.getProjectsThatAreForks(projects);
+		double ratio = Projects.getProjectsThatAreForks(projects);
 		
 		System.out.println("Are forks: " + ratio);
 		
@@ -214,10 +216,10 @@ public class TestMain {
 		 * 
 		 */
 		
-		double nratio = Project.getProjectsWithForksRate(projects);
+		double nratio = Projects.getProjectsWithForksRate(projects);
 		System.out.println("Have forks: " + nratio);
 		
-		int aratio = Project.getAverageForksRate(projects);
+		int aratio = Projects.getAverageForksRate(projects);
 		System.out.println("Average number of forks between the searched projects: " + aratio);
 		
 		// Fun with Milestones:

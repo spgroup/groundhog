@@ -2,6 +2,8 @@ package br.ufpe.cin.groundhog;
 
 /**
  * Represents the license used in the project
+ * @author ghlp
+ * @since 0.0.1
  */
 public class License {
 
