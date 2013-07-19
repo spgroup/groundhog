@@ -1,33 +1,58 @@
 # Groundhog
 [![Build Status](https://travis-ci.org/spgroup/groundhog.png?branch=master)](https://travis-ci.org/spgroup/groundhog)
 
-A framework for crawling raw GitHub data and to extract metrics from it
+A framework for crawling raw GitHub data and to extract metrics from it.
 
 ## Build
 
-Groundhog uses Java 7 features, so you must have it installed before build.
-
-Groundhog was built using Maven, so to build the project you will need to run the tool and let it fetch all the dependencies:
-
-`$ mvn package`
+Groundhog uses Java 7 features, so you must have it installed before build. Groundhog also uses [Maven](maven.apache.org), so to build the project you will need to download and install the tool.
 
 #### Bulding for Eclipse
 
-In order for it to behave like an Eclipse project, you'll need to install the Maven plugin and then run:
+In order for it to behave like an Eclipse project, you'll need to run the following command in the command line:
 
-`$ mvn eclipse:eclipse`
+```
+$ mvn eclipse:eclipse
+```
 
-### Generating the JAR
+If you prefer, you can just use the groundhog.jar file from command line. You can generate this file in two ways:
 
-Generate the JAR file for the Groundhog project.
+### Generating the JAR via Eclipse
 
 Eclipse users can go to `File > Export > Runnable JAR File` and enter the `CmdMain` class for the option "Launch Configuration".
+
+### Generating the JAR via command line
+
+Maven users can simply type in the root directory:
+
+```
+$ mvn package
+```
+
+and the jar will be created in the target/ path.
+
+
+### Running tests
+
+```
+$ mvn test
+```
 
 ## Usage
 
 You can use Groundhog in two ways: as an executable JAR from the command line or as a library in your own Java project.
 
-### Fetching Metadata
+### Using as a executable JAR
+
+Search GitHub for projects matching "phonegap-facebook-plugin" and place the results (if any) in a folder called metrics:
+
+```shell
+$ java -jar groundhog.jar -forge github -out metrics phonegap-facebook-plugin
+```
+
+### Using as a third-party library
+
+#### Fetching Metadata
 
 Metadata is fetched from GitHub's API. In order to be able to fetch more objects, you need to  [obtain your GitHub API token](https://github.com/settings/applications) and use it in Groundhog.
 
@@ -95,20 +120,6 @@ User user = new User("rails");
 Project project = new Project(user, "rails"); // project github.com/rails/rails
 
 List<User> contributors = searchGitHub.getAllProjectContributors(project);
-```
-
-### Running Groundhog
-
-Search GitHub for projects matching "phonegap-facebook-plugin" and place the results (if any) in a folder called metrics:
-
-```shell
-$ java -jar groundhog.jar -forge github -out metrics phonegap-facebook-plugin
-```
-
-### Running tests
-
-```
-$ mvn test
 ```
 
 ## Documentation
