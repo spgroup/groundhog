@@ -11,6 +11,8 @@ package br.ufpe.cin.groundhog;
  * 
  */
 public class Language implements Comparable<Language> {
+	public static final String JAVA = "Java";
+	
 	private String name;
 	private int loc;
 	

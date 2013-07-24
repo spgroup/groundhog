@@ -34,7 +34,6 @@ public class SearchGitHub implements ForgeSearch {
     public static int INFINITY = -1;
 
     private static final String ROOT = "https://api.github.com";
-	private static final String REPO_API = "https://api.github.com";
 	private static final String USERS_API = "https://api.github.com/users/";
 	
 	private final Requests requests;
@@ -85,6 +84,7 @@ public class SearchGitHub implements ForgeSearch {
 			throw new SearchException(e);
 		}
 	}
+
 	/**
 	 * Obtains from the GitHub API the set of projects with more than one language
 	 * @param Start indicates the desired page
@@ -113,8 +113,13 @@ public class SearchGitHub implements ForgeSearch {
 		}
 	}
 
+	public List<Project> getAllProjectsByLanguage(String lang) throws SearchException{
+		throw new UnsupportedOperationException("not implemented yet.");
+	}
+	
 	/**
 	 * Obtains from the GitHub API the set of projects
+	 * 
 	 * @param Start indicates the desired page
 	 * @param limit is the total of projects that are going to me returned 
 	 * @throws SearchException
@@ -149,8 +154,7 @@ public class SearchGitHub implements ForgeSearch {
 					JsonElement element = (JsonElement) iterator.next();
 					
 					String repoName = element.getAsJsonObject().get("name").getAsString();	
-					String searchUrlLegacy  = null;					
-					searchUrlLegacy = String.format("%s/legacy/repos/search/%s?%s", ROOT , repoName, this.oauthToken);
+					String searchUrlLegacy = String.format("%s/legacy/repos/search/%s?%s", ROOT , repoName, this.oauthToken);
 					
 					String jsonLegacy = requests.get(searchUrlLegacy);
 					jsonElement = parser.parse(jsonLegacy);
@@ -166,14 +170,11 @@ public class SearchGitHub implements ForgeSearch {
 					Project p = gson.fromJson(stringElement, Project.class);
 					
 					p.setSCM(SCM.GIT);
-					p.setScmURL(String.format("git://github.com/%s/%s.git", p.getOwner(), p.getName()));
-					
 					String owner = rawJsonObject.getAsJsonObject().get("owner").getAsString();
+					p.setScmURL(String.format("git://github.com/%s/%s.git", owner, p.getName()));
 					
 					User user = new User(owner);
-					
 					p.setOwner(user);
-					
 					projects.add(p);
 					
 					counter++;
@@ -198,7 +199,7 @@ public class SearchGitHub implements ForgeSearch {
 			throws SearchException {
 		
 		try {
-			String searchUrl = String.format("%s/repos/%s/%s%s", REPO_API, username, requests.encodeURL(term), this.oauthToken);
+			String searchUrl = String.format("%s/repos/%s/%s%s", ROOT, username, requests.encodeURL(term), this.oauthToken);
 			
 			String json = requests.get(searchUrl);
 			
@@ -225,7 +226,7 @@ public class SearchGitHub implements ForgeSearch {
 	 */
 	public List<Language> fetchProjectLanguages(Project project) {
 		
-		String searchUrl = String.format("%s/repos/%s/%s/languages", REPO_API, project.getUser().getLogin(), project.getName());
+		String searchUrl = String.format("%s/repos/%s/%s/languages", ROOT, project.getUser().getLogin(), project.getName());
 		String json = null;
 		try {
 			json = requests.get(searchUrl).replace("{", "").replace("}", "");
@@ -252,7 +253,7 @@ public class SearchGitHub implements ForgeSearch {
 		List<Issue> collection = new ArrayList<Issue>();
 
 		String searchUrl = String.format("%s/repos/%s/%s/issues",
-				REPO_API, project.getUser().getLogin(), project.getName());
+				ROOT, project.getUser().getLogin(), project.getName());
 		String jsonString = requests.get(searchUrl);
 		JsonElement jsonElement = gson.fromJson(jsonString, JsonElement.class);
 		JsonArray jsonArray = jsonElement.getAsJsonArray();
@@ -276,7 +277,7 @@ public class SearchGitHub implements ForgeSearch {
 	 */
 	public List<Milestone> getAllProjectMilestones(Project project) throws IOException {
 		
-		String searchUrl = String.format("%s/repos/%s/%s/milestones", REPO_API, project.getUser().getLogin(), project.getName());
+		String searchUrl = String.format("%s/repos/%s/%s/milestones", ROOT, project.getUser().getLogin(), project.getName());
 		String jsonString = requests.get(searchUrl);
 		
 		JsonElement jsonElement = gson.fromJson(jsonString, JsonElement.class);
@@ -301,7 +302,7 @@ public class SearchGitHub implements ForgeSearch {
 		List<Commit> collection = new ArrayList<Commit>();
 		
 		String searchUrl = String.format("%s/repos/%s/%s/commits",
-				REPO_API, project.getUser().getLogin(), project.getName());
+				ROOT, project.getUser().getLogin(), project.getName());
 		
 		JsonElement jsonElement = gson.fromJson(requests.get(searchUrl), JsonElement.class);
 		JsonArray jsonArray = jsonElement.getAsJsonArray();
@@ -326,7 +327,7 @@ public class SearchGitHub implements ForgeSearch {
 	public List<User> getAllProjectContributors(Project project) throws IOException {
 		List<User> collection = new ArrayList<User>();
 		
-		String searchUrl = String.format("%s/repos/%s/%s/contributors", REPO_API, project.getUser().getLogin(), project.getName());
+		String searchUrl = String.format("%s/repos/%s/%s/contributors", ROOT, project.getUser().getLogin(), project.getName());
 		String jsonString = requests.get(searchUrl);
 		
 		JsonElement jsonElement = gson.fromJson(jsonString, JsonElement.class);
