@@ -1,22 +1,22 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<groupId>br.ufpe.cin.groundhog</groupId>
 	<artifactId>groundhog</artifactId>
 	<version>0.1.0</version>
 	<packaging>jar</packaging>
 	<name>Groundhog</name>
-	
+
 	<description>A framework for crawling raw GitHub data and to extract metrics from it</description>
 	<url>https://github.com/spgroup/groundhog</url>
-	
+
 	<parent>
 		<groupId>org.sonatype.oss</groupId>
 		<artifactId>oss-parent</artifactId>
 		<version>7</version>
- 	</parent>
-	
+	</parent>
+
 	<developers>
 		<developer>
 			<id>gustavopinto</id>
@@ -30,13 +30,13 @@
 			<timezone>-3</timezone>
 		</developer>
 	</developers>
-	
+
 	<scm>
 		<url>https://github.com/spgroup/groundhog</url>
 		<connection>scm:git:git://github.com/spgroup/groundhog</connection>
 		<developerConnection>scm:git:git@github.com:spgroup/groundhog.git</developerConnection>
 	</scm>
-	
+
 	<licenses>
 		<license>
 			<distribution>repo</distribution>
@@ -44,7 +44,7 @@
 			<url>http://www.gnu.org/licenses/gpl-2.0.txt</url>
 		</license>
 	</licenses>
-	
+
 	<repositories>
 		<repository>
 			<id>jgit-repository</id>
@@ -60,7 +60,7 @@
 			<url>https://junrar-repository.googlecode.com/svn/deploy/</url>
 		</repository>
 	</repositories>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>net.sf.opencsv</groupId>
@@ -180,7 +180,7 @@
 			<version>4.11</version>
 		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<sourceDirectory>${project.basedir}/src/java/main</sourceDirectory>
 		<testSourceDirectory>${project.basedir}/src/java/test</testSourceDirectory>
@@ -228,6 +228,11 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.eluder.coveralls</groupId>
+				<artifactId>coveralls-maven-plugin</artifactId>
+				<version>2.0.0</version>
 			</plugin>
 		</plugins>
 	</build>
