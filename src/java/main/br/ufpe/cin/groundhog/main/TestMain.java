@@ -13,8 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.SCM;
-import br.ufpe.cin.groundhog.User;
-import br.ufpe.cin.groundhog.answers.Projects;
 import br.ufpe.cin.groundhog.codehistory.CodeHistoryModule;
 import br.ufpe.cin.groundhog.codehistory.GitCodeHistory;
 import br.ufpe.cin.groundhog.codehistory.SFCodeHistory;
@@ -186,64 +184,7 @@ public class TestMain {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		// gitHubExample("jsoup");
-		
-		/**
-		 * Testing issue 22 - getProjectsThatAreForks
-		 * How many are forks
-		 * Algorithm:
-		 *   Search: the first two projects, of the first page for projects named "opencv"
-		 *   get ratio: get the number of the projects returned from the search above that are forks
-		 */
-		int n = 1, m = 15;
-		List<Project> projects = searchGitHub.getProjects("opencv", 1, 15);
-		
-		System.out.println("Searching GitHub for 'opencv': the first " + m + " results of the " + n + " page...");
-		System.out.println(projects.size() + " projects returned");
-		double ratio = Projects.getProjectsThatAreForks(projects);
-		
-		System.out.println("Are forks: " + ratio);
-		
-		/**
-		 * If we want - hypothetically - to find out how many projects on GitHub are forks
-		 * List<Project> projects = searchGitHub.getProjects(1, -1);
-		 * Beware, this will zero your API limit!
-		 */
-		
-		/**
-		 * Testing issue 22 - getProjectsWithForksRate
-		 * Find out how many have forks
-		 * 
-		 */
-		
-		double nratio = Projects.getProjectsWithForksRate(projects);
-		System.out.println("Have forks: " + nratio);
-		
-		int aratio = Projects.getAverageForksRate(projects);
-		System.out.println("Average number of forks between the searched projects: " + aratio);
-		
-		// Fun with Milestones:
-		
-		User spg = new User("spgroup");
-		Project pr = new Project(spg, "groundhog");
-		
-		pr.setMilestones(searchGitHub.getAllProjectMilestones(pr));
-		
-		System.out.println("Searching for Milestones...");
-		
-		for (int h = 0; h < pr.getMilestones().size(); h++) {
-			System.out.println(pr.getMilestones().get(h).getTitle());
-		}
-		
-		// Fun with Issues:
-		
-		pr.setIssues(searchGitHub.getAllProjectIssues(pr));
-		
-		System.out.println("Searching for Issues...");
-		for (int k = 0; k < pr.getIssues().size(); k++) {
-			System.out.println(pr.getIssues().get(k).getTitle());
-		}
-		
+		 gitHubExample("jsoup");
         // sourceForgeExample();
 		// googleCodeExample("facebook-java-api"); // Google Code SVN
 		// googleCodeExample("guava-libraries"); // Google Code Git
