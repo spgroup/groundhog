@@ -24,13 +24,16 @@ public class Requests {
 	 * @return
 	 * @throws IOException
 	 */
-	public String get(String urlStr) throws IOException {
+	public String get(String urlStr) {
 		try {
 			return this.asyncClient.prepareGet(urlStr).execute().get().getResponseBody();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 			throw new HttpException(e);
 		} catch (ExecutionException e) {
+			e.printStackTrace();
+			throw new HttpException(e);
+		} catch (Exception e) {
 			e.printStackTrace();
 			throw new HttpException(e);
 		}

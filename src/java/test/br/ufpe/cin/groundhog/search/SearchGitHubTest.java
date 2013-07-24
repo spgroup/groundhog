@@ -29,7 +29,7 @@ public class SearchGitHubTest {
 		fakeProject.setUser(user);
 	}
 	
-//	@Test
+	@Test
 	public void testSearchByProjectName() {
 		try {			
 			List<Project> projects = searchGitHub.getProjects("groundhog", 1, SearchGitHub.INFINITY);
@@ -41,7 +41,7 @@ public class SearchGitHubTest {
 		}
 	}
 	
-//	@Test
+	@Test
 	public void testFetchByProjectLanguages() {
 		try {
 			List<Language> langs = searchGitHub.fetchProjectLanguages(fakeProject);
@@ -56,6 +56,17 @@ public class SearchGitHubTest {
 	public void testGetAllProjects() {
 		try {
 			List<Project> projects = searchGitHub.getAllProjects(0, 5);
+			Assert.assertNotNull(projects);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail();
+		}
+	}
+	
+	@Test
+	public void testGetProjectsByLanguage() {
+		try {
+			List<Project> projects = searchGitHub.getAllProjectsByLanguage("java");
 			Assert.assertNotNull(projects);
 		} catch (Exception e) {
 			e.printStackTrace();

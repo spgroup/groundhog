@@ -65,7 +65,7 @@ public class SearchSourceForge implements ForgeSearch {
 			}
 			
 			return projects;
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SearchException(e);
 		}
