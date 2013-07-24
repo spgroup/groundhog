@@ -1,7 +1,21 @@
 # Groundhog
 [![Build Status](https://travis-ci.org/spgroup/groundhog.png?branch=master)](https://travis-ci.org/spgroup/groundhog)
 
-A framework for crawling raw GitHub data and to extract metrics from it.
+Groundhog is an easy to use framework for crawling raw GitHub data and to extract metrics from it. It leverages the power of the Java language, as well as the Github plataform, to help researchers to better understand software repositories. Groundhog goals are flexibility, extensibility and simplicity.
+
+**WARNING:** Groundhog is currently alpha-software and its API **will** suffer major changes. The current version is an experiment that showcases using the GitHub API and the JavaCompiler.
+
+On the developer side, Groundhog focuses on simplicity by shipping with a bare stack, allowing a research to get started quickly while making it easy to extend the application as and when they see fit.
+
+It is currently alpha software and it supports:
+
+* Partially integrated with GitHub API
+* Extract and download projects from three forges
+* Collect metrics about Java code
+* Plug-and-play features
+
+Before becoming beta, we want to add the following to Groundhog:
+* Fully-integrated with GitHub API
 
 ## Build
 
