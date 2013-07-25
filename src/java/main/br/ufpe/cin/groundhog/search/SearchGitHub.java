@@ -175,21 +175,23 @@ public class SearchGitHub implements ForgeSearch {
 					JsonObject jsonObject = parser.parse(jsonLegacy).getAsJsonObject();			
 					JsonArray jsonArrayLegacy = jsonObject.get("repositories").getAsJsonArray();
 					
-					JsonObject rawJsonObject = jsonArrayLegacy.get(0).getAsJsonObject();
-					
-					String stringElement = rawJsonObject.toString();
-					Project p = gson.fromJson(stringElement, Project.class);
-					
-					p.setSCM(SCM.GIT);
-					String owner = rawJsonObject.getAsJsonObject().get("owner").getAsString();
-					p.setScmURL(String.format("git://github.com/%s/%s.git", owner, p.getName()));
-					
-					User user = new User(owner);
-					p.setOwner(user);
-					projects.add(p);
-					
-					counter++;
-					totalRepositories++;
+					if(jsonArrayLegacy.size() > 0) {
+						JsonObject rawJsonObject = jsonArrayLegacy.get(0).getAsJsonObject();
+						
+						String stringElement = rawJsonObject.toString();
+						Project p = gson.fromJson(stringElement, Project.class);
+						
+						p.setSCM(SCM.GIT);
+						String owner = rawJsonObject.getAsJsonObject().get("owner").getAsString();
+						p.setScmURL(String.format("git://github.com/%s/%s.git", owner, p.getName()));
+						
+						User user = new User(owner);
+						p.setOwner(user);
+						projects.add(p);
+						
+						counter++;
+						totalRepositories++;
+					}
 				}
 				
 				JsonElement lastPagesRepository = jsonArray.get(jsonArray.size() -1);
