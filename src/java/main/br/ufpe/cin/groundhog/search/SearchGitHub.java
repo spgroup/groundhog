@@ -240,6 +240,7 @@ public class SearchGitHub implements ForgeSearch {
 	public List<Language> fetchProjectLanguages(Project project) {
 		
 		String searchUrl = String.format("%s/repos/%s/%s/languages", ROOT, project.getUser().getLogin(), project.getName());
+
 		String json = requests.get(searchUrl).replace("{", "").replace("}", "");
 		
 		List<Language> languages = new ArrayList<>();
@@ -330,11 +331,10 @@ public class SearchGitHub implements ForgeSearch {
 		String searchUrl = String.format("%s/repos/%s/%s/contributors", ROOT, project.getUser().getLogin(), project.getName());
 		String jsonString = requests.get(searchUrl);
 		
-		JsonElement jsonElement = gson.fromJson(jsonString, JsonElement.class);
-		JsonArray jsonArray = jsonElement.getAsJsonArray();
-		
-		for (int i = 0; i < jsonArray.size(); i++) {
-			User contributor = gson.fromJson(jsonArray.get(i), User.class);
+		JsonArray jsonArray = gson.fromJson(jsonString, JsonElement.class).getAsJsonArray();
+
+		for (JsonElement element : jsonArray) {
+			User contributor = gson.fromJson(element, User.class);
 			collection.add(contributor);
 		}
 		
@@ -376,10 +376,10 @@ public class SearchGitHub implements ForgeSearch {
 				JsonElement lastPagesRepository = jsonArray.get(jsonArray.size() -1);
 				since = lastPagesRepository.getAsJsonObject().get("id").getAsInt();
 			}
+			return projects;
 		} catch (GroundhogException e) {
 			e.printStackTrace();
 			throw new SearchException(e);
 		}
-		return projects;
 	}
 }
