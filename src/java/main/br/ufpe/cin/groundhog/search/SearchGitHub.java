@@ -155,9 +155,7 @@ public class SearchGitHub implements ForgeSearch {
 				
 				String searchUrl = String.format("%s/repositories?since=%s%s", ROOT, since, this.oauthToken);
 				String response = requests.get(searchUrl);
-				JsonElement jsonElement = parser.parse(response);
-					
-				JsonArray jsonArray = jsonElement.getAsJsonArray();
+				JsonArray jsonArray = parser.parse(response).getAsJsonArray();
 				
 				int counter = 0;
 				
@@ -170,9 +168,15 @@ public class SearchGitHub implements ForgeSearch {
 					String searchUrlLegacy = String.format("%s/legacy/repos/search/%s?%s", ROOT , repoName, this.oauthToken);
 					
 					String jsonLegacy = requests.get(searchUrlLegacy);
-					jsonElement = parser.parse(jsonLegacy);
-
-					JsonObject jsonObject = parser.parse(jsonLegacy).getAsJsonObject();			
+					JsonElement jsonElement = parser.parse(jsonLegacy);
+					
+					JsonObject jsonObject = null;
+					try {
+						jsonObject = jsonElement.getAsJsonObject();
+					} catch (Exception e) {
+						System.out.println(jsonLegacy);
+						continue;
+					}
 					JsonArray jsonArrayLegacy = jsonObject.get("repositories").getAsJsonArray();
 					
 					if(jsonArrayLegacy.size() > 0) {
@@ -197,14 +201,15 @@ public class SearchGitHub implements ForgeSearch {
 				JsonElement lastPagesRepository = jsonArray.get(jsonArray.size() -1);
 				since = lastPagesRepository.getAsJsonObject().get("id").getAsInt();
 			}
+			return projects;
 			
 		} catch (GroundhogException e) {
-			
+			e.printStackTrace();
+			throw new SearchException(e);
+		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SearchException(e);
 		}
-		
-		return projects;
 	}
 
 	@Override

@@ -3,9 +3,6 @@ package br.ufpe.cin.groundhog.crawler;
 import java.io.File;
 import java.util.Random;
 
-import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.api.errors.InvalidRemoteException;
-import org.eclipse.jgit.api.errors.TransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,15 +31,20 @@ public class CrawlGitHub extends ForgeCrawler {
 	}
 
 	@Override
-	protected File downloadProject(Project project)
-			throws InvalidRemoteException, TransportException, GitAPIException {
+	protected File downloadProject(Project project) {
 		String projectName = project.getName() + "_" + new Random().nextInt();
 		String cloneUrl = project.getScmURL();
 		File projectFolder = new File(destinationFolder, projectName);
 
 		logger.info(String.format("Downloading %s project..", project.getName()));
 
-		this.gitClient.clone(cloneUrl, projectFolder);
-		return projectFolder;
+		try {
+			this.gitClient.clone(cloneUrl, projectFolder);
+			return projectFolder;
+		} catch (Exception e) {
+			String error = String.format("Unable to download %s", project.getName());
+			logger.error(error);
+			throw new DownloadExecption(error);
+		}
 	}
 }

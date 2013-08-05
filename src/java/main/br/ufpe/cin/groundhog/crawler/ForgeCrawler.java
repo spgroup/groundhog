@@ -61,17 +61,8 @@ public abstract class ForgeCrawler {
 			fs.add(f);
 		}
 		
-		shutdown();
+		ex.shutdownNow();
 		
 		return fs;
 	}
-	
-	/**
-	 * Guarantees downloads to be executed, but no new downloads will be accepted.
-	 * Should be called after downloadProjects.
-	 */
-	private void shutdown() {
-		ex.shutdownNow();
-	}
-	
 }

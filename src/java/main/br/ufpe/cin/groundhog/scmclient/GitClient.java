@@ -14,7 +14,9 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.CheckoutConflictException;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRefNameException;
+import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.RefAlreadyExistsException;
+import org.eclipse.jgit.api.errors.TransportException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
@@ -25,24 +27,17 @@ import org.gitective.core.filter.commit.CommitterDateFilter;
 import br.ufpe.cin.groundhog.util.Dates;
 
 public class GitClient {
-	
+
 	/**
 	 * Performs a clone operation for the given project URL and places the fetched code
 	 * into the destination directory.
 	 * @param url the project's URL
-	 * @param destination
+	 * @param destination 
 	 */
-	public void clone(String url, File destination) {
-		try {
-			Git git = Git.cloneRepository()
-								.setURI(url)
-								.setDirectory(destination)
-								.call();
-			
-			git.getRepository().close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public void clone(String url, File destination)
+			throws InvalidRemoteException, TransportException, GitAPIException {
+		Git git = Git.cloneRepository().setURI(url).setDirectory(destination).call();
+		git.getRepository().close();
 	}
 
 	/**

@@ -10,6 +10,10 @@ package br.ufpe.cin.groundhog;
 public class GroundhogException extends RuntimeException {
 	private static final long serialVersionUID = -3563928567447310893L;
 
+	public GroundhogException() {
+		super();
+	}
+
 	public GroundhogException(String msg) {
 		super(msg);
 	}

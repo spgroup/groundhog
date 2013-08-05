@@ -6,10 +6,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.ufpe.cin.groundhog.License;
+import br.ufpe.cin.groundhog.parser.NotAProjectException;
 import br.ufpe.cin.groundhog.util.FileUtil;
 
 import com.google.common.collect.Lists;
 
+/**
+ * This class tries to find which is the license in use. It raises an execption
+ * if no source code if found on the root dir.
+ * 
+ * @author ghlp
+ * @since 0.1.0
+ */
 public class LicenseParser {
 
 	private static Logger logger = LoggerFactory.getLogger(LicenseParser.class);
@@ -18,8 +26,15 @@ public class LicenseParser {
 	private final File root;
 
 	public LicenseParser(File project) {
+		checkIfIsProject(project);
 		this.files = project.listFiles();
 		this.root = project;
+	}
+
+	private void checkIfIsProject(File project) {
+		if (files.length == 0) {
+			throw new NotAProjectException();
+		}
 	}
 
 	/**
@@ -29,26 +44,28 @@ public class LicenseParser {
 		logger.info("Running license parser..");
 
 		FileUtil filesUtils = FileUtil.getInstance();
-		
-		for(File file: files) {
-			if(filesUtils.isTextFile(file)) {
+
+		for (File file : files) {
+			if (filesUtils.isTextFile(file)) {
 				String content = filesUtils.readAllLines(file);
-				
-				if(containsLicenseWord(content)) {
+
+				if (containsLicenseWord(content)) {
 					return extractLicense(content);
 				}
 			}
 		}
-		
-		logger.info(String.format("No license found for project %s", root.getName()));
+
+		logger.info(String.format("No license found for project %s",
+				root.getName()));
 		return new License("unlincesed");
 	}
 
 	private License extractLicense(String content) {
-		
-		for(String license: Licenses.names()) {
-			if(content.contains(license)) {
-				logger.info(String.format("License found! %s uses %s.", root.getName(), license));
+
+		for (String license : Licenses.names()) {
+			if (content.contains(license)) {
+				logger.info(String.format("License found! %s uses %s license.",
+						root.getName(), license));
 				return new License(license);
 			}
 		}
@@ -57,8 +74,9 @@ public class LicenseParser {
 
 	private boolean containsLicenseWord(String content) {
 
-		for (String licenseKeyword : Lists.newArrayList("License")) {
-			if (content.contains(licenseKeyword)) {
+		for (String licenseKeyword : Lists.newArrayList("license", "copyright",
+				"permission")) {
+			if (content.toLowerCase().contains(licenseKeyword)) {
 				return true;
 			}
 		}
