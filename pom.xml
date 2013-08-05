@@ -6,7 +6,7 @@
 	<artifactId>groundhog</artifactId>
 	<version>0.1.0</version>
 	<packaging>jar</packaging>
-	
+
 	<name>Groundhog</name>
 	<description>A framework for crawling raw GitHub data and to extract metrics from it</description>
 	<url>https://github.com/spgroup/groundhog</url>
@@ -225,6 +225,19 @@
 						<phase>package</phase>
 						<goals>
 							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
 						</goals>
 					</execution>
 				</executions>
