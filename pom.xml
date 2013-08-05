@@ -6,8 +6,8 @@
 	<artifactId>groundhog</artifactId>
 	<version>0.1.0</version>
 	<packaging>jar</packaging>
+	
 	<name>Groundhog</name>
-
 	<description>A framework for crawling raw GitHub data and to extract metrics from it</description>
 	<url>https://github.com/spgroup/groundhog</url>
 
