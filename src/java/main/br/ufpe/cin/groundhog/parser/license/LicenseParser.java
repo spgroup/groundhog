@@ -10,6 +10,13 @@ import br.ufpe.cin.groundhog.util.FileUtil;
 
 import com.google.common.collect.Lists;
 
+/**
+ * Class that tries to find what is the project's license.
+ * This in a work in progress. May lead to misleading results.
+ * 
+ * @author ghlp
+ * @since 0.1.0
+ */
 public class LicenseParser {
 
 	private static Logger logger = LoggerFactory.getLogger(LicenseParser.class);
@@ -29,26 +36,28 @@ public class LicenseParser {
 		logger.info("Running license parser..");
 
 		FileUtil filesUtils = FileUtil.getInstance();
-		
-		for(File file: files) {
-			if(filesUtils.isTextFile(file)) {
+
+		for (File file : files) {
+			if (filesUtils.isTextFile(file)) {
 				String content = filesUtils.readAllLines(file);
-				
-				if(containsLicenseWord(content)) {
+
+				if (containsLicenseWord(content)) {
 					return extractLicense(content);
 				}
 			}
 		}
-		
-		logger.info(String.format("No license found for project %s", root.getName()));
+
+		logger.info(String.format("No license found for project %s",
+				root.getName()));
 		return new License("unlincesed");
 	}
 
 	private License extractLicense(String content) {
-		
-		for(String license: Licenses.names()) {
-			if(content.contains(license)) {
-				logger.info(String.format("License found! %s uses %s.", root.getName(), license));
+
+		for (String license : Licenses.names()) {
+			if (content.contains(license)) {
+				logger.info(String.format("License found! %s uses %s.",
+						root.getName(), license));
 				return new License(license);
 			}
 		}

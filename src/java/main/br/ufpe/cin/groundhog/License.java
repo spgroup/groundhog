@@ -25,4 +25,8 @@ public class License {
 	public String getEntireContent() {
 		return entireContent;
 	}
+	
+	public String toString() {
+		return name;
+	}
 }
