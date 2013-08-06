@@ -15,6 +15,8 @@ import com.google.common.collect.Lists;
  * This class tries to find which is the license in use. It raises an exception
  * if no source code if found on the root dir.
  * 
+ * This class still a work in progress. May lead to misleading results.
+ * 
  * @author ghlp
  * @since 0.1.0
  */

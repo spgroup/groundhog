@@ -7,7 +7,7 @@
     "nprojects": 3,
     "outputformat": "json",
     "search": {
-        "projects": ["hello-curiosity", "Turbine", "epona", "rails"],
+        "projects": ["Turbine", "epona"],
         "username":"gustavopinto"
     }
 }
