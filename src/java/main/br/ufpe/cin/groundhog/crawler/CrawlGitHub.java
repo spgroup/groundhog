@@ -31,7 +31,7 @@ public class CrawlGitHub extends ForgeCrawler {
 	}
 
 	@Override
-	protected File downloadProject(Project project) {
+	public File downloadProject(Project project) {
 		String projectName = project.getName() + "_" + new Random().nextInt();
 		String cloneUrl = project.getScmURL();
 		File projectFolder = new File(destinationFolder, projectName);
@@ -42,7 +42,7 @@ public class CrawlGitHub extends ForgeCrawler {
 			this.gitClient.clone(cloneUrl, projectFolder);
 			return projectFolder;
 		} catch (Exception e) {
-			String error = String.format("Unable to download %s", project.getName());
+			String error = String.format("Unable to download %s (%s) project", project.getName(), project.getURL());
 			logger.error(error);
 			throw new DownloadExecption(error);
 		}

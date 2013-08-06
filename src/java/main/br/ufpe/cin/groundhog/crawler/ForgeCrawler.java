@@ -37,7 +37,7 @@ public abstract class ForgeCrawler {
 	 * @return a repository folder (if has SCM as Git or SVN) or a project folder (which contains archived/compressed files)
 	 * @throws Exception when something nasty happens
 	 */
-	protected abstract File downloadProject(Project project) throws Exception;
+	public abstract File downloadProject(Project project) throws Exception;
 	
 	/**
 	 * Downloads the given list of projects, returning futures with files objects.

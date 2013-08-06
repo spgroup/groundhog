@@ -177,7 +177,7 @@ public class CrawlSourceForge extends ForgeCrawler {
 	}
 
 	@Override
-	protected File downloadProject(Project project) throws IOException,
+	public File downloadProject(Project project) throws IOException,
 			InterruptedException, ExecutionException {
 		String projectName = project.getName();
 		List<String> urls = getDownloadURLs(projectName);

@@ -32,7 +32,7 @@ public class CrawlGoogleCode extends ForgeCrawler {
 	}
 	
 	@Override
-	protected File downloadProject(Project project)
+	public File downloadProject(Project project)
 			throws IOException, SVNException,
 			InvalidRemoteException, TransportException, GitAPIException {
 		String projectName = project.getName();

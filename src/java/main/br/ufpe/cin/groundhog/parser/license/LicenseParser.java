@@ -12,7 +12,7 @@ import br.ufpe.cin.groundhog.util.FileUtil;
 import com.google.common.collect.Lists;
 
 /**
- * This class tries to find which is the license in use. It raises an execption
+ * This class tries to find which is the license in use. It raises an exception
  * if no source code if found on the root dir.
  * 
  * @author ghlp
@@ -32,7 +32,8 @@ public class LicenseParser {
 	}
 
 	private void checkIfIsProject(File project) {
-		if (files.length == 0) {
+		if (project.listFiles().length == 0) {
+			logger.warn(String.format("The project %s does not have source code!"), project.getName());
 			throw new NotAProjectException();
 		}
 	}
