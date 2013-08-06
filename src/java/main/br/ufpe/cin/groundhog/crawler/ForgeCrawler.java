@@ -9,7 +9,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import br.ufpe.cin.groundhog.Project;
-import br.ufpe.cin.groundhog.main.JsonInput;
 
 /**
  * An abstract class that defines the forge crawl functionality.
@@ -26,7 +25,7 @@ public abstract class ForgeCrawler {
 	 * Constructs a new ForgeCrawler with a given destinationFolder.
 	 */
 	protected ForgeCrawler() {
-		this.ex = Executors.newFixedThreadPool(JsonInput.getMaxThreads());
+		this.ex = Executors.newCachedThreadPool();
 	}
 	
 	/**

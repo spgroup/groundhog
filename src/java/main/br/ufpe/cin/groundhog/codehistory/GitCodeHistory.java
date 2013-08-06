@@ -48,6 +48,7 @@ public class GitCodeHistory implements CodeHistory {
 			FileUtil.getInstance().copyDirectory(repositoryFolder,
 					projectFolder);
 			
+			logger.info("Checking out to the specific date..");
 			this.gitClient.checkout(projectFolder, date);
 			return projectFolder;
 		} catch (EmptyProjectAtDateException e) {

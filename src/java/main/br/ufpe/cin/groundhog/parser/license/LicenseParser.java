@@ -65,8 +65,7 @@ public class LicenseParser {
 
 		for (String license : Licenses.names()) {
 			if (content.contains(license)) {
-				logger.info(String.format("License found! %s uses %s license.",
-						root.getName(), license));
+				logger.info(String.format("License found! %s uses %s license.", root.getName(), license));
 				return new License(license);
 			}
 		}
@@ -75,8 +74,7 @@ public class LicenseParser {
 
 	private boolean containsLicenseWord(String content) {
 
-		for (String licenseKeyword : Lists.newArrayList("license", "copyright",
-				"permission")) {
+		for (String licenseKeyword : Lists.newArrayList("license", "copyright", "permission")) {
 			if (content.toLowerCase().contains(licenseKeyword)) {
 				return true;
 			}

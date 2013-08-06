@@ -42,7 +42,7 @@ public class CrawlGitHub extends ForgeCrawler {
 			this.gitClient.clone(cloneUrl, projectFolder);
 			return projectFolder;
 		} catch (Exception e) {
-			String error = String.format("Unable to download %s (%s) project", project.getName(), project.getURL());
+			String error = String.format("Unable to download %s (%s) project", project.getName(), project.getScmURL());
 			logger.error(error);
 			throw new DownloadExecption(error);
 		}

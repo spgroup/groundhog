@@ -355,7 +355,7 @@ public class SearchGitHub implements ForgeSearch {
 			int totalRepositories = 0;
 			while(totalRepositories < limit || limit < 0){
 
-				String searchUrl = ROOT + String.format("/repositories?since=%s&language=java&%s", since, this.oauthToken);
+				String searchUrl = String.format("%s/repositories?since=%s&language=java&%s", ROOT, since, this.oauthToken);
 				String jsonString = requests.get(searchUrl);
 				
 				JsonArray jsonArray = gson.fromJson(jsonString, JsonElement.class).getAsJsonArray();
@@ -363,22 +363,26 @@ public class SearchGitHub implements ForgeSearch {
 						(totalRepositories + i < limit || limit < 0); i++) {
 					
 					String repoName = jsonArray.get(i).getAsJsonObject().get("name").getAsString();					
-					String searchUrlLegacy = String.format("%s/legacy/repos/search/%s?language=java&%s", ROOT, repoName, this.oauthToken);
+					String searchUrlLegacy = String.format("%s/legacy/repos/search/%s?language=java%s", ROOT, repoName, this.oauthToken);
 					
 					String jsonLegacy = requests.get(searchUrlLegacy);
 					
 					JsonObject jsonObject = gson.fromJson(jsonLegacy, JsonElement.class).getAsJsonObject();			
 					JsonArray jsonArrayLegacy = jsonObject.get("repositories").getAsJsonArray();
 					
-					if( jsonArrayLegacy.size() == 0 ) continue; // not a java project
+					if( jsonArrayLegacy.size() > 0) {
 					
-					String element = jsonArrayLegacy.get(0).toString(); // results are sorted by best match
-					Project p = gson.fromJson(element, Project.class);
-					p.setSCM(SCM.GIT);
-					p.setScmURL(String.format("git://github.com/%s/%s.git", p.getOwner(), p.getName()));
-					
-					projects.add(p);
-					totalRepositories++;
+						JsonObject rawJsonObject = jsonArrayLegacy.get(0).getAsJsonObject();
+						String stringElement = rawJsonObject.toString();
+						Project p = gson.fromJson(stringElement, Project.class);
+						
+						p.setSCM(SCM.GIT);
+						String owner = rawJsonObject.getAsJsonObject().get("owner").getAsString();
+						p.setScmURL(String.format("git://github.com/%s/%s.git", owner, p.getName()));
+						
+						projects.add(p);
+						totalRepositories++;
+					}
 				}				
 				JsonElement lastPagesRepository = jsonArray.get(jsonArray.size() -1);
 				since = lastPagesRepository.getAsJsonObject().get("id").getAsInt();
