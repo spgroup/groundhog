@@ -1,6 +1,6 @@
 package br.ufpe.cin.groundhog.parser.java.formater;
 
-import br.ufpe.cin.groundhog.parser.java.UnsupportedMetricsFormatException;
+import br.ufpe.cin.groundhog.GroundhogException;
 
 public class FormaterFactory {
 
@@ -11,7 +11,7 @@ public class FormaterFactory {
 			return new JSONFormater();
 		} else {
 			String msg = String.format("I did not reconginze this output format (%s) :( I can only format in CSV or JSON", format);
-			throw new UnsupportedMetricsFormatException(msg);
+			throw new GroundhogException(msg);
 		}
 	}
 }
