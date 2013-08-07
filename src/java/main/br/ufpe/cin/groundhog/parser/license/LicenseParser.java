@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import br.ufpe.cin.groundhog.License;
 import br.ufpe.cin.groundhog.parser.NotAProjectException;
+import br.ufpe.cin.groundhog.parser.Parser;
 import br.ufpe.cin.groundhog.util.FileUtil;
 
 import com.google.common.collect.Lists;
@@ -20,7 +21,7 @@ import com.google.common.collect.Lists;
  * @author ghlp
  * @since 0.1.0
  */
-public class LicenseParser {
+public class LicenseParser implements Parser {
 
 	private static Logger logger = LoggerFactory.getLogger(LicenseParser.class);
 

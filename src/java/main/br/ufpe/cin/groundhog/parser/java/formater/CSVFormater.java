@@ -1,4 +1,4 @@
-package br.ufpe.cin.groundhog.parser.formater;
+package br.ufpe.cin.groundhog.parser.java.formater;
 
 import java.io.IOException;
 import java.io.StringWriter;

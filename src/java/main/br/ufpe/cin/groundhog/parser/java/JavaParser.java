@@ -17,15 +17,19 @@ import javax.tools.ToolProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import br.ufpe.cin.groundhog.parser.formater.Formater;
+import br.ufpe.cin.groundhog.parser.Parser;
+import br.ufpe.cin.groundhog.parser.java.formater.Formater;
 
 /**
  * Class that implements the metrics extraction functionality of this project.
- * Works by using the Compiler Tree API (com.sun.source.tree) with JavaCompiler class.
+ * Works by using the Compiler Tree API (com.sun.source.tree) with JavaCompiler
+ * class.
+ * 
  * @author benitofe, jpso, filipeximenes, weslleyt, fjsj
- *
+ * @since 0.0.1
+ * 
  */
-public class JavaParser {
+public class JavaParser implements Parser {
 	
 	private static Logger logger = LoggerFactory.getLogger(JavaParser.class);
 	
@@ -82,9 +86,12 @@ public class JavaParser {
 	}
 	
 	/**
-	 * Parses all Java source files inside this.folder and returns extracted metrics.
+	 * Parses all Java source files inside this.folder and returns extracted
+	 * metrics.
+	 * 
 	 * @return a map of metrics to another map of metric value and count.
-	 * @throws IOException if something wrong happens when closing source file manager
+	 * @throws IOException
+	 *             if something wrong happens when closing source file manager
 	 */
 	public HashMap<String, HashMap<String, MutableInt>> parse() throws IOException {
 		logger.info("Running java parser..");

@@ -5,8 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 import br.ufpe.cin.groundhog.codehistory.UnsupportedForgeException;
-import br.ufpe.cin.groundhog.parser.formater.Formater;
-import br.ufpe.cin.groundhog.parser.formater.FormaterFactory;
+import br.ufpe.cin.groundhog.parser.java.formater.Formater;
+import br.ufpe.cin.groundhog.parser.java.formater.FormaterFactory;
 import br.ufpe.cin.groundhog.util.Dates;
 
 import com.google.common.base.Objects;
