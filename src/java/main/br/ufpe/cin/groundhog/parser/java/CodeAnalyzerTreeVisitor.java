@@ -18,9 +18,12 @@ import com.sun.source.util.TreePathScanner;
 import com.sun.source.util.Trees;
 
 /**
+ * 
+ * http://docs.oracle.com/javase/6/docs/jdk/api/javac/tree/com/sun/source/tree/package-summary.html
+ * 
  * @author benitofe, jpso, filipeximenes, weslleyt, fjsj
+ * @since 0.0.1
  */
-// see: http://docs.oracle.com/javase/6/docs/jdk/api/javac/tree/com/sun/source/tree/package-summary.html
 public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 	private HashMap<String, HashMap<String, MutableInt>> counters;
 	
@@ -120,5 +123,4 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
     	count("annotation", a.getAnnotationType().toString());
     	return super.visitAnnotation(a, ts);
     }
-    
 }

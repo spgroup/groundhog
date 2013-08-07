@@ -37,22 +37,24 @@ public class JavaParser implements Parser {
 	private final List<File> filesList;
 
 	/**
-	 * Constructs a new JavaParser which will extract metrics of all Java source files inside
-	 * the given folder hierarchy.
-	 * @param folder a source folder
+	 * Constructs a new JavaParser which will extract metrics of all Java source
+	 * files inside the given folder hierarchy.
+	 * 
+	 * @param folder
+	 *            a source folder
 	 */
 	public JavaParser(File folder) {
 		this.folder = folder;
 		this.filesList = new LinkedList<File>();
 	}
 
-	private void recursiveSearch(File start) {
-		File files[] = start.listFiles();
+	private void searchForJavaFiles(File root) {
+		File files[] = root.listFiles();
 
 		if (files != null) {
 			for (File f : files) {
 				if (f.isDirectory()) {
-					recursiveSearch(f);
+					searchForJavaFiles(f);
 				} else if (f.isFile()) {
 					String path = f.getAbsolutePath();
 					if (!path.contains(File.separator + "__MACOSX") && f.getName().endsWith(".java")) {
@@ -64,17 +66,19 @@ public class JavaParser implements Parser {
 	}
 	
 	private HashMap<String, HashMap<String, MutableInt>> invokeProcessor() throws IOException {
+		if (!filesList.isEmpty()) {
+			return new HashMap<String, HashMap<String, MutableInt>> ();
+		} 
+		
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
 		Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles(filesList);
 		
-		// Options: http://docs.oracle.com/javase/6/docs/technotes/tools/windows/javac.html
 		List<String> options = new ArrayList<String>();
 		options.add("-g:none"); // Do not generate any debugging information
 		options.add("-nowarn"); // Disable warning messages
 		options.add("-implicit:none"); // Suppress class file generation
 		options.add("-proc:only"); // Only annotation processing is done, without any subsequent compilation
-		// Obs.: only annotation processing is faster and is enough because AST will be built and visited
 		
 		CompilationTask task = compiler.getTask(null, fileManager, null, options, null, compilationUnits);
 		CodeAnalyzerProcessor processor = new CodeAnalyzerProcessor();
@@ -95,11 +99,8 @@ public class JavaParser implements Parser {
 	 */
 	public HashMap<String, HashMap<String, MutableInt>> parse() throws IOException {
 		logger.info("Running java parser..");
-		recursiveSearch(folder);
-		if (!filesList.isEmpty()) {
-			return invokeProcessor();
-		} 
-		return null;
+		searchForJavaFiles(folder);
+		return invokeProcessor();
 	}
 	
 	public String format(Formater metricsFormat) throws IOException{
