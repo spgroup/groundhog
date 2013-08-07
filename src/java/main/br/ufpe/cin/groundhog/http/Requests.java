@@ -5,34 +5,33 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.concurrent.ExecutionException;
 
 import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.ListenableFuture;
 
+/**
+ * Utility class to perform asynchronous http requests
+ * 
+ * @author ghlp, fjsj
+ * @since 0.0.1
+ */
 public class Requests {
-	private final AsyncHttpClient asyncClient;
+	private final AsyncHttpClient httpClient;
 	
 	public Requests() {
-		this.asyncClient = new AsyncHttpClient();
+		this.httpClient = new AsyncHttpClient();
 	}
 	
 	/**
 	 * Gets the response body of the given URL
 	 * @param urlStr
-	 * @return
-	 * @throws IOException
+	 * @return the entire html content
+	 * @throws HttpException
 	 */
 	public String get(String urlStr) {
 		try {
-			return this.asyncClient.prepareGet(urlStr).execute().get().getResponseBody();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			throw new HttpException(e);
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-			throw new HttpException(e);
+			return this.httpClient.prepareGet(urlStr).execute().get().getResponseBody();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new HttpException(e);
@@ -42,23 +41,20 @@ public class Requests {
 	/**
 	 * Downloads the response body of the given URL
 	 * @param urlStr an URL of a page whose body will be downloaded
-	 * @return
-	 * @throws IOException
+	 * @return the entire html content as an InputStream
+	 * @throws HttpException
 	 */
-	public InputStream download(String urlStr) throws IOException {
+	public InputStream download(String urlStr) {
 		try {
-			return this.asyncClient.prepareGet(urlStr).setFollowRedirects(true).execute().get().getResponseBodyAsStream();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			throw new HttpException(e);
-		} catch (ExecutionException e) {
+			return this.httpClient.prepareGet(urlStr).setFollowRedirects(true).execute().get().getResponseBodyAsStream();
+		} catch (Exception e) {
 			e.printStackTrace();
 			throw new HttpException(e);
 		}
 	}
 	
 	public <T> ListenableFuture<T> getAsync(String urlStr, AsyncCompletionHandler<T> callback) throws IOException {
-		return asyncClient.prepareGet(urlStr).execute(callback);
+		return httpClient.prepareGet(urlStr).execute(callback);
 	}
 	
 	public String encodeURL(String s) {

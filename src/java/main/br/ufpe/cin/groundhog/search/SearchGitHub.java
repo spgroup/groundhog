@@ -86,6 +86,7 @@ public class SearchGitHub implements ForgeSearch {
 
 	/**
 	 * Obtains from the GitHub API the set of projects with more than one language
+	 * 
 	 * @param Start indicates the desired page
 	 * @param limit the total of projects that will be returned
 	 * @throws SearchException
@@ -96,7 +97,7 @@ public class SearchGitHub implements ForgeSearch {
 			
 			List<Project> projects = new ArrayList<Project>();
 			for (Project project : rawData) {
-				List<Language> languages = fetchProjectLanguages(project);
+				List<Language> languages = getProjectLanguages(project);
 				
 				if(languages.size() > 1){
 					projects.add(project);
@@ -203,9 +204,6 @@ public class SearchGitHub implements ForgeSearch {
 			}
 			return projects;
 			
-		} catch (GroundhogException e) {
-			e.printStackTrace();
-			throw new SearchException(e);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SearchException(e);
@@ -244,7 +242,7 @@ public class SearchGitHub implements ForgeSearch {
 	 * @param project
 	 *            a {@link Project} object to have its languages fetched
 	 */
-	public List<Language> fetchProjectLanguages(Project project) {
+	public List<Language> getProjectLanguages(Project project) {
 		
 		String searchUrl = String.format("%s/repos/%s/%s/languages", ROOT, project.getUser().getLogin(), project.getName());
 
