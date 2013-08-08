@@ -1,7 +1,6 @@
 package br.ufpe.cin.groundhog.crawler;
 
 import java.io.File;
-import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,19 +31,19 @@ public class CrawlGitHub extends ForgeCrawler {
 
 	@Override
 	public File downloadProject(Project project) {
-		String projectName = project.getName() + "_" + new Random().nextInt();
-		String cloneUrl = project.getScmURL();
-		File projectFolder = new File(destinationFolder, projectName);
+		String projectName = project.getName() + "_" + System.currentTimeMillis();
+		String projectUrl = project.getScmURL();
+		File projectDestinationFolder = new File(destinationFolder, projectName);
 
 		logger.info(String.format("Downloading %s project..", project.getName()));
 
 		try {
-			this.gitClient.clone(cloneUrl, projectFolder);
-			return projectFolder;
+			this.gitClient.clone(projectUrl, projectDestinationFolder);
+			return projectDestinationFolder;
 		} catch (Exception e) {
 			String error = String.format("Unable to download %s (%s) project", project.getName(), project.getScmURL());
 			logger.error(error);
-			throw new DownloadExecption(error);
+			throw new DownloadException(error);
 		}
 	}
 }

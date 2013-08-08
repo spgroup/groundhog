@@ -2,22 +2,22 @@ package br.ufpe.cin.groundhog.crawler;
 
 import br.ufpe.cin.groundhog.GroundhogException;
 
-public class DownloadExecption extends GroundhogException {
+public class DownloadException extends GroundhogException {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 3008366459405858621L;
 
-	public DownloadExecption(String msg) {
+	public DownloadException(String msg) {
 		super(msg);
 	}
 
-	public DownloadExecption(String msg, Throwable cause) {
+	public DownloadException(String msg, Throwable cause) {
 		super(msg, cause);
 	}
 
-	public DownloadExecption(Throwable cause) {
+	public DownloadException(Throwable cause) {
 		super(cause);
 	}
 }
