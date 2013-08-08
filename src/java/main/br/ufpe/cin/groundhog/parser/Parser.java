@@ -6,8 +6,8 @@ package br.ufpe.cin.groundhog.parser;
  * @author ghlp
  * @since 0.1.0
  */
-public interface Parser {
+public interface Parser<T> {
 
-	
+	public T parser();
 	
 }

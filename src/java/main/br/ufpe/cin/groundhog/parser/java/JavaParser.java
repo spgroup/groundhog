@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.ufpe.cin.groundhog.parser.Parser;
+import br.ufpe.cin.groundhog.parser.ParserException;
 import br.ufpe.cin.groundhog.parser.java.formater.Formater;
 
 /**
@@ -25,11 +26,11 @@ import br.ufpe.cin.groundhog.parser.java.formater.Formater;
  * Works by using the Compiler Tree API (com.sun.source.tree) with JavaCompiler
  * class.
  * 
- * @author benitofe, jpso, filipeximenes, weslleyt, fjsj
+ * @author benitofe, jpso, filipeximenes, weslleyt, fjsj, gustavopinto
  * @since 0.0.1
  * 
  */
-public class JavaParser implements Parser {
+public class JavaParser implements Parser<HashMap<String, HashMap<String, MutableInt>>> {
 	
 	private static Logger logger = LoggerFactory.getLogger(JavaParser.class);
 	
@@ -97,14 +98,18 @@ public class JavaParser implements Parser {
 	 * @throws IOException
 	 *             if something wrong happens when closing source file manager
 	 */
-	public HashMap<String, HashMap<String, MutableInt>> parse() throws IOException {
+	public HashMap<String, HashMap<String, MutableInt>> parser() {
 		logger.info("Running java parser..");
 		searchForJavaFiles(folder);
-		return invokeProcessor();
+		try {
+			return invokeProcessor();
+		} catch (IOException e) {
+			throw new ParserException(e.getMessage());
+		}
 	}
 	
 	public String format(Formater metricsFormat) throws IOException{
-		HashMap<String, HashMap<String, MutableInt>> counters = parse();
+		HashMap<String, HashMap<String, MutableInt>> counters = parser();
 		if(counters == null) {
 			throw new NotAJavaProjectException();
 		}

@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.ufpe.cin.groundhog.License;
-import br.ufpe.cin.groundhog.parser.NotAProjectException;
 import br.ufpe.cin.groundhog.parser.Parser;
 import br.ufpe.cin.groundhog.util.FileUtil;
 
@@ -21,7 +20,7 @@ import com.google.common.collect.Lists;
  * @author ghlp
  * @since 0.1.0
  */
-public class LicenseParser implements Parser {
+public class LicenseParser implements Parser<License> {
 
 	private static Logger logger = LoggerFactory.getLogger(LicenseParser.class);
 
@@ -29,21 +28,14 @@ public class LicenseParser implements Parser {
 	private final File root;
 
 	public LicenseParser(File project) {
-		checkIfIsProject(project);
 		this.files = project.listFiles();
 		this.root = project;
-	}
-
-	private void checkIfIsProject(File project) {
-		if (project.listFiles().length == 0) {
-			logger.warn(String.format("The project %s does not have source code!"), project.getName());
-			throw new NotAProjectException();
-		}
 	}
 
 	/**
 	 * Parses the top level folder looking for licenses files
 	 */
+	@Override
 	public License parser() {
 		logger.info("Running license parser..");
 
@@ -59,8 +51,7 @@ public class LicenseParser implements Parser {
 			}
 		}
 
-		logger.info(String.format("No license found for project %s",
-				root.getName()));
+		logger.info(String.format("No license found for project %s", root.getName()));
 		return new License("unlincesed");
 	}
 
@@ -77,7 +68,7 @@ public class LicenseParser implements Parser {
 
 	private boolean containsLicenseWord(String content) {
 
-		for (String licenseKeyword : Lists.newArrayList("license", "copyright", "permission")) {
+		for (String licenseKeyword : Lists.newArrayList("license", "copyright")) {
 			if (content.toLowerCase().contains(licenseKeyword)) {
 				return true;
 			}
