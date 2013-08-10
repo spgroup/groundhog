@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -29,26 +30,54 @@ public abstract class ForgeCrawler {
 	}
 	
 	/**
-	 * Downloads a single project and returns its repository folder. A project repository folder is useful to be
-	 * manipulated by CodeHistory class and to be parsed by Parser class. 
+	 * Downloads a single project and returns its repository folder. A project
+	 * repository folder is useful to be manipulated by {@link CodeHistory}
+	 * class and to be parsed by {@link Parser} class.
 	 * 
-	 * @param project a ForgeProject.
-	 * @return a repository folder (if has SCM as Git or SVN) or a project folder (which contains archived/compressed files)
-	 * @throws Exception when something nasty happens
+	 * @param a project
+	 * 
+	 * @return a repository folder
+	 * @throws DownloadException
+	 *             when something nasty happens
 	 */
-	public abstract File downloadProject(Project project) throws Exception;
+	public abstract File downloadProject(Project project) throws DownloadException;
 	
+	/**
+	 * Downloads the given list of projects, returning the files objects. Each
+	 * file represents the repository folder of a project, according to
+	 * ForgeProject list ordering. A project repository folder is useful to be
+	 * manipulated by {@link CodeHistory} class and to be parsed by Parser class.
+	 * 
+	 * @param list of Projects
+	 * @return list of repository folders as File objects
+	 */
+	public List<File> downloadProjects(List<Project> projects) {
+		List<Future<File>> futures = asyncDownloadProjects(projects);
+		
+		try {
+			List<File> files = new ArrayList<>();
+			for (Future<File> future : futures) {
+					File f = future.get();
+					files.add(f);
+			}
+			return files;
+		} catch (InterruptedException | ExecutionException e) {
+			e.printStackTrace();
+			throw new DownloadException(e.getLocalizedMessage());
+		}
+	}
+
 	/**
 	 * Downloads the given list of projects, returning futures with files objects.
 	 * Each file represents the repository folder of a project,
 	 * according to ForgeProject list ordering. To get a future result, 
 	 * just call its .get() method. A project repository folder is useful to be
-	 * manipulated by CodeHistory class and to be parsed by Parser class.
+	 * manipulated by {@link CodeHistory} class and to be parsed by {@link Parser} class.
 	 * 
-	 * @param projects list of ForgeProjects, usually given by a ForgeSearch subclass
+	 * @param list of Projects, usually given by a ForgeSearch subclass
 	 * @return list of futures with repository folders as File objects
 	 */
-	public List<Future<File>> downloadProjects(List<Project> projects) {
+	public List<Future<File>> asyncDownloadProjects(List<Project> projects) {
 		List<Future<File>> fs = new ArrayList<Future<File>>();
 		
 		for (final Project p : projects) {
@@ -60,7 +89,7 @@ public abstract class ForgeCrawler {
 			fs.add(f);
 		}
 		
-		ex.shutdownNow();
+		ex.shutdown();
 		
 		return fs;
 	}
