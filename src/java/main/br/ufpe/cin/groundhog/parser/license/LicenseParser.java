@@ -14,6 +14,7 @@ import br.ufpe.cin.groundhog.parser.Parser;
 import br.ufpe.cin.groundhog.util.FileUtil;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * This class tries to find which is the license in use. It raises an exception
@@ -24,13 +25,14 @@ import com.google.common.collect.Lists;
  * @author ghlp
  * @since 0.1.0
  */
-public class LicenseParser implements Parser<License> {
+public class LicenseParser implements Parser<Set<License>> {
 
 	private static Logger logger = LoggerFactory.getLogger(LicenseParser.class);
 
 	private final File[] files;
 	private final File root;
-	private final Set<String> licenses;
+	private final Set<License> licenses;
+	private final FileUtil filesUtils = FileUtil.getInstance();
 
 	public LicenseParser(File project) {
 		this.files = project.listFiles();
@@ -42,57 +44,61 @@ public class LicenseParser implements Parser<License> {
 	 * Parses the top level folder looking for licenses files
 	 */
 	@Override
-	public License parser() {
+	public Set<License> parser() {
 		logger.info("Running license parser..");
-
-		FileUtil filesUtils = FileUtil.getInstance();
 
 		for (File file : files) {
 			if (filesUtils.isTextFile(file)) {
 				String content = filesUtils.readAllLines(file);
 
 				if (containsLicenseWord(content)) {
-					return extractLicense(content);
+					extractLicense(content, file.getName());
 				}
 			}
 		}
 
-		logger.info(String.format("No license found for project %s", root.getName()));
-		return new License("unlincesed");
+		if (this.licenses.size() > 0) {
+			return this.licenses;
+		}
+
+		logger.info(String.format("No license found for project %s.",
+				root.getName()));
+		return Sets.newHashSet(new License("unlincesed"));
 	}
 
-	private License extractLicense(String content) {
+	private void extractLicense(String content, String fileName) {
 
+		boolean isKnownLicense = false;
 		for (String license : Licenses.names()) {
 			Pattern pattern = Pattern.compile("\\b(" + license +")\\b");
 			Matcher matcher = pattern.matcher(content);
+
 			if(matcher.find()) {
 				int start = matcher.start();
 				int end = matcher.end();
 				
 				while (start < end) {
-					this.licenses.add(matcher.group());
+					this.licenses.add(new License(matcher.group()));
+					isKnownLicense = true;
 					start++;
 				}
 				
-				logger.info(String.format("License found! %s uses %s license.", root.getName(), licenses));
-				return new License(license);
+				logger.info(String.format("License found in %s file! It uses %s license.", fileName, license));
 			}
 		}
-		return new License("not-understandable-license");
+			
+		if(!isKnownLicense) {
+			this.licenses.add(new License("not-understandable-license"));				
+		}
 	}
 
 	private boolean containsLicenseWord(String content) {
-		for (String licenseKeyword : Lists.newArrayList("license", "copyright")) {
-			if (content.toLowerCase().contains(licenseKeyword)) {
+
+		for (String keyword : Lists.newArrayList("license", "copyright")) {
+			if (content.toLowerCase().contains(keyword)) {
 				return true;
 			}
 		}
 		return false;
-	}
-	
-	public static void main(String[] args) {
-		String content = "The MIT License (MIT)  Copyright (c) [year] [fullname]  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the Software), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.  THE SOFTWARE IS PROVIDED AS IS, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.";
-		new LicenseParser(new File(".")).extractLicense(content);
 	}
 }
