@@ -3,20 +3,23 @@ package br.ufpe.cin.groundhog.scmclient;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jgit.api.AddCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.CheckoutConflictException;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRefNameException;
-import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.RefAlreadyExistsException;
-import org.eclipse.jgit.api.errors.TransportException;
 import org.eclipse.jgit.errors.StopWalkException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -29,6 +32,7 @@ import org.gitective.core.filter.commit.CommitCountFilter;
 import org.gitective.core.filter.commit.CommitFilter;
 import org.gitective.core.filter.commit.CommitterDateFilter;
 
+import br.ufpe.cin.groundhog.crawler.DownloadException;
 import br.ufpe.cin.groundhog.util.Dates;
 
 public class GitClient {
@@ -41,11 +45,32 @@ public class GitClient {
 	 *            the project's URL
 	 * @param destination
 	 */
-	public void clone(String url, File destination)
-			throws InvalidRemoteException, TransportException, GitAPIException {
-		Git git = Git.cloneRepository().setURI(url).setDirectory(destination)
-				.call();
-		git.getRepository().close();
+	public void clone(final String url, final File destination) {
+		ExecutorService executor = Executors.newSingleThreadExecutor();
+
+		try {
+			executor.invokeAll(Arrays.asList(new Callable<Void>() {
+
+				@Override
+				public Void call() {
+					try {
+						Git git = Git.cloneRepository().setURI(url).setDirectory(destination).call();
+		
+						git.getRepository().close();
+						return null;
+					} catch (Exception e) {
+						e.printStackTrace();
+						throw new DownloadException(e);
+					}
+				}
+
+			}), 10, TimeUnit.MINUTES);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			throw new DownloadException(e);
+		} finally {
+			executor.shutdown();
+		}
 	}
 
 	/**
@@ -72,7 +97,7 @@ public class GitClient {
 				}
 			}, count));
 			finder.find();
-			
+
 			System.out.println(count.getCount());
 
 		} catch (IOException e) {
