@@ -177,15 +177,19 @@ public class CrawlSourceForge extends ForgeCrawler {
 	}
 
 	@Override
-	public File downloadProject(Project project) throws IOException,
-			InterruptedException, ExecutionException {
+	public File downloadProject(Project project) throws DownloadException {
 		String projectName = project.getName();
-		List<String> urls = getDownloadURLs(projectName);
+		try {
+			List<String> urls = getDownloadURLs(projectName);
+	
+			for (String url : urls) {
+				InputStream is = requests.download(url);
+				downloadAndSaveFile(projectName, url, is, destinationFolder);
+			}
+			return new File(destinationFolder, projectName);
 
-		for (String url : urls) {
-			InputStream is = requests.download(url);
-			downloadAndSaveFile(projectName, url, is, destinationFolder);
+		} catch (IOException | InterruptedException | ExecutionException e) {
+			throw new DownloadException(e);
 		}
-		return new File(destinationFolder, projectName);
 	}
 }

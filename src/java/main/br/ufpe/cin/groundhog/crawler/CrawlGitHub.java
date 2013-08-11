@@ -30,7 +30,7 @@ public class CrawlGitHub extends ForgeCrawler {
 	}
 
 	@Override
-	public File downloadProject(Project project) {
+	public File downloadProject(Project project) throws DownloadException {
 		String projectName = project.getName() + "_" + System.currentTimeMillis();
 		String projectUrl = project.getScmURL();
 		File projectDestinationFolder = new File(destinationFolder, projectName);
