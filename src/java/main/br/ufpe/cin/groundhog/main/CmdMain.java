@@ -175,9 +175,7 @@ public final class CmdMain extends GroundhogMain {
 
 			File checkedOutRepository = null;
 
-			if (project.getSCM() == SCM.SVN) {
-				checkedOutRepository = codehistory.checkoutToDate(project.getName(), project.getScmURL(), datetime);
-			} else {
+			if (project.getSCM() == SCM.GIT) {
 				checkedOutRepository = codehistory.checkoutToDate(project.getName(), repositoryFolder, datetime);
 			}
 			logger.info(format("Project %s successfully checked out to %s", name, datetimeStr));

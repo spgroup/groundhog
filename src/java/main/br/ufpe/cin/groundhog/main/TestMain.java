@@ -16,7 +16,6 @@ import br.ufpe.cin.groundhog.SCM;
 import br.ufpe.cin.groundhog.codehistory.CodeHistoryModule;
 import br.ufpe.cin.groundhog.codehistory.GitCodeHistory;
 import br.ufpe.cin.groundhog.codehistory.SFCodeHistory;
-import br.ufpe.cin.groundhog.codehistory.SvnCodeHistory;
 import br.ufpe.cin.groundhog.crawler.CrawlGitHub;
 import br.ufpe.cin.groundhog.crawler.CrawlGoogleCode;
 import br.ufpe.cin.groundhog.crawler.CrawlSourceForge;
@@ -162,9 +161,7 @@ public class TestMain {
 		logger.info("3 - Checkout repository to a given date...");
 		Date date = new GregorianCalendar(2011, 0, 2).getTime();
 		File temp = null;
-		if (project.getSCM() == SCM.SVN) {
-			temp = injector.getInstance(SvnCodeHistory.class).checkoutToDate(project.getName(), project.getScmURL(), date);
-		} else if (project.getSCM() == SCM.GIT) {
+		if (project.getSCM() == SCM.GIT) {
 			temp = injector.getInstance(GitCodeHistory.class).checkoutToDate(project.getName(), repositoryFolder, date);
 		} else {
 			logger.error("Can't continue with parsing step. Unwkown SCM.");
