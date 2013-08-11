@@ -29,24 +29,25 @@ public class GitCodeHistory implements CodeHistory {
 	
 	@Override
 	public File checkoutToDate(String project, String url, Date date) {
-		throw new NoSuchMethodError("Not implemented");
+		throw new NoSuchMethodError("Not implemented yet.");
 	}
 
 	@Override
 	/**
 	 * Creates a directory with the name of the project, moves the content of the repository folder into it
 	 * and performs the SCM checkout on this new directory
+	 * 
 	 * @param project the name of the project
 	 * @param repositoryFolder the repository where the source code is located
 	 * @param date the date on which the checkout will be based
 	 */
 	public File checkoutToDate(String project, File repositoryFolder, final Date date) {
-		try {
-			File projectFolder = new File(FileUtil.getInstance()
-					.createTempDir(), project);
 			
-			FileUtil.getInstance().copyDirectory(repositoryFolder,
-					projectFolder);
+		try {
+			FileUtil files = FileUtil.getInstance();
+
+			File projectFolder = new File(files.createTempDir(), project);
+			files.copyDirectory(repositoryFolder, projectFolder);
 			
 			logger.info("Checking out to the specific date..");
 			this.gitClient.checkout(projectFolder, date);

@@ -42,6 +42,7 @@ public class GitClient {
 
 	/**
 	 * Performs a checkout to the given Git repository
+	 * 
 	 * @param repositoryFolder the repository where the checkout will be performed
 	 * @param date
 	 * @throws IOException
@@ -55,6 +56,7 @@ public class GitClient {
 			throws IOException, RefAlreadyExistsException,
 			InvalidRefNameException, CheckoutConflictException, GitAPIException,
 			EmptyProjectAtDateException {
+		
 		Git git = Git.open(repositoryFolder);
 		Repository rep = git.getRepository();
 		CommitFinder finder = new CommitFinder(rep);
@@ -78,6 +80,7 @@ public class GitClient {
 			rep.close();
 			throw new EmptyProjectAtDateException(new Dates("yyyy-MM-dd").format(date));
 		}
+
 		RevCommit closest = Collections.max(commits, new Comparator<RevCommit>() {
 			public int compare(RevCommit c1, RevCommit c2) {
 				return c1.getCommitterIdent().getWhen().compareTo(c2.getCommitterIdent().getWhen());
@@ -105,5 +108,4 @@ public class GitClient {
 		git.checkout().setName("groundhog-analyze").setStartPoint(closest).setCreateBranch(true).call();
 		rep.close();
 	}
-
 }
