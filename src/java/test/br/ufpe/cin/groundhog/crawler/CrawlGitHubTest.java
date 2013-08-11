@@ -32,7 +32,8 @@ public class CrawlGitHubTest {
 	@Test
 	public void testCrawlGithub() throws InterruptedException, ExecutionException {
 		CrawlGitHub crawl = new CrawlGitHub(gitClient, Files.createTempDir());
-		List<Future<File>> fs = crawl.downloadProjects(Lists.newArrayList(new Project("modules.playframework.org", "", SCM.GIT, "git@github.com:playframework/modules.playframework.org.git")));
+		Project p = new Project("modules.playframework.org", "", SCM.GIT, "git@github.com:playframework/modules.playframework.org.git");
+		List<Future<File>> fs = crawl.asyncDownloadProjects(Lists.newArrayList(p));
 		for (Future<File> f : fs) {
 			File file = f.get();
 			Assert.assertNotNull(file);

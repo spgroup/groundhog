@@ -34,7 +34,7 @@ public class CrawlGoogleCodeTest {
 			Project project = new Project("fake", "fake", "https://code.google.com/p/googletransitdatafeed/source/browse/", SCM.SVN, "http://googletransitdatafeed.googlecode.com/svn/trunk/");
 			CrawlGoogleCode crawl = new CrawlGoogleCode(gitClient, Files.createTempDir());
 			
-			List<Future<File>> fs = crawl.downloadProjects(Arrays.asList(project));
+			List<Future<File>> fs = crawl.asyncDownloadProjects(Arrays.asList(project));
 			for (Future<File> f : fs) {
 				File file = f.get();
 				Assert.assertNotNull(file);

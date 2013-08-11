@@ -38,7 +38,7 @@ public class CrawlSourceForgeTest {
 			List<Project> projects = Arrays.asList(project);
 			
 			CrawlSourceForge crawl = new CrawlSourceForge(requests, Files.createTempDir());
-			List<Future<File>> fs = crawl.downloadProjects(projects);
+			List<Future<File>> fs = crawl.asyncDownloadProjects(projects);
 			for (Future<File> f : fs) {
 				File file = f.get();
 				Assert.assertNotNull(file);

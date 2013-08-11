@@ -270,7 +270,7 @@ public final class CmdMain extends GroundhogMain {
 			// Download and analyze projects
 			logger.info("Downloading and processing projects...");
 			ExecutorService ex = Executors.newFixedThreadPool(JsonInput.getMaxThreads());
-			List<Future<File>> downloadFutures = crawler.downloadProjects(projects);
+			List<Future<File>> downloadFutures = crawler.asyncDownloadProjects(projects);
 			List<Future<?>> analysisFutures = new ArrayList<Future<?>>();
 
 			for (int i = 0; i < downloadFutures.size(); i++) {
