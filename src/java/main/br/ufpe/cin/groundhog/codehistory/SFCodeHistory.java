@@ -17,13 +17,6 @@ import br.ufpe.cin.groundhog.util.FileUtil;
  */
 public class SFCodeHistory implements CodeHistory {
 	
-	@Override
-	public File checkoutToDate(String project, String url, Date date) {
-		throw new NoSuchMethodError("Not implemented");
-	}
-
-	// TODO: how to know if the single extracted file is really the source code of the project
-	// and isn't a library or just a part?
 	/**
 	 * 
 	 * @param project

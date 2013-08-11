@@ -15,20 +15,6 @@ public interface CodeHistory {
 	/**
 	 * Checks out the given project according to the given date. Returns a new temporary folder
 	 * with the project source code version at or before date. This variation of this method should
-	 * be used when the SCM revision history is centralized within a URL (like SVN). 
-	 * 
-	 * @param project project name
-	 * @param url project SCM URL, usually set by a ForgeCrawler subclass
-	 * @param date date to checkout
-	 * @return a new temporary folder with the project source code state at the given date.
-	 * @throws CheckoutException when something nasty happens
-	 */
-	public File checkoutToDate(String project, String url, Date date)
-			throws CheckoutException;
-	
-	/**
-	 * Checks out the given project according to the given date. Returns a new temporary folder
-	 * with the project source code version at or before date. This variation of this method should
 	 * be used when the SCM revision history is available locally (like Git)
 	 * or when project is composed by compressed files (like SourceForge).
 	 * 

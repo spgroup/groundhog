@@ -28,11 +28,6 @@ public class GitCodeHistory implements CodeHistory {
 	}
 	
 	@Override
-	public File checkoutToDate(String project, String url, Date date) {
-		throw new NoSuchMethodError("Not implemented yet.");
-	}
-
-	@Override
 	/**
 	 * Creates a directory with the name of the project, moves the content of the repository folder into it
 	 * and performs the SCM checkout on this new directory
