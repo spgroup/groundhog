@@ -471,6 +471,18 @@ public class Project implements GitHubEntity {
 	}
 
 	/**
+	 * Return true if the project is considered mature
+	 * 
+	 * A project is considered active if it has at least 1 commmit and more the
+	 * 1 contributor
+	 * 
+	 * @return
+	 */
+	public boolean isActive() {
+		return ((commits.size() > 1) && (contributors.size() > 2));
+	}
+	
+	/**
 	 * Returns true if the project is considered mature, and false otherwise.
 	 * 
 	 * A project is considered mature if it has at least three watchers, plus
