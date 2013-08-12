@@ -23,6 +23,8 @@ import com.google.gson.JsonParser;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import static br.ufpe.cin.groundhog.http.URLsDecoder.*;
+
 /**
  * Performs the project search on GitHub, via its official JSON API
  * 
@@ -53,7 +55,7 @@ public class SearchGitHub implements ForgeSearch {
 				return getAllForgeProjects(page, limit);
 			}
 			
-			String searchUrl = String.format("%s/legacy/repos/search/%s?start_page=%s&language=java%s", ROOT, requests.encodeURL(term), page, this.oauthToken);
+			String searchUrl = String.format("%s/legacy/repos/search/%s?start_page=%s&language=java%s", ROOT, encodeURL(term), page, this.oauthToken);
 			
 			String json = requests.get(searchUrl);
 			JsonObject jsonObject = gson.fromJson(json, JsonElement.class).getAsJsonObject();			
@@ -91,9 +93,9 @@ public class SearchGitHub implements ForgeSearch {
 	 * @param limit the total of projects that will be returned
 	 * @throws SearchException
 	 */
-	public List<Project> getProjectsWithMoreThanOneLanguage(int page, int limit) throws SearchException {
+	public List<Project> getProjectsWithMoreThanOneLanguage(int limit) throws SearchException {
 		try {
-			List<Project> rawData = getAllProjects(page, limit);
+			List<Project> rawData = getAllProjects(0, limit);
 			
 			List<Project> projects = new ArrayList<Project>();
 			for (Project project : rawData) {
@@ -169,15 +171,9 @@ public class SearchGitHub implements ForgeSearch {
 					String searchUrlLegacy = String.format("%s/legacy/repos/search/%s?%s", ROOT , repoName, this.oauthToken);
 					
 					String jsonLegacy = requests.get(searchUrlLegacy);
+
 					JsonElement jsonElement = parser.parse(jsonLegacy);
-					
-					JsonObject jsonObject = null;
-					try {
-						jsonObject = jsonElement.getAsJsonObject();
-					} catch (Exception e) {
-						System.out.println(jsonLegacy);
-						continue;
-					}
+					JsonObject jsonObject = jsonElement.getAsJsonObject();
 					JsonArray jsonArrayLegacy = jsonObject.get("repositories").getAsJsonArray();
 					
 					if(jsonArrayLegacy.size() > 0) {
@@ -215,7 +211,7 @@ public class SearchGitHub implements ForgeSearch {
 			throws SearchException {
 		
 		try {
-			String searchUrl = String.format("%s/repos/%s/%s%s", ROOT, username, requests.encodeURL(term), this.oauthToken);
+			String searchUrl = String.format("%s/repos/%s/%s%s", ROOT, username, encodeURL(term), this.oauthToken);
 			
 			String json = requests.get(searchUrl);
 			
