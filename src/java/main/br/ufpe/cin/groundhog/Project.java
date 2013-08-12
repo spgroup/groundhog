@@ -505,6 +505,6 @@ public class Project implements GitHubEntity {
 
 	@Override
 	public String toString() {
-		return String.format("Project(%s, %s, %s)", this.name, this.description, this.sourceCodeURL);
+		return String.format("Project(%s, (%s, %s), %s)", this.name, this.isActive(), this.isMature(), this.sourceCodeURL);
 	}
 }
