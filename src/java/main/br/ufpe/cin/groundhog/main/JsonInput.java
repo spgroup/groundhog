@@ -7,6 +7,7 @@ import java.util.List;
 import br.ufpe.cin.groundhog.codehistory.UnsupportedForgeException;
 import br.ufpe.cin.groundhog.parser.java.formater.Formater;
 import br.ufpe.cin.groundhog.parser.java.formater.FormaterFactory;
+import br.ufpe.cin.groundhog.parser.java.formater.JSONFormater;
 import br.ufpe.cin.groundhog.util.Dates;
 
 import com.google.common.base.Objects;
@@ -68,7 +69,7 @@ public final class JsonInput {
 	}
 
 	public Formater getOutputformat() {
-		return FormaterFactory.get(this.outputformat.toLowerCase());
+		return FormaterFactory.get(JSONFormater.class);
 	}
 
 	public static int getMaxThreads() {

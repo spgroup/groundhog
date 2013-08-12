@@ -40,8 +40,7 @@ public class JavaParser implements Parser<HashMap<String, HashMap<String, Mutabl
 	 * Constructs a new JavaParser which will extract metrics of all Java source
 	 * files inside the given folder hierarchy.
 	 * 
-	 * @param folder
-	 *            a source folder
+	 * @param a source folder
 	 */
 	public JavaParser(File folder) {
 		this.folder = folder;
@@ -94,8 +93,6 @@ public class JavaParser implements Parser<HashMap<String, HashMap<String, Mutabl
 	 * metrics.
 	 * 
 	 * @return a map of metrics to another map of metric value and count.
-	 * @throws IOException
-	 *             if something wrong happens when closing source file manager
 	 */
 	public HashMap<String, HashMap<String, MutableInt>> parser() {
 		logger.info("Running java parser..");

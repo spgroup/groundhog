@@ -25,7 +25,9 @@ import br.ufpe.cin.groundhog.http.HttpModule;
 import br.ufpe.cin.groundhog.http.Requests;
 import br.ufpe.cin.groundhog.parser.java.JavaParser;
 import br.ufpe.cin.groundhog.parser.java.MutableInt;
+import br.ufpe.cin.groundhog.parser.java.formater.CSVFormater;
 import br.ufpe.cin.groundhog.parser.java.formater.FormaterFactory;
+import br.ufpe.cin.groundhog.parser.java.formater.JSONFormater;
 import br.ufpe.cin.groundhog.scmclient.GitClient;
 import br.ufpe.cin.groundhog.scmclient.ScmModule;
 import br.ufpe.cin.groundhog.search.SearchGitHub;
@@ -79,10 +81,8 @@ public class TestMain {
 		logger.info("4 - Parse...");
 		
 		HashMap<String, HashMap<String, MutableInt>> javaMetrics = new JavaParser(temp).parser();
-		String metrics = FormaterFactory.get("json").format(javaMetrics);
+		String metrics = FormaterFactory.get(JSONFormater.class).format(javaMetrics);
 		System.out.println(metrics);
-//		HashMap<String, HashMap<String, MutableInt>> counters = parser.parse();
-//		JavaParser.printResult(counters);
 		
 		try {
 			FileUtil.getInstance().deleteTempDirs();
@@ -127,7 +127,7 @@ public class TestMain {
 		
 		logger.info("4 - Parse...");
 		HashMap<String, HashMap<String, MutableInt>> javaMetrics = new JavaParser(temp).parser();
-		String metrics = FormaterFactory.get("csv").format(javaMetrics);
+		String metrics = FormaterFactory.get(CSVFormater.class).format(javaMetrics);
 		System.out.println(metrics);
 		
 		try {
@@ -173,7 +173,7 @@ public class TestMain {
 		
 		logger.info("4 - Parse...");
 		HashMap<String, HashMap<String, MutableInt>> javaMetrics = new JavaParser(temp).parser();
-		String metrics = FormaterFactory.get("csv").format(javaMetrics);
+		String metrics = FormaterFactory.get(CSVFormater.class).format(javaMetrics);
 		System.out.println(metrics);
 		
 		try {

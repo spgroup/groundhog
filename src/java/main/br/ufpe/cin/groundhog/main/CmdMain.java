@@ -33,6 +33,7 @@ import br.ufpe.cin.groundhog.http.Requests;
 import br.ufpe.cin.groundhog.parser.java.JavaParser;
 import br.ufpe.cin.groundhog.parser.java.MutableInt;
 import br.ufpe.cin.groundhog.parser.java.NotAJavaProjectException;
+import br.ufpe.cin.groundhog.parser.java.formater.CSVFormater;
 import br.ufpe.cin.groundhog.parser.java.formater.Formater;
 import br.ufpe.cin.groundhog.parser.java.formater.FormaterFactory;
 import br.ufpe.cin.groundhog.scmclient.EmptyProjectAtDateException;
@@ -215,7 +216,7 @@ public final class CmdMain extends GroundhogMain {
 			// Parse project
 			logger.info(format("Parsing project %s...", name));
 			HashMap<String, HashMap<String, MutableInt>> javaMetrics = new JavaParser(projectFolder).parser();
-			String metrics = FormaterFactory.get("csv").format(javaMetrics);
+			String metrics = FormaterFactory.get(CSVFormater.class).format(javaMetrics);
 
 			// Save metrics to file
 			String metricsFilename = format("%s-%s.%s", name, datetimeStr, metricsFormat.simpleName());
