@@ -5,6 +5,7 @@ import static java.lang.String.format;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -30,8 +31,10 @@ import br.ufpe.cin.groundhog.crawler.ForgeCrawler;
 import br.ufpe.cin.groundhog.http.HttpModule;
 import br.ufpe.cin.groundhog.http.Requests;
 import br.ufpe.cin.groundhog.parser.java.JavaParser;
+import br.ufpe.cin.groundhog.parser.java.MutableInt;
 import br.ufpe.cin.groundhog.parser.java.NotAJavaProjectException;
 import br.ufpe.cin.groundhog.parser.java.formater.Formater;
+import br.ufpe.cin.groundhog.parser.java.formater.FormaterFactory;
 import br.ufpe.cin.groundhog.scmclient.EmptyProjectAtDateException;
 import br.ufpe.cin.groundhog.scmclient.GitClient;
 import br.ufpe.cin.groundhog.scmclient.ScmModule;
@@ -211,8 +214,8 @@ public final class CmdMain extends GroundhogMain {
 		try {
 			// Parse project
 			logger.info(format("Parsing project %s...", name));
-			JavaParser parser = new JavaParser(projectFolder);
-			String metrics = parser.format(metricsFormat);
+			HashMap<String, HashMap<String, MutableInt>> javaMetrics = new JavaParser(projectFolder).parser();
+			String metrics = FormaterFactory.get("csv").format(javaMetrics);
 
 			// Save metrics to file
 			String metricsFilename = format("%s-%s.%s", name, datetimeStr, metricsFormat.simpleName());

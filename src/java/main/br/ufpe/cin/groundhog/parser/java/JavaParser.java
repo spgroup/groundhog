@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 
 import br.ufpe.cin.groundhog.parser.Parser;
 import br.ufpe.cin.groundhog.parser.ParserException;
-import br.ufpe.cin.groundhog.parser.java.formater.Formater;
 
 /**
  * Class that implements the metrics extraction functionality of this project.
@@ -106,13 +105,5 @@ public class JavaParser implements Parser<HashMap<String, HashMap<String, Mutabl
 		} catch (IOException e) {
 			throw new ParserException(e.getMessage());
 		}
-	}
-	
-	public String format(Formater metricsFormat) throws IOException{
-		HashMap<String, HashMap<String, MutableInt>> counters = parser();
-		if(counters == null) {
-			throw new NotAJavaProjectException();
-		}
-		return metricsFormat.format(counters);
 	}
 }

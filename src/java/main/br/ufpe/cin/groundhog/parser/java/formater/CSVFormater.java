@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import au.com.bytecode.opencsv.CSVWriter;
-import br.ufpe.cin.groundhog.GroundhogException;
+import br.ufpe.cin.groundhog.parser.ParserException;
 import br.ufpe.cin.groundhog.parser.java.MutableInt;
 
 /**
@@ -36,7 +36,7 @@ public class CSVFormater extends Formater {
 			return result.toString();
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new GroundhogException();
+			throw new ParserException();
 		}
 	}
 }

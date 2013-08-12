@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -23,6 +24,7 @@ import br.ufpe.cin.groundhog.crawler.ForgeCrawler;
 import br.ufpe.cin.groundhog.http.HttpModule;
 import br.ufpe.cin.groundhog.http.Requests;
 import br.ufpe.cin.groundhog.parser.java.JavaParser;
+import br.ufpe.cin.groundhog.parser.java.MutableInt;
 import br.ufpe.cin.groundhog.parser.java.formater.FormaterFactory;
 import br.ufpe.cin.groundhog.scmclient.GitClient;
 import br.ufpe.cin.groundhog.scmclient.ScmModule;
@@ -75,8 +77,9 @@ public class TestMain {
 		File temp = codeHistory.checkoutToDate(project.getName(), repositoryFolder, date);
 		
 		logger.info("4 - Parse...");
-		JavaParser parser = new JavaParser(temp);
-		String metrics = parser.format(FormaterFactory.get("json"));
+		
+		HashMap<String, HashMap<String, MutableInt>> javaMetrics = new JavaParser(temp).parser();
+		String metrics = FormaterFactory.get("json").format(javaMetrics);
 		System.out.println(metrics);
 //		HashMap<String, HashMap<String, MutableInt>> counters = parser.parse();
 //		JavaParser.printResult(counters);
@@ -123,8 +126,8 @@ public class TestMain {
 		File temp = codeHistory.checkoutToDate(project.getName(), repositoryFolder, date);
 		
 		logger.info("4 - Parse...");
-		JavaParser parser = new JavaParser(temp);
-		String metrics = parser.format(FormaterFactory.get("csv"));
+		HashMap<String, HashMap<String, MutableInt>> javaMetrics = new JavaParser(temp).parser();
+		String metrics = FormaterFactory.get("csv").format(javaMetrics);
 		System.out.println(metrics);
 		
 		try {
@@ -169,8 +172,8 @@ public class TestMain {
 		}
 		
 		logger.info("4 - Parse...");
-		JavaParser parser = new JavaParser(temp);
-		String metrics = parser.format(FormaterFactory.get("csv"));
+		HashMap<String, HashMap<String, MutableInt>> javaMetrics = new JavaParser(temp).parser();
+		String metrics = FormaterFactory.get("csv").format(javaMetrics);
 		System.out.println(metrics);
 		
 		try {
