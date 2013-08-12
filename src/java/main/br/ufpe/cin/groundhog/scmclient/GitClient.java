@@ -35,6 +35,11 @@ import org.gitective.core.filter.commit.CommitterDateFilter;
 import br.ufpe.cin.groundhog.crawler.DownloadException;
 import br.ufpe.cin.groundhog.util.Dates;
 
+/**
+ * 
+ * @author ghlp
+ * @since 0.0.1
+ */
 public class GitClient {
 
 	/**

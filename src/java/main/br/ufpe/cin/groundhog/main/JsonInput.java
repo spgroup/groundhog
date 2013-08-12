@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.ufpe.cin.groundhog.codehistory.UnsupportedForgeException;
+import br.ufpe.cin.groundhog.parser.java.formater.CSVFormater;
 import br.ufpe.cin.groundhog.parser.java.formater.Formater;
 import br.ufpe.cin.groundhog.parser.java.formater.FormaterFactory;
 import br.ufpe.cin.groundhog.parser.java.formater.JSONFormater;
@@ -69,7 +70,10 @@ public final class JsonInput {
 	}
 
 	public Formater getOutputformat() {
-		return FormaterFactory.get(JSONFormater.class);
+		if(this.outputformat.equals("json")) {
+			return FormaterFactory.get(JSONFormater.class);
+		} 
+		return FormaterFactory.get(CSVFormater.class);
 	}
 
 	public static int getMaxThreads() {

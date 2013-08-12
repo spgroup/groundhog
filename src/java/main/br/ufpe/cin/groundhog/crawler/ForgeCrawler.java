@@ -20,15 +20,6 @@ import br.ufpe.cin.groundhog.Project;
  */
 public abstract class ForgeCrawler {
 	
-	private ExecutorService ex;
-	
-	/**
-	 * Constructs a new ForgeCrawler with a given destinationFolder.
-	 */
-	protected ForgeCrawler() {
-		this.ex = Executors.newCachedThreadPool();
-	}
-	
 	/**
 	 * Downloads a single project and returns its repository folder. A project
 	 * repository folder is useful to be manipulated by {@link CodeHistory}
@@ -78,6 +69,8 @@ public abstract class ForgeCrawler {
 	 * @return list of futures with repository folders as File objects
 	 */
 	public List<Future<File>> asyncDownloadProjects(List<Project> projects) {
+		ExecutorService ex = Executors.newCachedThreadPool();
+		
 		List<Future<File>> fs = new ArrayList<Future<File>>();
 		
 		for (final Project p : projects) {

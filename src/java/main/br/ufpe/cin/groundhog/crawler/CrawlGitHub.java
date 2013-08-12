@@ -24,14 +24,13 @@ public class CrawlGitHub extends ForgeCrawler {
 
 	@Inject
 	public CrawlGitHub(GitClient gitClient, File destinationFolder) {
-		super();
 		this.gitClient = gitClient;
 		this.destinationFolder = destinationFolder;
 	}
 
 	@Override
 	public File downloadProject(Project project) throws DownloadException {
-		String projectName = project.getName();// + "_" + System.currentTimeMillis();
+		String projectName = project.getName();
 		String projectUrl = project.getScmURL();
 		File projectDestinationFolder = new File(destinationFolder, projectName);
 
