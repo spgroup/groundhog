@@ -30,6 +30,9 @@ import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.ListenableFuture;
 import com.ning.http.client.Response;
 
+import static br.ufpe.cin.groundhog.http.URLsDecoder.*;
+
+
 public class CrawlSourceForge extends ForgeCrawler {
 	private static String rootUrl = "http://sourceforge.net";
 
@@ -66,7 +69,7 @@ public class CrawlSourceForge extends ForgeCrawler {
 			}
 			if (href.endsWith("/download")) { // file
 				if (isParseable(filename, extension)) {
-					String filePath = requests.decodeURL(href.substring(
+					String filePath = decodeURL(href.substring(
 							href.indexOf("/files/") + "/files/".length(),
 							href.indexOf("/download")));
 					try {
@@ -78,7 +81,7 @@ public class CrawlSourceForge extends ForgeCrawler {
 					fileURLs.add(href);
 				}
 			} else { // folder
-				String folderPath = requests.decodeURL(href.substring(
+				String folderPath = decodeURL(href.substring(
 						href.indexOf("/files/") + "/files/".length(),
 						href.lastIndexOf('/')));
 				try {
@@ -136,7 +139,7 @@ public class CrawlSourceForge extends ForgeCrawler {
 
 	private void downloadAndSaveFile(String projectName, String url,
 			InputStream is, File destination) throws IOException {
-		url = requests.decodeURL(url);
+		url = decodeURL(url);
 		String fileSeparator = File.separator;
 		String[] folders = url.substring(
 				url.indexOf("/files/") + "/files/".length(),
