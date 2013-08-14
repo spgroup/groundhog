@@ -131,6 +131,8 @@ public class SearchGitHub implements ForgeSearch {
 		List<Project> projects = new ArrayList<Project>();
 		for (JsonElement element : jsonArray) {
 			Project p = gson.fromJson(element, Project.class);
+			String owner = element.getAsJsonObject().get("owner").getAsString();
+			p.setUser(new User(owner));
 			projects.add(p);
 		}
 		
