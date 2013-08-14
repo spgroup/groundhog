@@ -1,5 +1,7 @@
 package br.ufpe.cin.groundhog.search;
 
+import static br.ufpe.cin.groundhog.http.URLsDecoder.encodeURL;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -22,8 +24,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-
-import static br.ufpe.cin.groundhog.http.URLsDecoder.*;
 
 /**
  * Performs the project search on GitHub, via its official JSON API
@@ -317,6 +317,9 @@ public class SearchGitHub implements ForgeSearch {
 		List<Commit> commits = new ArrayList<Commit>();
 		for (JsonElement element : jsonArray) {
 			Commit commit = gson.fromJson(element, Commit.class);
+			
+			String date = element.getAsJsonObject().get("commit").getAsJsonObject().get("author").getAsJsonObject().get("date").getAsString();
+			commit.setCommitDate(date.replaceAll("T", " ").replace("Z", ""));
 			commits.add(commit);
 		}
 		

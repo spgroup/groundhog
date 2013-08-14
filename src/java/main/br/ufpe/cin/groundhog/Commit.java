@@ -1,11 +1,14 @@
 package br.ufpe.cin.groundhog;
 
 import java.util.Date;
+
+import br.ufpe.cin.groundhog.util.Dates;
+
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Represents a Commit object in Groundhog
- * @author Rodrigo Alves
+ * @author Rodrigo Alves, gustavopinto
  * @since 0.0.1
  */
 public class Commit implements GitHubEntity {
@@ -18,14 +21,9 @@ public class Commit implements GitHubEntity {
 	@SerializedName("message")
 	private String message;
 	
-	private Commit parent;
-	
 	private Project project;
 	
 	private Date commitDate;
-	private Date pushDate;
-	
-	private int totalCount;
 	
 	private int additionsCount;
 	
@@ -92,45 +90,9 @@ public class Commit implements GitHubEntity {
 		return this.commitDate;
 	}
 
-	public void setCommitDate(Date commitDate) {
-		this.commitDate = commitDate;
-	}
-
-	/**
-	 * Returns the parent {@link Commit} if it exists
-	 * @return a {@link Commit} object
-	 */
-	public Commit getParent() {
-		return this.parent;
-	}
-
-	public void setParent(Commit parent) {
-		this.parent = parent;
-	}
-
-	/**
-	 * Returns the date when the commit was pushed to GitHub
-	 * This date should always be greater than the commit date
-	 * @return
-	 */
-	public Date getPushDate() {
-		return this.pushDate;
-	}
-
-	public void setPushDate(Date pushDate) {
-		this.pushDate = pushDate;
-	}
-
-	/**
-	 * Informs the sum of lines changed (added or deleted) among the files involved in the commit
-	 * @return
-	 */
-	public int getTotalCount() {
-		return this.totalCount;
-	}
-
-	public void setTotalCount(int totalCount) {
-		this.totalCount = totalCount;
+	public void setCommitDate(String date) {
+		Date createAtDate = new Dates("yyyy-MM-dd HH:mm:ss").format(date);
+		this.commitDate = createAtDate;
 	}
 
 	/**
