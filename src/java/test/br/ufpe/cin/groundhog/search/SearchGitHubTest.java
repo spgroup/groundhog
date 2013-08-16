@@ -1,5 +1,7 @@
 package br.ufpe.cin.groundhog.search;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Assert;
@@ -29,7 +31,6 @@ public class SearchGitHubTest {
 		fakeProject.setUser(user);
 	}
 	
-	@Test
 	public void testSearchByProjectName() {
 		try {			
 			List<Project> projects = searchGitHub.getProjects("groundhog", 1, SearchGitHub.INFINITY);
@@ -41,7 +42,6 @@ public class SearchGitHubTest {
 		}
 	}
 	
-	@Test
 	public void testFetchByProjectLanguages() {
 		try {
 			List<Language> langs = searchGitHub.getProjectLanguages(fakeProject);
@@ -52,7 +52,6 @@ public class SearchGitHubTest {
 		}
 	}
 	
-	@Test
 	public void testGetAllProjects() {
 		try {
 			List<Project> projects = searchGitHub.getAllProjects(0, 5);
@@ -63,10 +62,21 @@ public class SearchGitHubTest {
 		}
 	}
 	
-	@Test
 	public void testGetProjectsByLanguage() {
 		try {
 			List<Project> projects = searchGitHub.getAllProjectsByLanguage("java");
+			Assert.assertNotNull(projects);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail();
+		}
+	}
+	
+	@Test
+	public void testGetProjectsActiveByYear() {
+		try {
+			
+			List<Project> projects = searchGitHub.getProjectActiveByYear("2013-01-01", "2013-12-31", 2);
 			Assert.assertNotNull(projects);
 		} catch (Exception e) {
 			e.printStackTrace();

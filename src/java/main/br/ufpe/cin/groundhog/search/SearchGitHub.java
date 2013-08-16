@@ -3,6 +3,8 @@ package br.ufpe.cin.groundhog.search;
 import static br.ufpe.cin.groundhog.http.URLsDecoder.encodeURL;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -324,6 +326,58 @@ public class SearchGitHub implements ForgeSearch {
 		}
 		
 		return commits;
+	}
+	
+	/**
+	 * Fetches all the Commits of the given {@link Project} from the GitHub API
+	 * @param project the @{link Project} to which the commits belong
+	 * @return a {@link List} of {@link Commit} objects
+	 */
+	public List<Commit> getAllProjectCommitsByDate(Project project, String start, String end) {
+		
+		
+		String searchUrl = String.format("%s/repos/%s/%s/commits?since=%s&until=%s", ROOT, project.getUser().getLogin(), project.getName(), 
+				start, end);
+		
+		JsonElement jsonElement = gson.fromJson(requests.get(searchUrl), JsonElement.class);
+		JsonArray jsonArray = jsonElement.getAsJsonArray();
+
+		List<Commit> commits = new ArrayList<Commit>();
+		for (JsonElement element : jsonArray) {
+			Commit commit = gson.fromJson(element, Commit.class);
+			
+			String date = element.getAsJsonObject().get("commit").getAsJsonObject().get("author").getAsJsonObject().get("date").getAsString();
+			commit.setCommitDate(date.replaceAll("T", " ").replace("Z", ""));
+			commits.add(commit);
+		}
+		
+		return commits;
+	}
+	
+	/**
+	 * Fetches all the Commits of the given {@link Project} from the GitHub API
+	 * @param project the @{link Project} to which the commits belong
+	 * @return a {@link List} of {@link Commit} objects
+	 */
+	public List<Project> getProjectActiveByYear(String start, String end, int limit) {
+		try {
+			List<Project> rawData = getAllProjects(0, limit);
+			
+			List<Project> projects = new ArrayList<Project>();
+			for (Project project : rawData) {
+				List<Commit> commits = getAllProjectCommitsByDate(project, start, end);
+				
+				if(commits.size() > 1){
+					projects.add(project);
+				}
+			}
+			
+			return projects;
+		
+		} catch (GroundhogException e) {
+			e.printStackTrace();
+			throw new SearchException(e);
+		}
 	}
 	
 	/**
