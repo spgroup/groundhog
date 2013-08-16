@@ -1,7 +1,5 @@
 package br.ufpe.cin.groundhog.search;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import org.junit.Assert;
@@ -31,6 +29,7 @@ public class SearchGitHubTest {
 		fakeProject.setUser(user);
 	}
 	
+	@Test
 	public void testSearchByProjectName() {
 		try {			
 			List<Project> projects = searchGitHub.getProjects("groundhog", 1, SearchGitHub.INFINITY);
@@ -42,6 +41,7 @@ public class SearchGitHubTest {
 		}
 	}
 	
+	@Test
 	public void testFetchByProjectLanguages() {
 		try {
 			List<Language> langs = searchGitHub.getProjectLanguages(fakeProject);
@@ -52,6 +52,7 @@ public class SearchGitHubTest {
 		}
 	}
 	
+	@Test
 	public void testGetAllProjects() {
 		try {
 			List<Project> projects = searchGitHub.getAllProjects(0, 5);
@@ -62,6 +63,7 @@ public class SearchGitHubTest {
 		}
 	}
 	
+	@Test
 	public void testGetProjectsByLanguage() {
 		try {
 			List<Project> projects = searchGitHub.getAllProjectsByLanguage("java");
@@ -76,7 +78,9 @@ public class SearchGitHubTest {
 	public void testGetProjectsActiveByYear() {
 		try {
 			
-			List<Project> projects = searchGitHub.getProjectActiveByYear("2013-01-01", "2013-12-31", 2);
+			List<Project> projects = searchGitHub.getProjectActiveByYear("2012-01-01", "2012-12-31", 500);
+			double percent = (projects.size()/500.0)*100.0;
+			System.out.println( percent + "% of the projects java");
 			Assert.assertNotNull(projects);
 		} catch (Exception e) {
 			e.printStackTrace();
