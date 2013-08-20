@@ -58,7 +58,7 @@ public class TestMain {
 		File downloadFolder = FileUtil.getInstance().createTempDir();
 		
 		logger.info("1 - Search for projects according to term...");
-		Injector injector = Guice.createInjector(new SearchModule(), new CodeHistoryModule(), new CodeHistoryModule(), new ScmModule());
+		Injector injector = Guice.createInjector(new SearchModule(), new CodeHistoryModule(), new CodeHistoryModule(), new ScmModule(), new HttpModule());
 		SearchGitHub search = injector.getInstance(SearchGitHub.class);
 		
 		List<Project> projects = search.getProjects(term, 1, -1);
