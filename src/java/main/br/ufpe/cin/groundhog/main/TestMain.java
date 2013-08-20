@@ -61,17 +61,13 @@ public class TestMain {
 		Injector injector = Guice.createInjector(new SearchModule(), new CodeHistoryModule(), new CodeHistoryModule(), new ScmModule(), new HttpModule());
 		SearchGitHub search = injector.getInstance(SearchGitHub.class);
 		
-		List<Project> projects = search.getProjects(term, 1, -1);
+		List<Project> projects = search.getProjects(term, 1, 2);
 		Project project = projects.get(0);
 		projects = Arrays.asList(project); // analyze only the first project 
 		
 		logger.info("2 - Download 1st result...");
 		ForgeCrawler crawler = new CrawlGitHub(injector.getInstance(GitClient.class), downloadFolder);
-		List<Future<File>> futures = crawler.asyncDownloadProjects(projects);
-		File repositoryFolder = null;
-		for (Future<File> f : futures) { // wait for download
-			repositoryFolder = f.get();
-		}
+		File repositoryFolder = crawler.downloadProject(projects.get(0));
 		
 		logger.info("3 - Checkout repository to a given date...");
 		Date date = new GregorianCalendar(2012, 6, 1).getTime();
@@ -184,7 +180,7 @@ public class TestMain {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		 gitHubExample("jsoup");
+		 gitHubExample("pipa");
         // sourceForgeExample();
 		// googleCodeExample("facebook-java-api"); // Google Code SVN
 		// googleCodeExample("guava-libraries"); // Google Code Git
