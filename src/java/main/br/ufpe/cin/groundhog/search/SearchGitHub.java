@@ -32,11 +32,11 @@ import com.google.inject.name.Named;
  * @since 0.0.1
  */
 public class SearchGitHub implements ForgeSearch {
-    public static int INFINITY = -1;
+	public static int INFINITY = -1;
 
-    private static final String ROOT = "https://api.github.com";
+	private static final String ROOT = "https://api.github.com";
 	private static final String USERS_API = "https://api.github.com/users/";
-	
+
 	private final Requests requests;
 	private final Gson gson;
 
@@ -48,38 +48,38 @@ public class SearchGitHub implements ForgeSearch {
 		this.gson = new Gson();
 		this.oauthToken = oauthToken;
 	}
-	
+
 	public List<Project> getProjects(String term, int page, int limit) throws SearchException {
 		try {
 			if (term == null) {
 				return getAllForgeProjects(page, limit);
 			}
-			
+
 			String searchUrl = String.format("%s/legacy/repos/search/%s?start_page=%s&language=java%s", ROOT, encodeURL(term), page, this.oauthToken);
-			
+
 			String json = requests.get(searchUrl);
 			JsonObject jsonObject = gson.fromJson(json, JsonElement.class).getAsJsonObject();			
 			JsonArray jsonArray = jsonObject.get("repositories").getAsJsonArray();
-			
+
 			List<Project> projects = new ArrayList<Project>();
 			for (int i = 0; i < jsonArray.size() && (i < limit || limit < 0); i++) {
 				String element = jsonArray.get(i).toString();
 
 				Project p = gson.fromJson(element, Project.class);
 				p.setSCM(SCM.GIT);
-				
+
 				String owner = jsonArray.get(i).getAsJsonObject().get("owner").getAsString();
 				p.setScmURL(String.format("git@github.com:%s/%s.git", owner, p.getName()));
-				
+
 				String userJson = requests.get(USERS_API + owner + "?" + oauthToken);
 				User user = gson.fromJson(userJson, User.class);
-				
+
 				p.setOwner(user);
 				projects.add(p);
 			}
-			
+
 			return projects;
-		
+
 		} catch (GroundhogException e) {
 			e.printStackTrace();
 			throw new SearchException(e);
@@ -96,18 +96,18 @@ public class SearchGitHub implements ForgeSearch {
 	public List<Project> getProjectsWithMoreThanOneLanguage(int limit) throws SearchException {
 		try {
 			List<Project> rawData = getAllProjects(0, limit);
-			
+
 			List<Project> projects = new ArrayList<Project>();
 			for (Project project : rawData) {
 				List<Language> languages = getProjectLanguages(project);
-				
+
 				if(languages.size() > 1){
 					projects.add(project);
 				}
 			}
-			
+
 			return projects;
-		
+
 		} catch (GroundhogException e) {
 			e.printStackTrace();
 			throw new SearchException(e);
@@ -127,7 +127,7 @@ public class SearchGitHub implements ForgeSearch {
 
 		JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
 		JsonArray jsonArray= jsonObject.get("repositories").getAsJsonArray();
-			
+
 		List<Project> projects = new ArrayList<Project>();
 		for (JsonElement element : jsonArray) {
 			Project p = gson.fromJson(element, Project.class);
@@ -135,10 +135,10 @@ public class SearchGitHub implements ForgeSearch {
 			p.setUser(new User(owner));
 			projects.add(p);
 		}
-		
+
 		return projects;
 	}
-	
+
 	/**
 	 * Obtains from the GitHub API the set of projects
 	 * 
@@ -147,61 +147,61 @@ public class SearchGitHub implements ForgeSearch {
 	 * @throws SearchException
 	 */
 	public List<Project> getAllProjects(int start, int limit) throws SearchException {
-		
+
 		List<Project> projects = new ArrayList<Project>();
 		JsonParser parser = new JsonParser();
-		
+
 		try{
-			
+
 			int since = start;
 			int totalRepositories = 0;
-			
+
 			while(totalRepositories < limit || limit < 0){
-				
+
 				String searchUrl = String.format("%s/repositories?since=%s&language=java%s", ROOT, since, this.oauthToken);
-				String response = requests.get(searchUrl);
+				String response = getWithProtection(searchUrl);
 				JsonArray jsonArray = parser.parse(response).getAsJsonArray();
-				
+
 				int counter = 0;
-				
+
 				for (Iterator<JsonElement> iterator = jsonArray.iterator(); (iterator
 						.hasNext() && (totalRepositories + counter < limit || limit < 0));) {
-					
+
 					JsonElement element = (JsonElement) iterator.next();
-					
+
 					String repoName = element.getAsJsonObject().get("name").getAsString();	
 					String searchUrlLegacy = String.format("%s/legacy/repos/search/%s?%s", ROOT , repoName, this.oauthToken);
-					
-					String jsonLegacy = requests.get(searchUrlLegacy);
+
+					String jsonLegacy = getWithProtection(searchUrlLegacy);
 
 					JsonElement jsonElement = parser.parse(jsonLegacy);
 					JsonObject jsonObject = jsonElement.getAsJsonObject();
 					JsonArray jsonArrayLegacy = jsonObject.get("repositories").getAsJsonArray();
-					
+
 					if(jsonArrayLegacy.size() > 0) {
 						JsonObject rawJsonObject = jsonArrayLegacy.get(0).getAsJsonObject();
-						
+
 						String stringElement = rawJsonObject.toString();
 						Project p = gson.fromJson(stringElement, Project.class);
-						
+
 						p.setSCM(SCM.GIT);
 						String owner = rawJsonObject.getAsJsonObject().get("owner").getAsString();
 						p.setScmURL(String.format("git://github.com/%s/%s.git", owner, p.getName()));
-						
+
 						User user = new User(owner);
 						p.setOwner(user);
 						projects.add(p);
-						
+
 						counter++;
 						totalRepositories++;
 					}
 				}
-				
+
 				JsonElement lastPagesRepository = jsonArray.get(jsonArray.size() -1);
 				since = lastPagesRepository.getAsJsonObject().get("id").getAsInt();
 			}
 			return projects;
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SearchException(e);
@@ -211,28 +211,28 @@ public class SearchGitHub implements ForgeSearch {
 	@Override
 	public List<Project> getProjects(String term, String username, int page)
 			throws SearchException {
-		
+
 		try {
 			String searchUrl = String.format("%s/repos/%s/%s%s", ROOT, username, encodeURL(term), this.oauthToken);
-			
+
 			String json = requests.get(searchUrl);
-			
+
 			Project p = gson.fromJson(json, Project.class);
 			p.setSCM(SCM.GIT);
 			p.setScmURL(String.format("git@github.com:%s/%s.git", username, p.getName()));
-			
+
 			json = requests.get(USERS_API + username);
 			User user = gson.fromJson(json, User.class);
 			p.setOwner(user);
-			
+
 			return Lists.newArrayList(p);
-		
+
 		} catch (Throwable e) {
 			e.printStackTrace();
 			throw new SearchException(e);
 		}
 	}
-	
+
 	/**
 	 * Obtains from the GitHub API the set of languages that compose a
 	 * {@link Project}
@@ -241,11 +241,11 @@ public class SearchGitHub implements ForgeSearch {
 	 *            a {@link Project} object to have its languages fetched
 	 */
 	public List<Language> getProjectLanguages(Project project) {
-		
+
 		String searchUrl = String.format("%s/repos/%s/%s/languages%s", ROOT, project.getUser().getLogin(), project.getName(), this.oauthToken);
 
 		String json = requests.get(searchUrl).replace("{", "").replace("}", "");
-		
+
 		List<Language> languages = new ArrayList<>();
 		if(!json.equalsIgnoreCase("{}")){
 			for (String str: json.split(",")) {
@@ -256,7 +256,7 @@ public class SearchGitHub implements ForgeSearch {
 				languages.add(lang);
 			}
 		}
-		
+
 		return languages;
 	}
 
@@ -269,7 +269,7 @@ public class SearchGitHub implements ForgeSearch {
 	public List<Issue> getAllProjectIssues(Project project) {
 
 		String searchUrl = String.format("%s/repos/%s/%s/issues%s", ROOT, project.getUser().getLogin(), project.getName(), this.oauthToken);
-		
+
 		String jsonString = requests.get(searchUrl);
 		JsonArray jsonArray = gson.fromJson(jsonString, JsonElement.class).getAsJsonArray();
 
@@ -278,31 +278,31 @@ public class SearchGitHub implements ForgeSearch {
 			Issue issue = gson.fromJson(element, Issue.class);
 			issues.add(issue);
 		}
-		
+
 		return issues;
 	}
-	
+
 	/**
 	 * Fetches all the Milestones of the given {@link Project} from the GitHub API
 	 * @param project the @{link Project} of which the Milestones are about
 	 * @return a {@link List} of {@link Milestone} objects
 	 */
 	public List<Milestone> getAllProjectMilestones(Project project) {
-		
+
 		String searchUrl = String.format("%s/repos/%s/%s/milestones%s", ROOT, project.getUser().getLogin(), project.getName(), this.oauthToken);
 		String jsonString = requests.get(searchUrl);
 
 		JsonArray jsonArray = gson.fromJson(jsonString, JsonElement.class).getAsJsonArray();
-		
+
 		List<Milestone> milestones = new ArrayList<Milestone>();
 		for (JsonElement element : jsonArray) {
 			Milestone milestone = gson.fromJson(element, Milestone.class);
 			milestones.add(milestone);
 		}
-		
+
 		return milestones;
 	}
-	
+
 	/**
 	 * Fetches all the Commits of the given {@link Project} from the GitHub API
 	 * @param project the @{link Project} to which the commits belong
@@ -310,48 +310,50 @@ public class SearchGitHub implements ForgeSearch {
 	 */
 	public List<Commit> getAllProjectCommits(Project project) {
 		String searchUrl = String.format("%s/repos/%s/%s/commits%s", ROOT, project.getUser().getLogin(), project.getName(), this.oauthToken);
-		
+
 		JsonElement jsonElement = gson.fromJson(requests.get(searchUrl), JsonElement.class);
 		JsonArray jsonArray = jsonElement.getAsJsonArray();
 
 		List<Commit> commits = new ArrayList<Commit>();
 		for (JsonElement element : jsonArray) {
 			Commit commit = gson.fromJson(element, Commit.class);
-			
+
 			String date = element.getAsJsonObject().get("commit").getAsJsonObject().get("author").getAsJsonObject().get("date").getAsString();
 			commit.setCommitDate(date.replaceAll("T", " ").replace("Z", ""));
 			commits.add(commit);
 		}
-		
+
 		return commits;
 	}
-	
+
 	/**
 	 * Fetches all the Commits of the given {@link Project} from the GitHub API
 	 * @param project the @{link Project} to which the commits belong
 	 * @return a {@link List} of {@link Commit} objects
 	 */
 	public List<Commit> getAllProjectCommitsByDate(Project project, String start, String end) {
-		
-		
+
+		List<Commit> commits = new ArrayList<>();
+
 		String searchUrl = String.format("%s/repos/%s/%s/commits?since=%s&until=%s%s", ROOT, project.getUser().getLogin(), project.getName(), 
 				start, end, this.oauthToken);
-		
-		JsonElement jsonElement = gson.fromJson(requests.get(searchUrl), JsonElement.class);
+		String response = getWithProtection(searchUrl);
+
+		JsonElement jsonElement = gson.fromJson(response, JsonElement.class);
 		JsonArray jsonArray = jsonElement.getAsJsonArray();
 
-		List<Commit> commits = new ArrayList<Commit>();
+		commits = new ArrayList<Commit>();
 		for (JsonElement element : jsonArray) {
 			Commit commit = gson.fromJson(element, Commit.class);
-			
+
 			String date = element.getAsJsonObject().get("commit").getAsJsonObject().get("author").getAsJsonObject().get("date").getAsString();
 			commit.setCommitDate(date.replaceAll("T", " ").replace("Z", ""));
 			commits.add(commit);
 		}
-		
+
 		return commits;
 	}
-	
+
 	/**
 	 * Fetches all the Commits of the given {@link Project} from the GitHub API
 	 * @param project the @{link Project} to which the commits belong
@@ -360,24 +362,29 @@ public class SearchGitHub implements ForgeSearch {
 	public List<Project> getProjectActiveByYear(String start, String end, int limit) {
 		try {
 			List<Project> rawData = getAllProjects(0, limit);
-			
+
 			List<Project> projects = new ArrayList<Project>();
+
 			for (Project project : rawData) {
+
 				List<Commit> commits = getAllProjectCommitsByDate(project, start, end);
-				
-				if(commits.size() > 1){
+
+				System.out.println("Project Name: "+project.getName());
+				System.out.println("Number of commits from "+ start + " to " + end +": "+commits.size());
+
+				if(commits.size() > 0){
 					projects.add(project);
 				}
 			}
-			
+
 			return projects;
-		
+
 		} catch (GroundhogException e) {
 			e.printStackTrace();
 			throw new SearchException(e);
 		}
 	}
-	
+
 	/**
 	 * Fetches all the contributors of the given {@link Project} from the GitHub API
 	 * @param project the @{link Project} to get the contributors from
@@ -385,20 +392,20 @@ public class SearchGitHub implements ForgeSearch {
 	 */
 	public List<User> getAllProjectContributors(Project project) {
 		List<User> collection = new ArrayList<User>();
-		
+
 		String searchUrl = String.format("%s/repos/%s/%s/contributors%s", ROOT, project.getUser().getLogin(), project.getName(), this.oauthToken);
 		String jsonString = requests.get(searchUrl);
-		
+
 		JsonArray jsonArray = gson.fromJson(jsonString, JsonElement.class).getAsJsonArray();
 
 		for (JsonElement element : jsonArray) {
 			User contributor = gson.fromJson(element, User.class);
 			collection.add(contributor);
 		}
-		
+
 		return collection;
 	}
-	
+
 	public List<Project> getAllForgeProjects(int start, int limit) throws SearchException{
 		List<Project> projects = new ArrayList<Project>();
 		try{
@@ -408,29 +415,29 @@ public class SearchGitHub implements ForgeSearch {
 
 				String searchUrl = String.format("%s/repositories?since=%s&language=java&%s", ROOT, since, this.oauthToken);
 				String jsonString = requests.get(searchUrl);
-				
+
 				JsonArray jsonArray = gson.fromJson(jsonString, JsonElement.class).getAsJsonArray();
 				for (int i = 0; i < jsonArray.size() && 
 						(totalRepositories + i < limit || limit < 0); i++) {
-					
+
 					String repoName = jsonArray.get(i).getAsJsonObject().get("name").getAsString();					
 					String searchUrlLegacy = String.format("%s/legacy/repos/search/%s?language=java%s", ROOT, repoName, this.oauthToken);
-					
+
 					String jsonLegacy = requests.get(searchUrlLegacy);
-					
+
 					JsonObject jsonObject = gson.fromJson(jsonLegacy, JsonElement.class).getAsJsonObject();			
 					JsonArray jsonArrayLegacy = jsonObject.get("repositories").getAsJsonArray();
-					
+
 					if( jsonArrayLegacy.size() > 0) {
-					
+
 						JsonObject rawJsonObject = jsonArrayLegacy.get(0).getAsJsonObject();
 						String stringElement = rawJsonObject.toString();
 						Project p = gson.fromJson(stringElement, Project.class);
-						
+
 						p.setSCM(SCM.GIT);
 						String owner = rawJsonObject.getAsJsonObject().get("owner").getAsString();
 						p.setScmURL(String.format("git://github.com/%s/%s.git", owner, p.getName()));
-						
+
 						projects.add(p);
 						totalRepositories++;
 					}
@@ -443,5 +450,23 @@ public class SearchGitHub implements ForgeSearch {
 			e.printStackTrace();
 			throw new SearchException(e);
 		}
+	}
+
+	private String getWithProtection(String url){
+
+		String retorno = requests.get(url);
+
+		if(retorno.contains("API rate limit exceeded for ")){
+			try {
+				Thread.sleep(1000 * 60 * 60);
+
+				retorno = requests.get(url);
+
+			} catch (InterruptedException ex) {
+				ex.printStackTrace();
+			}
+		}
+
+		return retorno;
 	}
 }
