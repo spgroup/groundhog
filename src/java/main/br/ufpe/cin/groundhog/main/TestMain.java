@@ -70,10 +70,10 @@ public class TestMain {
 		File repositoryFolder = crawler.downloadProject(projects.get(0));
 		
 		//3 - Checkout repository to a given date...
-		Date date = new GregorianCalendar(2013, 8, 21).getTime();
+		Date date = new GregorianCalendar(2012, 07, 10).getTime();
 		GitCodeHistory codeHistory = injector.getInstance(GitCodeHistory.class);
 		File temp = codeHistory.checkoutToDate(project.getName(), repositoryFolder, date);
-		
+
 		//4 - Parse...
 		HashMap<String, HashMap<String, MutableInt>> javaMetrics = new JavaParser(temp).parser();
 		String metrics = FormaterFactory.get(JSONFormater.class).format(javaMetrics);
@@ -85,6 +85,7 @@ public class TestMain {
 		} catch (IOException e) {
 			logger.error("Could not delete temp files :( (but they will be eventually deleted)");
 		}
+		
 		logger.info("That is it! Groundhog is done!");
 	}
 	
@@ -181,7 +182,7 @@ public class TestMain {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		 gitHubExample("pipa");
+		 gitHubExample("restfulie-java");
         // sourceForgeExample();
 		// googleCodeExample("facebook-java-api"); // Google Code SVN
 		// googleCodeExample("guava-libraries"); // Google Code Git

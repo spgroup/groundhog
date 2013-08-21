@@ -52,12 +52,15 @@ public class JavaParser implements Parser<HashMap<String, HashMap<String, Mutabl
 
 		if (files != null) {
 			for (File f : files) {
-				if (f.isDirectory()) {
-					searchForJavaFiles(f);
-				} else if (f.isFile()) {
-					String path = f.getAbsolutePath();
-					if (!path.contains(File.separator + "__MACOSX") && f.getName().endsWith(".java")) {
-						filesList.add(f);	
+				
+				if(!f.getName().startsWith(".")){
+					if (f.isDirectory()) {
+						searchForJavaFiles(f);
+					} else if (f.isFile()) {
+						String path = f.getAbsolutePath();
+						if (!path.contains(File.separator + "__MACOSX") && f.getName().endsWith(".java")) {
+							filesList.add(f);	
+						}
 					}
 				}
 			}
@@ -65,7 +68,7 @@ public class JavaParser implements Parser<HashMap<String, HashMap<String, Mutabl
 	}
 	
 	private HashMap<String, HashMap<String, MutableInt>> invokeProcessor() throws IOException {
-		if (!filesList.isEmpty()) {
+		if (filesList.isEmpty()) {
 			return new HashMap<String, HashMap<String, MutableInt>> ();
 		} 
 		
