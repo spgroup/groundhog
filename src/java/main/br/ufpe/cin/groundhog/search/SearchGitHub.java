@@ -69,7 +69,7 @@ public class SearchGitHub implements ForgeSearch {
 				p.setSCM(SCM.GIT);
 
 				String owner = jsonArray.get(i).getAsJsonObject().get("owner").getAsString();
-				p.setScmURL(String.format("git@github.com:%s/%s.git", owner, p.getName()));
+				p.setScmURL(String.format("https://github.com/%s/%s.git", owner, p.getName()));
 
 				String userJson = requests.get(USERS_API + owner + "?" + oauthToken);
 				User user = gson.fromJson(userJson, User.class);
@@ -186,7 +186,7 @@ public class SearchGitHub implements ForgeSearch {
 
 						p.setSCM(SCM.GIT);
 						String owner = rawJsonObject.getAsJsonObject().get("owner").getAsString();
-						p.setScmURL(String.format("git://github.com/%s/%s.git", owner, p.getName()));
+						p.setScmURL(String.format("https://github.com/%s/%s.git", owner, p.getName()));
 
 						User user = new User(owner);
 						p.setOwner(user);
@@ -436,7 +436,7 @@ public class SearchGitHub implements ForgeSearch {
 
 						p.setSCM(SCM.GIT);
 						String owner = rawJsonObject.getAsJsonObject().get("owner").getAsString();
-						p.setScmURL(String.format("git://github.com/%s/%s.git", owner, p.getName()));
+						p.setScmURL(String.format("https://github.com/%s/%s.git", owner, p.getName()));
 
 						projects.add(p);
 						totalRepositories++;

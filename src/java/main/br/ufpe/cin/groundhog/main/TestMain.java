@@ -57,7 +57,7 @@ public class TestMain {
 	public static void gitHubExample(String term) throws Exception {
 		File downloadFolder = FileUtil.getInstance().createTempDir();
 		
-		logger.info("1 - Search for projects according to term...");
+		//1 - Search for projects according to term...
 		Injector injector = Guice.createInjector(new SearchModule(), new CodeHistoryModule(), new CodeHistoryModule(), new ScmModule(), new HttpModule());
 		SearchGitHub search = injector.getInstance(SearchGitHub.class);
 		
@@ -65,26 +65,27 @@ public class TestMain {
 		Project project = projects.get(0);
 		projects = Arrays.asList(project); // analyze only the first project 
 		
-		logger.info("2 - Download 1st result...");
+		//2 - Download 1st result...
 		ForgeCrawler crawler = new CrawlGitHub(injector.getInstance(GitClient.class), downloadFolder);
 		File repositoryFolder = crawler.downloadProject(projects.get(0));
 		
-		logger.info("3 - Checkout repository to a given date...");
-		Date date = new GregorianCalendar(2012, 6, 1).getTime();
+		//3 - Checkout repository to a given date...
+		Date date = new GregorianCalendar(2013, 8, 21).getTime();
 		GitCodeHistory codeHistory = injector.getInstance(GitCodeHistory.class);
 		File temp = codeHistory.checkoutToDate(project.getName(), repositoryFolder, date);
 		
-		logger.info("4 - Parse...");
-		
+		//4 - Parse...
 		HashMap<String, HashMap<String, MutableInt>> javaMetrics = new JavaParser(temp).parser();
 		String metrics = FormaterFactory.get(JSONFormater.class).format(javaMetrics);
 		System.out.println(metrics);
-		
+				
 		try {
 			FileUtil.getInstance().deleteTempDirs();
+			logger.info("Cleaning up the garbage..");
 		} catch (IOException e) {
-			logger.info("Could not delete temp files :( (but they will be eventually deleted)");
+			logger.error("Could not delete temp files :( (but they will be eventually deleted)");
 		}
+		logger.info("That is it! Groundhog is done!");
 	}
 	
 	/**

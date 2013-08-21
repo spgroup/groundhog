@@ -35,9 +35,11 @@ public class CrawlGitHub extends ForgeCrawler {
 		File projectDestinationFolder = new File(destinationFolder, projectName);
 
 		logger.info(String.format("Downloading %s project..", project.getName()));
+		
 
 		try {
 			this.gitClient.clone(projectUrl, projectDestinationFolder);
+			logger.info(String.format("Done! The project is available at %s", projectDestinationFolder.getAbsolutePath()));
 			return projectDestinationFolder;
 		} catch (Exception e) {
 			String error = String.format("Unable to download %s (%s) project", project.getName(), project.getScmURL());
