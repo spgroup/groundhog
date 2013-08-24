@@ -80,7 +80,7 @@ public class SearchGitHubTest {
 			
 			float numberOfProjects = 5000;
 			
-			List<Project> projects = searchGitHub.getProjectActiveByYear("2012-01-01", "2012-12-31", Float.floatToIntBits(numberOfProjects));
+			List<Project> projects = searchGitHub.getProjectActiveByYear("2012-01-01", "2012-12-31", (int)numberOfProjects);
 			
 			double percent = ((projects.size()*1.0)/numberOfProjects)*100.0;
 			System.out.println( percent + "% of the projects java of " + numberOfProjects + " projects");
