@@ -5,11 +5,19 @@ import java.util.Map;
 import com.google.inject.name.Named;
 
 /**
+ * Use this class when you need to create a github url, instead doing so by
+ * string concatenation.
+ * 
  * @author ghlp
  * @since 0.1.0
  */
 public final class UrlBuilder {
 
+	/**
+	 * Kinds of API
+	 * 
+	 * @author ghlp
+	 */
 	enum GithubAPI {
 		LEGACY_V2 {
 			@Override
@@ -47,16 +55,38 @@ public final class UrlBuilder {
 		this.builder = new StringBuilder();
 	}
 
+	/**
+	 * Choose what will be your base API.
+	 * Currently available: USERS, REPOSITORES, and LEGACY
+	 * see {@link GithubAPI}
+
+	 * @param api
+	 * @return current url representation
+	 */
 	public UrlBuilder uses(GithubAPI api) {
 		this.builder.append(api.baseForm());
 		return this;
 	}
 	
+	/**
+	 * Add a parameter to the URL
+	 * 
+	 * @param value
+	 * @return current url representation
+	 */
 	public UrlBuilder withParam(String value) {
 		this.builder.append(value);
 		return this;
 	}
 	
+	/**
+	 * Add a parameter and value to the URL. It will be concatenated with ? or
+	 * &, depending on whether it is the first parameter or not.
+	 * 
+	 * @param key
+	 * @param value
+	 * @return current url representation
+	 */
 	public UrlBuilder withParam(String key, Object value) {
 		String concat = isFirstParam() ? "?" : "&";
 		
@@ -64,7 +94,15 @@ public final class UrlBuilder {
 		this.builder.append(param);
 		return this;
 	}
-	
+
+	/**
+	 * Add a parameter and value to the URL. Differently of {@link withparam},
+	 * this method will not use ? or & to concatenate the url.
+	 * 
+	 * @param key
+	 * @param value
+	 * @return current url representation
+	 */
 	public UrlBuilder withSimpleParam(String key, Object value) {
 		this.builder.append(key).append(value);
 		return this;
@@ -78,6 +116,11 @@ public final class UrlBuilder {
 		throw new UnsupportedOperationException("not implemented yet.");
 	}
 
+	/**
+	 * Return the url as a string 
+	 * 
+	 * @return final url
+	 */
 	public String build() {
 		String result = this.builder.append(oauthToken).toString();
 		this.builder.delete(0, result.length());
