@@ -14,7 +14,7 @@ import com.google.inject.name.Named;
 public final class UrlBuilder {
 
 	/**
-	 * Kinds of API
+	 * Root sources of the API
 	 * 
 	 * @author ghlp
 	 */

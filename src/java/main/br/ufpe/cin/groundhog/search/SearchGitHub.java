@@ -61,7 +61,7 @@ public class SearchGitHub implements ForgeSearch {
 			JsonObject jsonObject = gson.fromJson(json, JsonElement.class).getAsJsonObject();			
 			JsonArray jsonArray = jsonObject.get("repositories").getAsJsonArray();
 
-			List<Project> projects = new ArrayList<Project>();
+			List<Project> projects = new ArrayList<>();
 			for (int i = 0; i < jsonArray.size() && (i < limit || limit < 0); i++) {
 				String element = jsonArray.get(i).toString();
 
@@ -98,7 +98,7 @@ public class SearchGitHub implements ForgeSearch {
 		try {
 			List<Project> rawData = getAllProjects(0, limit);
 
-			List<Project> projects = new ArrayList<Project>();
+			List<Project> projects = new ArrayList<>();
 			for (Project project : rawData) {
 				List<Language> languages = getProjectLanguages(project);
 
@@ -129,7 +129,7 @@ public class SearchGitHub implements ForgeSearch {
 		JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
 		JsonArray jsonArray= jsonObject.get("repositories").getAsJsonArray();
 
-		List<Project> projects = new ArrayList<Project>();
+		List<Project> projects = new ArrayList<>();
 		for (JsonElement element : jsonArray) {
 			Project p = gson.fromJson(element, Project.class);
 			String owner = element.getAsJsonObject().get("owner").getAsString();
@@ -149,17 +149,20 @@ public class SearchGitHub implements ForgeSearch {
 	 */
 	public List<Project> getAllProjects(int start, int limit) throws SearchException {
 
-		List<Project> projects = new ArrayList<Project>();
-		JsonParser parser = new JsonParser();
-
-		try{
+		try {
 
 			int since = start;
 			int totalRepositories = 0;
 
+			List<Project> projects = new ArrayList<>();
+			JsonParser parser = new JsonParser();
 			while(totalRepositories < limit || limit < 0){
 
-				String searchUrl = builder.uses(GithubAPI.REPOSITORIES).withParam("language", "java").withParam("since", since).build();
+				String searchUrl = builder.uses(GithubAPI.REPOSITORIES)
+										  .withParam("language", "java")
+										  .withParam("since", since)
+										  .build();
+				
 				String response = getWithProtection(searchUrl);
 				JsonArray jsonArray = parser.parse(response).getAsJsonArray();
 
@@ -172,8 +175,8 @@ public class SearchGitHub implements ForgeSearch {
 
 					String repoName = element.getAsJsonObject().get("name").getAsString();	
 					String searchUrlLegacy = builder.uses(GithubAPI.LEGACY_V2).withParam(repoName).build();
+					
 					String jsonLegacy = getWithProtection(searchUrlLegacy);
-
 					JsonElement jsonElement = parser.parse(jsonLegacy);
 					JsonObject jsonObject = jsonElement.getAsJsonObject();
 					JsonArray jsonArrayLegacy = jsonObject.get("repositories").getAsJsonArray();
@@ -314,7 +317,7 @@ public class SearchGitHub implements ForgeSearch {
 
 		JsonArray jsonArray = gson.fromJson(jsonString, JsonElement.class).getAsJsonArray();
 
-		List<Milestone> milestones = new ArrayList<Milestone>();
+		List<Milestone> milestones = new ArrayList<>();
 		for (JsonElement element : jsonArray) {
 			Milestone milestone = gson.fromJson(element, Milestone.class);
 			milestones.add(milestone);
@@ -340,7 +343,7 @@ public class SearchGitHub implements ForgeSearch {
 		JsonElement jsonElement = gson.fromJson(requests.get(searchUrl), JsonElement.class);
 		JsonArray jsonArray = jsonElement.getAsJsonArray();
 
-		List<Commit> commits = new ArrayList<Commit>();
+		List<Commit> commits = new ArrayList<>();
 		for (JsonElement element : jsonArray) {
 			Commit commit = gson.fromJson(element, Commit.class);
 
@@ -378,7 +381,7 @@ public class SearchGitHub implements ForgeSearch {
 			Commit commit = gson.fromJson(element, Commit.class);
 
 			String date = element.getAsJsonObject().get("commit").getAsJsonObject().get("author").getAsJsonObject().get("date").getAsString();
-			commit.setCommitDate(date.replaceAll("T", " ").replace("Z", ""));
+			commit.setCommitDate(date);
 			commits.add(commit);
 		}
 
@@ -394,7 +397,7 @@ public class SearchGitHub implements ForgeSearch {
 		try {
 			List<Project> rawData = getAllProjects(0, limit);
 
-			List<Project> projects = new ArrayList<Project>();
+			List<Project> projects = new ArrayList<>();
 
 			for (Project project : rawData) {
 

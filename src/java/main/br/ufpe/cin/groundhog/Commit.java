@@ -91,7 +91,7 @@ public class Commit implements GitHubEntity {
 	}
 
 	public void setCommitDate(String date) {
-		Date createAtDate = new Dates("yyyy-MM-dd HH:mm:ss").format(date);
+		Date createAtDate = new Dates("yyyy-MM-dd HH:mm:ss").format(date.replaceAll("T", " ").replace("Z", ""));
 		this.commitDate = createAtDate;
 	}
 
