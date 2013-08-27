@@ -348,7 +348,7 @@ public class SearchGitHub implements ForgeSearch {
 			Commit commit = gson.fromJson(element, Commit.class);
 
 			String date = element.getAsJsonObject().get("commit").getAsJsonObject().get("author").getAsJsonObject().get("date").getAsString();
-			commit.setCommitDate(date.replaceAll("T", " ").replace("Z", ""));
+			commit.setCommitDate(date);
 			commits.add(commit);
 		}
 
@@ -381,42 +381,11 @@ public class SearchGitHub implements ForgeSearch {
 			Commit commit = gson.fromJson(element, Commit.class);
 
 			String date = element.getAsJsonObject().get("commit").getAsJsonObject().get("author").getAsJsonObject().get("date").getAsString();
-			commit.setCommitDate(date);
+			commit.setCommitDate(date.replaceAll("T", " ").replace("Z", ""));
 			commits.add(commit);
 		}
 
 		return commits;
-	}
-
-	/**
-	 * Fetches all the Commits of the given {@link Project} from the GitHub API
-	 * @param project the @{link Project} to which the commits belong
-	 * @return a {@link List} of {@link Commit} objects
-	 */
-	public List<Project> getProjectActiveByYear(String start, String end, int limit) {
-		try {
-			List<Project> rawData = getAllProjects(0, limit);
-
-			List<Project> projects = new ArrayList<>();
-
-			for (Project project : rawData) {
-
-				List<Commit> commits = getAllProjectCommitsByDate(project, start, end);
-
-				System.out.println("Project Name: "+project.getName());
-				System.out.println("Number of commits from "+ start + " to " + end +": "+commits.size());
-
-				if(commits.size() > 0){
-					projects.add(project);
-				}
-			}
-
-			return projects;
-
-		} catch (GroundhogException e) {
-			e.printStackTrace();
-			throw new SearchException(e);
-		}
 	}
 
 	/**
