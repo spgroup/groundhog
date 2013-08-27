@@ -74,22 +74,4 @@ public class SearchGitHubTest {
 		}
 	}
 	
-	@Test
-	public void testGetProjectsActiveByYear() {
-		try {
-			
-			float numberOfProjects = 5000;
-			
-			List<Project> projects = searchGitHub.getProjectActiveByYear("2012-01-01", "2012-12-31", (int)numberOfProjects);
-			
-			double percent = ((projects.size()*1.0)/numberOfProjects)*100.0;
-			System.out.println( percent + "% of the projects java of " + numberOfProjects + " projects");
-			
-			Assert.assertNotNull(projects);
-		} catch (Exception e) {
-			e.printStackTrace();
-			Assert.fail();
-		}
-	}
-	
 }
