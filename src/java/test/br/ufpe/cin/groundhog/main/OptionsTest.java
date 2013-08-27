@@ -9,7 +9,7 @@ public class OptionsTest {
 
 	@Test
 	public void testJsonInputFile() {
-		Options op = new Options();
+		CmdOptions op = new CmdOptions();
 		op.setInputFile(new File("groundhog.json"));
 		Assert.assertNotNull(op.getInputFile());
 	}

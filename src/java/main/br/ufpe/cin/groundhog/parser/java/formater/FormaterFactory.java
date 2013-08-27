@@ -3,6 +3,7 @@ package br.ufpe.cin.groundhog.parser.java.formater;
 import br.ufpe.cin.groundhog.GroundhogException;
 
 /**
+ * Factory class that creates a specific {@link Format}
  * 
  * @author ghlp
  * @since 0.0.1

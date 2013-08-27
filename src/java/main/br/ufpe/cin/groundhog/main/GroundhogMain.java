@@ -15,11 +15,11 @@ import br.ufpe.cin.groundhog.util.FileUtil;
 
 public abstract class GroundhogMain {
 	private final static Logger logger = LoggerFactory.getLogger(GroundhogMain.class);
-	public abstract void run(JsonInput input);
+	public abstract void run(JsonInputFile input);
 
 	public static void main(String[] args) {
-		JsonInput input = null;
-		Options opt = new Options();
+		JsonInputFile input = null;
+		CmdOptions opt = new CmdOptions();
 		CmdLineParser parser = new CmdLineParser(opt);
 		PrintStream errorStream = null;
 
@@ -54,11 +54,11 @@ public abstract class GroundhogMain {
 		}
 	}
 
-	private static JsonInput checkArguments(Options opt) {
+	private static JsonInputFile checkArguments(CmdOptions opt) {
 		if (opt.getInputFile() != null) {
 			return opt.getInputFile();
 		}
-		return new JsonInput(opt);
+		return new JsonInputFile(opt);
 	}
 
 	/**

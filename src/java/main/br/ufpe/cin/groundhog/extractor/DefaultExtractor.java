@@ -12,7 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import br.ufpe.cin.groundhog.GroundhogException;
-import br.ufpe.cin.groundhog.main.JsonInput;
+import br.ufpe.cin.groundhog.main.JsonInputFile;
 import br.ufpe.cin.groundhog.util.FileUtil;
 
 /**
@@ -46,7 +46,7 @@ public class DefaultExtractor implements Extractor {
 	 * @param destinationFolder the destination folder to which the extracted files will be moved to
 	 */
 	private void recursiveExtract(final File root, File next, final File destinationFolder) {
-		ExecutorService executor = Executors.newFixedThreadPool(JsonInput.getMaxThreads());
+		ExecutorService executor = Executors.newFixedThreadPool(JsonInputFile.getMaxThreads());
 		File[] subFiles = next.listFiles();
 		List<Future<?>> futures = new ArrayList<Future<?>>();
 		

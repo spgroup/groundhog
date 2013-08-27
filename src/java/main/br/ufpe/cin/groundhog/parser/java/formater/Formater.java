@@ -4,6 +4,13 @@ import java.util.HashMap;
 
 import br.ufpe.cin.groundhog.parser.java.MutableInt;
 
+/**
+ * This class formats the object data gathered from {@link JavaParser} into file
+ * formats. We currently support CSV and JSON files. 
+ * 
+ * @author ghlp
+ * @since 0.0.1
+ */
 public abstract class Formater {
 
 	/**
@@ -15,11 +22,7 @@ public abstract class Formater {
 	 */
 	public abstract String format(HashMap<String, HashMap<String, MutableInt>> object);
 
-	public String simpleName() {
-		return getClass().getSimpleName().toLowerCase().replaceAll("formater", "");
-	}
-	
 	public String toString() {
-		return simpleName();
+		return getClass().getSimpleName().toLowerCase().replaceAll("formater", "");
 	}
 }

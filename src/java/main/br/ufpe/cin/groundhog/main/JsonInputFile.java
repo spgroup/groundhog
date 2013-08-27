@@ -15,11 +15,10 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 /**
- * Represents the input file parameters in Groundhog
+ * This class represents the parameters passed via command line. 
  * @author gustavopinto
- *
  */
-public final class JsonInput {
+public final class JsonInputFile {
 	private String forge;
 	private String dest;
 	private String out;
@@ -29,7 +28,7 @@ public final class JsonInput {
 	private Search search;
 	private String gitHubOauthAcessToken;
 
-	public JsonInput(Options opt) {
+	public JsonInputFile(CmdOptions opt) {
 		super();
 		this.forge = opt.getForge().name();
 		this.dest = opt.getDestinationFolder() != null ? opt.getDestinationFolder().getAbsolutePath() : null;

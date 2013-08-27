@@ -219,8 +219,8 @@ public final class CmdMain extends GroundhogMain {
 			String metrics = FormaterFactory.get(CSVFormater.class).format(javaMetrics);
 
 			// Save metrics to file
-			String metricsFilename = format("%s-%s.%s", name, datetimeStr, metricsFormat.simpleName());
-			logger.info(format("Project %s parsed, metrics extracted! Writing result to file %s...", name, metricsFilename));
+			String metricsFilename = format("%s-%s.%s", name, datetimeStr, metricsFormat.toString());
+			logger.info(format("Project %s parsed and metrics extracted! Writing results to file %s...", name, metricsFilename));
 
 			File metricsFile = new File(metricsFolder, metricsFilename);
 			FileUtil.getInstance().writeStringToFile(metricsFile, metrics);
@@ -235,7 +235,7 @@ public final class CmdMain extends GroundhogMain {
 
 
 	@Override
-	public void run(JsonInput input) {
+	public void run(JsonInputFile input) {
 		try {
 			final File destinationFolder = input.getDest();
 			final File metricsFolder = input.getOut();
@@ -271,7 +271,7 @@ public final class CmdMain extends GroundhogMain {
 
 			// Download and analyze projects
 			logger.info("Downloading and processing projects...");
-			ExecutorService ex = Executors.newFixedThreadPool(JsonInput.getMaxThreads());
+			ExecutorService ex = Executors.newFixedThreadPool(JsonInputFile.getMaxThreads());
 			List<Future<File>> downloadFutures = crawler.asyncDownloadProjects(projects);
 			List<Future<?>> analysisFutures = new ArrayList<Future<?>>();
 

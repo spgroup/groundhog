@@ -25,7 +25,7 @@ enum SupportedForge {
  * 
  * @author fjsj, gustavopinto, Rodrigo Alves
  */
-public class Options {
+public class CmdOptions {
 
 	@Option(name = "-forge", usage = "forge to be used in search and crawling process")
 	private SupportedForge forge = SupportedForge.GITHUB;
@@ -51,7 +51,7 @@ public class Options {
 	@Option(name = "-githubtoken", usage = "use authenticated requests to github api")
 	private String gitHubOauthAcessToken;
 	
-	private JsonInput input = null;
+	private JsonInputFile input = null;
 
 	@Argument
 	private List<String> arguments = new ArrayList<String>();
@@ -153,7 +153,7 @@ public class Options {
 		this.metricsFormat = metricsFormat;
 	}
 
-	public JsonInput getInputFile() {
+	public JsonInputFile getInputFile() {
 		return input;
 	}
 
@@ -179,7 +179,7 @@ public class Options {
 			List<String> lines = Files.readLines(inputFile,
 					Charset.defaultCharset());
 			String json = Joiner.on(" ").join(lines);
-			JsonInput args = new Gson().fromJson(json, JsonInput.class);
+			JsonInputFile args = new Gson().fromJson(json, JsonInputFile.class);
 			this.input = args;
 		} catch (JsonSyntaxException e) {
 			throw new GroundhogException(

@@ -4,6 +4,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * Helper class to deal with dates
+ * 
+ * @author ghlp
+ * @since 0.0.1
+ */
 public class Dates {
 
 	private SimpleDateFormat simpleDateFormat;
