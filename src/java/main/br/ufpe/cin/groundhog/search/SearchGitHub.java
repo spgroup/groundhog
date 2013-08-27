@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import br.ufpe.cin.groundhog.Commit;
 import br.ufpe.cin.groundhog.GroundhogException;
 import br.ufpe.cin.groundhog.Issue;
@@ -32,6 +35,8 @@ import com.google.inject.Inject;
  * @since 0.0.1
  */
 public class SearchGitHub implements ForgeSearch {
+	private static Logger logger = LoggerFactory.getLogger(SearchGitHub.class);
+	
 	public static int INFINITY = -1;
 
 	private final Gson gson;
@@ -46,6 +51,7 @@ public class SearchGitHub implements ForgeSearch {
 	}
 
 	public List<Project> getProjects(String term, int page, int limit) throws SearchException {
+		logger.info("Searching project metadata");
 		try {
 			if (term == null) {
 				return getAllForgeProjects(page, limit);
@@ -95,7 +101,10 @@ public class SearchGitHub implements ForgeSearch {
 	 * @throws SearchException
 	 */
 	public List<Project> getProjectsWithMoreThanOneLanguage(int limit) throws SearchException {
+		
 		try {
+			logger.info("Searching project with more than one language metadata");
+			
 			List<Project> rawData = getAllProjects(0, limit);
 
 			List<Project> projects = new ArrayList<>();
@@ -123,6 +132,8 @@ public class SearchGitHub implements ForgeSearch {
 	 */
 	public List<Project> getAllProjectsByLanguage(String lang) throws SearchException {
 
+		logger.info("Searching all project by language metadata");
+		
 		String searchUrl = builder.uses(GithubAPI.LEGACY_V2).withParam("language", lang).build();
 		String json = requests.get(searchUrl);
 
@@ -216,6 +227,9 @@ public class SearchGitHub implements ForgeSearch {
 			throws SearchException {
 
 		try {
+			
+			logger.info("Searching project metadata by term");
+			
 			String searchUrl = builder.uses(GithubAPI.LEGACY_V2)
 					  .withParam(encodeURL(term))
 					  .withParam("start_page", page)
@@ -280,6 +294,8 @@ public class SearchGitHub implements ForgeSearch {
 	 */
 	public List<Issue> getAllProjectIssues(Project project) {
 
+		logger.info("Searching project issues metadata");
+		
 		String searchUrl = builder.uses(GithubAPI.ROOT)
 				  .withParam("repos")
 				  .withSimpleParam("/", project.getUser().getLogin())
@@ -306,6 +322,8 @@ public class SearchGitHub implements ForgeSearch {
 	 */
 	public List<Milestone> getAllProjectMilestones(Project project) {
 
+		logger.info("Searching project milestones metadata");
+		
 		String searchUrl = builder.uses(GithubAPI.ROOT)
 				  .withParam("repos")
 				  .withSimpleParam("/", project.getUser().getLogin())
@@ -332,6 +350,8 @@ public class SearchGitHub implements ForgeSearch {
 	 * @return a {@link List} of {@link Commit} objects
 	 */
 	public List<Commit> getAllProjectCommits(Project project) {
+		
+		logger.info("Searching project commits metadata");
 		
 		String searchUrl = builder.uses(GithubAPI.ROOT)
 				  .withParam("repos")
@@ -362,6 +382,8 @@ public class SearchGitHub implements ForgeSearch {
 	 */
 	public List<Commit> getAllProjectCommitsByDate(Project project, String start, String end) {
 
+		logger.info("Searching all project commits metadata by date");
+		
 		String searchUrl = builder.uses(GithubAPI.ROOT)
 				  .withParam("repos")
 				  .withSimpleParam("/", project.getUser().getLogin())
@@ -394,7 +416,10 @@ public class SearchGitHub implements ForgeSearch {
 	 * @return a {@link List} of {@link User} objects
 	 */
 	public List<User> getAllProjectContributors(Project project) {
-		List<User> collection = new ArrayList<User>();
+		
+		logger.info("Searching project contributors metadata");
+		
+		List<User> collection = new ArrayList<>();
 
 		String searchUrl = builder.uses(GithubAPI.ROOT)
 				  .withParam("repos")
@@ -416,10 +441,13 @@ public class SearchGitHub implements ForgeSearch {
 	}
 
 	public List<Project> getAllForgeProjects(int start, int limit) throws SearchException{
-		List<Project> projects = new ArrayList<Project>();
 		try{
+			logger.info("Searching all projects metadata");
+			
 			int since = start;
 			int totalRepositories = 0;
+			List<Project> projects = new ArrayList<>();
+			
 			while(totalRepositories < limit || limit < 0){
 
 				String searchUrl = builder.uses(GithubAPI.REPOSITORIES)
@@ -428,7 +456,6 @@ public class SearchGitHub implements ForgeSearch {
 										  .build();
 				
 				String jsonString = requests.get(searchUrl);
-
 				JsonArray jsonArray = gson.fromJson(jsonString, JsonElement.class).getAsJsonArray();
 				for (int i = 0; i < jsonArray.size() && 
 						(totalRepositories + i < limit || limit < 0); i++) {
