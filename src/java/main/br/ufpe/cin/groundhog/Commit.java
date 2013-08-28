@@ -135,6 +135,7 @@ public class Commit implements GitHubEntity {
 	
 	@Override
 	public String toString() {
-		return String.format("Commit(%s, %s)", this.commitDate, this.message);
+		return String.format("Commit(%s - %s, %s) - %d",
+				this.getabbrevSHA(), this.commitDate, this.message, this.getCommiter().getLogin());
 	}
 }

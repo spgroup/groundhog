@@ -191,8 +191,8 @@ public class TestMain {
 
 		List<Commit> commits = searchGitHub.getAllProjectCommits(project);
 		
-		for (Commit c: commits) {
-			System.out.println(c);
+		for (Commit com: commits) {
+			System.out.println(com);
 		}
 		
         // sourceForgeExample();

@@ -336,17 +336,17 @@ public class SearchGitHub implements ForgeSearch {
 				  .withSimpleParam("/", project.getName())
 				  .withParam("/commits")
 				  .build();
-		
-		System.out.println(searchUrl);
 
 		JsonElement jsonElement = gson.fromJson(requests.get(searchUrl), JsonElement.class);
 		JsonArray jsonArray = jsonElement.getAsJsonArray();
-		
-		System.out.println(jsonArray);
 
 		List<Commit> commits = new ArrayList<Commit>();
+		
 		for (JsonElement element: jsonArray) {
 			Commit commit = gson.fromJson(element, Commit.class);
+			User user = gson.fromJson(element.getAsJsonObject().get("committer"), User.class);
+			commit.setCommiter(user);
+			commit.setMessage(element.getAsJsonObject().get("commit").getAsJsonObject().get("message").getAsString());
 
 			String date = element.getAsJsonObject().get("commit").getAsJsonObject().get("author").getAsJsonObject().get("date").getAsString();
 			commit.setCommitDate(date.replaceAll("T", " ").replace("Z", ""));
