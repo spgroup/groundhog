@@ -12,8 +12,10 @@ import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.ufpe.cin.groundhog.Commit;
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.SCM;
+import br.ufpe.cin.groundhog.User;
 import br.ufpe.cin.groundhog.codehistory.CodeHistoryModule;
 import br.ufpe.cin.groundhog.codehistory.GitCodeHistory;
 import br.ufpe.cin.groundhog.codehistory.SFCodeHistory;
@@ -182,7 +184,17 @@ public class TestMain {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		 gitHubExample("restfulie-java");
+//		 gitHubExample("restfulie-java");
+		
+		User user = new User("gustavopinto");
+		Project project = new Project(user, "groundhog-case-study");
+
+		List<Commit> commits = searchGitHub.getAllProjectCommits(project);
+		
+		for (Commit c: commits) {
+			System.out.println(c);
+		}
+		
         // sourceForgeExample();
 		// googleCodeExample("facebook-java-api"); // Google Code SVN
 		// googleCodeExample("guava-libraries"); // Google Code Git
