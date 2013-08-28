@@ -184,16 +184,7 @@ public class TestMain {
 	}
 	
 	public static void main(String[] args) throws Exception {
-//		 gitHubExample("restfulie-java");
-		
-		User user = new User("gustavopinto");
-		Project project = new Project(user, "groundhog-case-study");
-
-		List<Commit> commits = searchGitHub.getAllProjectCommits(project);
-		
-		for (Commit com: commits) {
-			System.out.println(com);
-		}
+		// gitHubExample("restfulie-java");
 		
         // sourceForgeExample();
 		// googleCodeExample("facebook-java-api"); // Google Code SVN
