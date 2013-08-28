@@ -118,10 +118,24 @@ public class Commit implements GitHubEntity {
 	public void setDeletionsCount(int deletionsCount) {
 		this.deletionsCount = deletionsCount;
 	}
+	
+	/**
+	 * Gives the abbreviated SHA of the {@link Commit} object
+	 * @return a {@link String} object
+	 */
+	public String getabbrevSHA() {
+		return this.sha.substring(0, 7);
+	}
 
 	@Override
 	public String getURL() {
 		return String.format("https://api.github.com/repos/%s/%s/commits/%s",
 				this.project.getUser().getLogin(), this.project.getName(), this.sha);
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("Commit(%s - %s, %s) - %d",
+				this.getabbrevSHA(), this.commitDate, this.message, this.getCommiter().getLogin());
 	}
 }

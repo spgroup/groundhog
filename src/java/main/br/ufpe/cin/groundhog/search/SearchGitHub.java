@@ -47,7 +47,7 @@ public class SearchGitHub implements ForgeSearch {
 	public SearchGitHub(Requests requests) {
 		this.requests = requests;
 		this.gson = new Gson();
-		this.builder = new UrlBuilder("fake"); 
+		this.builder = new UrlBuilder(""); 
 	}
 
 	public List<Project> getProjects(String term, int page, int limit) throws SearchException {
@@ -357,7 +357,7 @@ public class SearchGitHub implements ForgeSearch {
 				  .withParam("repos")
 				  .withSimpleParam("/", project.getUser().getLogin())
 				  .withSimpleParam("/", project.getName())
-				  .withParam("commits")
+				  .withParam("/commits")
 				  .build();
 
 		JsonElement jsonElement = gson.fromJson(requests.get(searchUrl), JsonElement.class);
@@ -366,6 +366,9 @@ public class SearchGitHub implements ForgeSearch {
 		List<Commit> commits = new ArrayList<>();
 		for (JsonElement element : jsonArray) {
 			Commit commit = gson.fromJson(element, Commit.class);
+			User user = gson.fromJson(element.getAsJsonObject().get("committer"), User.class);
+			commit.setCommiter(user);
+			commit.setMessage(element.getAsJsonObject().get("commit").getAsJsonObject().get("message").getAsString());
 
 			String date = element.getAsJsonObject().get("commit").getAsJsonObject().get("author").getAsJsonObject().get("date").getAsString();
 			commit.setCommitDate(date);

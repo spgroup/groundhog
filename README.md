@@ -108,6 +108,21 @@ for (Issue issue: issues) {
 }
 ```
 
+#### Commits
+
+You can easily fetch all commits of a project
+
+```java
+User user = new User("gustavopinto");
+Project project = new Project(user, "groundhog-case-study");
+
+List<Commit> commits = searchGitHub.getAllProjectCommits(project);
+
+for (Commit com: commits) {
+    System.out.println(com);
+}
+```
+
 #### Milestones
 
 Just like Issues, Groundhog lets you fetch the list of Milestones of a project, too.
