@@ -406,7 +406,7 @@ public class SearchGitHub implements ForgeSearch {
 			Commit commit = gson.fromJson(element, Commit.class);
 
 			String date = element.getAsJsonObject().get("commit").getAsJsonObject().get("author").getAsJsonObject().get("date").getAsString();
-			commit.setCommitDate(date.replaceAll("T", " ").replace("Z", ""));
+			commit.setCommitDate(date);
 			commits.add(commit);
 		}
 
