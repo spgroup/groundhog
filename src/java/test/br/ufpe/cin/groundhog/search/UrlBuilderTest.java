@@ -7,7 +7,7 @@ import br.ufpe.cin.groundhog.search.UrlBuilder.GithubAPI;
 
 public class UrlBuilderTest {
 
-	private UrlBuilder builder = new UrlBuilder("&fake");
+	private UrlBuilder builder = new UrlBuilder("fake");
 	
 	@Test
 	public void getProjectUrlV2() {
@@ -39,7 +39,7 @@ public class UrlBuilderTest {
 				  .withParam("/languages")
 				  .build();
 		
-		Assert.assertEquals("https://api.github.com/repos/spgroup/groundhog/languages&fake", searchUrl);
+		Assert.assertEquals("https://api.github.com/repos/spgroup/groundhog/languages?fake", searchUrl);
 	}
 	
 	@Test
@@ -51,7 +51,7 @@ public class UrlBuilderTest {
 				  .withParam("/issues")
 				  .build();
 		
-		Assert.assertEquals("https://api.github.com/repos/spgroup/groughog/issues&fake", searchUrl);
+		Assert.assertEquals("https://api.github.com/repos/spgroup/groughog/issues?fake", searchUrl);
 	}
 	
 	@Test

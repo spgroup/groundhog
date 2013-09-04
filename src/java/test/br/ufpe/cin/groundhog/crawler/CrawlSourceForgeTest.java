@@ -7,7 +7,6 @@ import java.util.concurrent.Future;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
 
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.http.HttpModule;
@@ -31,7 +30,7 @@ public class CrawlSourceForgeTest {
 		requests = injector.getInstance(Requests.class);
 	}
 
-	@Test
+//	@Test
 	public void testCrawlGithub() {
 		try {
 			Project project = searchSourceForge.getProjects("geom-java", 1, -1).get(0);
@@ -45,7 +44,7 @@ public class CrawlSourceForgeTest {
 			}
 			
 		} catch (Exception e) {
-//			Assert.fail();
+			Assert.fail();
 		}
 	}
 }

@@ -17,6 +17,7 @@ import br.ufpe.cin.groundhog.Milestone;
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.SCM;
 import br.ufpe.cin.groundhog.User;
+import br.ufpe.cin.groundhog.http.HttpModule;
 import br.ufpe.cin.groundhog.http.Requests;
 import br.ufpe.cin.groundhog.search.UrlBuilder.GithubAPI;
 
@@ -26,6 +27,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.inject.Guice;
 import com.google.inject.Inject;
 
 /**
@@ -47,7 +49,7 @@ public class SearchGitHub implements ForgeSearch {
 	public SearchGitHub(Requests requests) {
 		this.requests = requests;
 		this.gson = new Gson();
-		this.builder = new UrlBuilder(""); 
+		this.builder = Guice.createInjector(new HttpModule()).getInstance(UrlBuilder.class);
 	}
 
 	public List<Project> getProjects(String term, int page, int limit) throws SearchException {
@@ -134,7 +136,7 @@ public class SearchGitHub implements ForgeSearch {
 
 		logger.info("Searching all project by language metadata");
 		
-		String searchUrl = builder.uses(GithubAPI.LEGACY_V2).withParam("language", lang).build();
+		String searchUrl = builder.uses(GithubAPI.LEGACY_V2).withSimpleParam("language=", lang).build();
 		String json = requests.get(searchUrl);
 
 		JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();

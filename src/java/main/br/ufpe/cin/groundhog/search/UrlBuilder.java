@@ -2,6 +2,7 @@ package br.ufpe.cin.groundhog.search;
 
 import java.util.Map;
 
+import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 /**
@@ -50,6 +51,7 @@ public final class UrlBuilder {
 	private final String oauthToken;
 	private final StringBuilder builder;
 
+	@Inject
 	public UrlBuilder(@Named("githubOauthToken") String oauthToken) {
 		this.oauthToken = oauthToken;
 		this.builder = new StringBuilder();
@@ -122,7 +124,9 @@ public final class UrlBuilder {
 	 * @return final url
 	 */
 	public String build() {
-		String result = this.builder.append(oauthToken).toString();
+		String concat = isFirstParam() ? "?" : "&";
+		
+		String result = this.builder.append(concat).append(oauthToken).toString();
 		this.builder.delete(0, result.length());
 		return result;
 	}
