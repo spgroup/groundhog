@@ -14,11 +14,11 @@ public class Language implements Comparable<Language> {
 	public static final String JAVA = "Java";
 	
 	private String name;
-	private int loc;
+	private int byteCount;
 	
-	public Language(String name, int loc) {
+	public Language(String name, int byteCount) {
 		this.name = name;
-		this.loc = loc;
+		this.byteCount = byteCount;
 	}
 
 	/**
@@ -34,29 +34,26 @@ public class Language implements Comparable<Language> {
 	}
 
 	/**
-	 * Informs the loc (lines of code) of the language in its project
+	 * Informs the byte count of the language in its project
 	 *  @return a {@link String} object
 	 */
-	public int getLoc() {
-		return this.loc;
+	public int getByteCount() {
+		return this.byteCount;
 	}
 
-	public void setLoc(int loc) {
-		this.loc = loc;
+	public void setByteCount(int byteCount) {
+		this.byteCount = byteCount;
 	}
 
 	@Override
 	public int compareTo(Language o) {
-		if( this.getLoc() < o.getLoc()){
-			return -1;
-		} 
-		if( this.getLoc() > o.getLoc()){
-			return 1;
-		}
+		if( this.getByteCount() < o.getByteCount()) return -1;
+		if( this.getByteCount() > o.getByteCount()) return 1;
+		
 		return 0;
 	}
 	
 	public String toString() {
-		return name;
+		return this.name;
 	}
 }
