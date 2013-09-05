@@ -10,8 +10,11 @@ import com.google.gson.annotations.SerializedName;
  * @author gustavopinto, Rodrigo Alves
  */
 public class User implements GitHubEntity {
-	@SerializedName("id")
+    @SerializedName("id")
 	private int id;
+	
+	@SerializedName("name")
+	private String name;
 	
 	@SerializedName("login")
 	private String login;
@@ -55,6 +58,11 @@ public class User implements GitHubEntity {
 		this.login = login;
 	}
 	
+	public User(String login, String name) {
+		this(login);
+		this.name = name;
+	}
+	
 	/**
 	 * Informs the GitHub ID for the {@link User} object in question
 	 * This ID is unique in GitHub, which means no two users can have the same ID on GitHub
@@ -66,6 +74,22 @@ public class User implements GitHubEntity {
 	
 	public void setId(int id) {
 		this.id = id;
+	}
+	
+	/**
+	 * Informs the User name. Useful for measuring commit authorship
+	 * @return a {@link String} object
+	 */
+	public String getName() {
+		return this.name;
+	}
+	
+	/**
+	 * Sets the name of the User
+	 * @param name
+	 */
+	public void setName(String name) {
+		this.name = name;
 	}
 	
     /**
