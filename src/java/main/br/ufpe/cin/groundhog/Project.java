@@ -85,6 +85,7 @@ public class Project implements GitHubEntity {
 	public Project(User user, String name) {
 		this.user = user;
 		this.name = name;
+		this.scmURL = "https://github.com/" + user.getLogin() + "/" + name + ".git";
 	}
 
 	/**
