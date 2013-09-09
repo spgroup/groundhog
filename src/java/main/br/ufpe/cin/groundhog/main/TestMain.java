@@ -186,19 +186,15 @@ public class TestMain {
 	public static void main(String[] args) throws Exception {
 		// gitHubExample("restfulie-java");
 		
-		GitClient gitClient = new GitClient();
-		File folder = new File("/Users/rodrigovieira/Desktop");
-				
-		CrawlGitHub crawler = new CrawlGitHub(gitClient, folder);
-		User u = new User("gustavopinto");
+//		File folder = new File("/tmp");
+//		CrawlGitHub crawler = new CrawlGitHub(new GitClient(), folder);
+//		Project pr = new Project(new User("gustavopinto"), "groundhog-case-study");
+//		
+//		System.out.println("url e: " + pr.getScmURL());
+//		
+//		crawler.downloadProject(pr);
 		
-		Project pr = new Project(u, "groundhog-case-study");
-		
-		System.out.println("url e: " + pr.getScmURL());
-		
-		crawler.downloadProject(pr);
-		
-		File project = new File("/Users/rodrigovieira/Desktop/groundhog-case-study");
+		File project = new File("/tmp/groundhog-case-study");
 		
 		GitCommitExtractor extractor = new GitCommitExtractor();
 		extractor.extractCommits(project);

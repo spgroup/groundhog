@@ -4,19 +4,20 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import br.ufpe.cin.groundhog.Commit;
-import br.ufpe.cin.groundhog.User;
 
 import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.gitective.core.CommitFinder;
+import org.gitective.core.PathFilterUtils;
 import org.gitective.core.filter.commit.AndCommitFilter;
 import org.gitective.core.filter.commit.AuthorFilter;
 import org.gitective.core.filter.commit.CommitCountFilter;
 import org.gitective.core.filter.commit.CommitListFilter;
+
+import br.ufpe.cin.groundhog.Commit;
+import br.ufpe.cin.groundhog.User;
 
 /**
  * Extract Commit data from Git repositories
@@ -24,11 +25,6 @@ import org.gitective.core.filter.commit.CommitListFilter;
  *
  */
 public class GitCommitExtractor {
-	private CommitCountFilter commits;
-	
-	public GitCommitExtractor() {
-		this.commits = new CommitCountFilter();
-	}
 	
 	/**
 	 * 
@@ -37,24 +33,20 @@ public class GitCommitExtractor {
 	 * @throws IOException
 	 */
 	public List<Commit> extractCommits(File project) throws IOException {
-		List<Commit> commits = new ArrayList<>();
-		String path = project.getAbsolutePath();
-		
-		CommitFinder finder = new CommitFinder(path);
-		FileRepositoryBuilder builder = new FileRepositoryBuilder();
-		Repository repository = builder.setGitDir(new File(path)).readEnvironment()
-			.findGitDir()
-		    .build();
-
 		CommitListFilter list = new CommitListFilter();
 		
-		for (RevCommit rev : list.getCommits()){
-		    System.out.println(rev.getName());
-		    System.out.println(rev.getAuthorIdent().getName());
+		String path = project.getAbsolutePath() + "/.git";
+		CommitFinder finder = new CommitFinder(path);
+		
+		finder.setFilter(list).find();
+		
+		for(RevCommit rev : list.getCommits()){
+		    System.out.print(rev.getName() + " ");
+		    System.out.print(rev.getAuthorIdent().getName() + " ");
 		    System.out.println(rev.getShortMessage());
 		}
 		
-		return commits;
+		return null;
 	}
 	
 	/**
