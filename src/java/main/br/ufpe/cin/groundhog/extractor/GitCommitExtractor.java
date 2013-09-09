@@ -26,13 +26,7 @@ import br.ufpe.cin.groundhog.User;
  */
 public class GitCommitExtractor {
 	
-	/**
-	 * 
-	 * @param project
-	 * @return
-	 * @throws IOException
-	 */
-	public List<Commit> extractCommits(File project) throws IOException {
+	public List<Commit> extractCommits(File project) {
 		CommitListFilter list = new CommitListFilter();
 		
 		String path = project.getAbsolutePath() + "/.git";
@@ -47,6 +41,20 @@ public class GitCommitExtractor {
 		}
 		
 		return null;
+	}
+	
+	public int numberOfCommits(File project) {
+		CommitCountFilter commits = new CommitCountFilter();
+		String path = project.getAbsolutePath() + "/.git";
+		
+		CommitFinder finder = new CommitFinder(path);
+		finder.setFilter(PathFilterUtils.andSuffix(".java"));
+		finder.setMatcher(commits);
+		finder.find();
+
+		System.out.println(commits.getCount());
+		
+		return (int) commits.getCount();
 	}
 	
 	/**
