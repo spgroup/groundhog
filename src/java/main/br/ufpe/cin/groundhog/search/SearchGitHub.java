@@ -345,6 +345,37 @@ public class SearchGitHub implements ForgeSearch {
 
 		return milestones;
 	}
+	
+	/**
+	 * Fetches all the Tags of the given {@link Project} from the GitHub API
+	 * @param project the @{link Project} of which the Milestones are about
+	 * @return a the size of the {@link List} of {@link Tags} objects
+	 */
+	public int getNumberProjectTags(Project project) {
+
+		logger.info("Searching project tags metadata");
+		
+		String searchUrl = builder.uses(GithubAPI.ROOT)
+				  .withParam("repos")
+				  .withSimpleParam("/", project.getUser().getLogin())
+				  .withSimpleParam("/", project.getName())
+				  .withParam("/git/refs/tags")
+				  .build();
+
+		String jsonString = getWithProtection(searchUrl);
+
+		int retorno = 0;
+		
+		if(!jsonString.contains("Not Found") && !jsonString.contains("Git Repository is empty.")){
+			JsonArray jsonArray = gson.fromJson(jsonString, JsonElement.class).getAsJsonArray();
+
+			if(jsonArray.isJsonArray()){
+				retorno = jsonArray.size();
+			}
+		}
+		
+		return retorno;
+	}
 
 	/**
 	 * Fetches all the Commits of the given {@link Project} from the GitHub API
