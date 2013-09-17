@@ -367,11 +367,21 @@ public class SearchGitHub implements ForgeSearch {
 		int retorno = 0;
 		
 		if(!jsonString.contains("Not Found") && !jsonString.contains("Git Repository is empty.")){
-			JsonArray jsonArray = gson.fromJson(jsonString, JsonElement.class).getAsJsonArray();
 
-			if(jsonArray.isJsonArray()){
-				retorno = jsonArray.size();
+			try {
+				JsonElement element =gson.fromJson(jsonString, JsonElement.class);
+				
+				if(element.isJsonArray()){
+					
+					JsonArray jsonArray = element.getAsJsonArray();
+					
+					retorno = jsonArray.size();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.out.println("Causado por " + jsonString);
 			}
+			
 		}
 		
 		return retorno;
