@@ -151,6 +151,19 @@ Project project = new Project(user, "rails"); // project github.com/rails/rails
 List<User> contributors = searchGitHub.getAllProjectContributors(project);
 ```
 
+## Local Data Extraction
+
+In addition to the metadata extraction allowed via the GitHub API, Groundhog covers local data extraction onto repositories via a Git interface
+
+You can, for example, count the number of commits in a project that include a Java file, via a `GitCommitExtractor` object:
+
+```java
+GitCommitExtractor extractor = new GitCommitExtractor();
+File project = new File("/tmp/elasticsearch");
+
+extractor.numberOfCommitsWithExtension(project, "java");
+```
+
 ## Documentation
 
 Groundhog features a [Wiki], where you can browse for more information.
