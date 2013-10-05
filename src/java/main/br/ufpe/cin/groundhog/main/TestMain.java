@@ -193,11 +193,13 @@ public class TestMain {
 //		
 //		crawler.downloadProject(pr);
 		
-		File project = new File("/tmp/groundhog-case-study");
+		File project = new File("/Users/rodrigovieira/Desktop/groundhog-case-study");
 		
 		GitCommitExtractor extractor = new GitCommitExtractor();
 		extractor.extractCommits(project);
-		extractor.numberOfCommits(project);
+		
+		System.out.println(extractor.numberOfCommitsWithExtension(project, "md"));
+		
 		
 		System.out.println("Pronto!");
         // sourceForgeExample();

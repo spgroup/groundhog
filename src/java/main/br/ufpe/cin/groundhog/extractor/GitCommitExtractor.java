@@ -34,25 +34,32 @@ public class GitCommitExtractor {
 		
 		finder.setFilter(list).find();
 		
-		for(RevCommit rev : list.getCommits()){
-		    System.out.print(rev.getName() + " ");
-		    System.out.print(rev.getAuthorIdent().getName() + " ");
-		    System.out.println(rev.getShortMessage());
+		for (RevCommit rev : list.getCommits()){
+		    System.out.println(rev.getName() + " " + rev.getAuthorIdent().getName() + " " + rev.getShortMessage());
 		}
 		
 		return null;
 	}
 	
-	public int numberOfCommits(File project) {
+	/**
+	 * A method that returns the number of commits that contain files with a given file extension
+	 * Example usage:
+	 * 
+	 * File project = new File("/tmp/project");
+	 * numberOfCommitsWithExtension(project, ".java") // Returns the number of commits in project that includes Java files
+	 * 
+	 * @param project A {@link file} object for the directory where the Git repository is located 
+	 * @param extension The extension to be searched within the commits
+	 * @return the number of commits that includes files with the given extension
+	 */
+	public int numberOfCommitsWithExtension(File project, String extension) {
 		CommitCountFilter commits = new CommitCountFilter();
 		String path = project.getAbsolutePath() + "/.git";
 		
 		CommitFinder finder = new CommitFinder(path);
-		finder.setFilter(PathFilterUtils.andSuffix(".java"));
+		finder.setFilter(PathFilterUtils.andSuffix("." + extension));
 		finder.setMatcher(commits);
 		finder.find();
-
-		System.out.println(commits.getCount());
 		
 		return (int) commits.getCount();
 	}
