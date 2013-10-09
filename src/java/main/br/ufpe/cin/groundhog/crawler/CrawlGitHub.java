@@ -16,7 +16,6 @@ import com.google.inject.Inject;
  * @author fjsj, gustavopinto
  */
 public class CrawlGitHub extends ForgeCrawler {
-
 	private final static Logger logger = LoggerFactory.getLogger(CrawlGitHub.class);
 
 	private final GitClient gitClient;
@@ -35,7 +34,6 @@ public class CrawlGitHub extends ForgeCrawler {
 		File projectDestinationFolder = new File(destinationFolder, projectName);
 
 		logger.info(String.format("Downloading %s project..", project.getName()));
-		
 
 		try {
 			this.gitClient.clone(projectUrl, projectDestinationFolder);

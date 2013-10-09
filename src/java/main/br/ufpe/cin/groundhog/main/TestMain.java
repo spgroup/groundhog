@@ -21,6 +21,7 @@ import br.ufpe.cin.groundhog.crawler.CrawlGitHub;
 import br.ufpe.cin.groundhog.crawler.CrawlGoogleCode;
 import br.ufpe.cin.groundhog.crawler.CrawlSourceForge;
 import br.ufpe.cin.groundhog.crawler.ForgeCrawler;
+import br.ufpe.cin.groundhog.extractor.GitCommitExtractor;
 import br.ufpe.cin.groundhog.http.HttpModule;
 import br.ufpe.cin.groundhog.http.Requests;
 import br.ufpe.cin.groundhog.parser.java.JavaParser;
@@ -184,6 +185,23 @@ public class TestMain {
 	public static void main(String[] args) throws Exception {
 		// gitHubExample("restfulie-java");
 		
+//		File folder = new File("/tmp");
+//		CrawlGitHub crawler = new CrawlGitHub(new GitClient(), folder);
+//		Project pr = new Project(new User("gustavopinto"), "groundhog-case-study");
+//		
+//		System.out.println("url e: " + pr.getScmURL());
+//		
+//		crawler.downloadProject(pr);
+		
+		File project = new File("/Users/rodrigovieira/Desktop/groundhog-case-study");
+		
+		GitCommitExtractor extractor = new GitCommitExtractor();
+		extractor.extractCommits(project);
+		
+		System.out.println(extractor.numberOfCommitsWithExtension(project, "md"));
+		
+		
+		System.out.println("Pronto!");
         // sourceForgeExample();
 		// googleCodeExample("facebook-java-api"); // Google Code SVN
 		// googleCodeExample("guava-libraries"); // Google Code Git
