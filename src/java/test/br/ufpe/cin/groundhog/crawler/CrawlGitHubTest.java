@@ -21,12 +21,12 @@ import com.google.inject.Injector;
 
 public class CrawlGitHubTest {
 
-	private GitClient gitClient; 
+	private GitClient gitClient;
 
 	@Before
 	public void setup() {
 		Injector injector = Guice.createInjector(new ScmModule());
-		gitClient = injector.getInstance(GitClient.class);
+		this.gitClient = injector.getInstance(GitClient.class);
 	}
 
 	@Test
