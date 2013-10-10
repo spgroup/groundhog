@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>Groundhog by spgroup</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+          <h1>Groundhog</h1>
+          <h2>A framework for crawling GitHub projects and raw data and to extract metrics from them</h2>
+        </header>
+
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/spgroup/groundhog/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/spgroup/groundhog/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/spgroup/groundhog" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <h1>
+<a name="groundhog" class="anchor" href="#groundhog"><span class="octicon octicon-link"></span></a>Groundhog</h1>
+
+<p><a href="https://travis-ci.org/spgroup/groundhog"><img src="https://travis-ci.org/spgroup/groundhog.png?branch=master" alt="Build Status"></a></p>
+
+<p>Groundhog is an easy to use framework for crawling raw GitHub data and to extract metrics from it. It leverages the power of the Java language, as well as the Github plataform, to help researchers to better understand software repositories. Groundhog goals are flexibility, extensibility and simplicity.</p>
+
+<p><strong>WARNING:</strong> Groundhog is currently alpha-software and its API <strong>will</strong> suffer major changes. The current version is an experiment that showcases using the GitHub API and the JavaCompiler.</p>
+
+<p>On the developer side, Groundhog focuses on simplicity by shipping with a bare stack, allowing a research to get started quickly while making it easy to extend the application as and when they see fit.</p>
+
+<p>It is currently alpha software and it supports:</p>
+
+<ul>
+<li>Partially integrated with GitHub API</li>
+<li>Extract and download projects from three forges</li>
+<li>Collect metrics about Java code</li>
+<li>Plug-and-play features</li>
+</ul><p>Before becoming beta, we want to add the following to Groundhog:</p>
+
+<ul>
+<li>Fully-integrated with GitHub API</li>
+</ul><h2>
+<a name="build" class="anchor" href="#build"><span class="octicon octicon-link"></span></a>Build</h2>
+
+<p>Groundhog uses Java 7 features, so you must have it installed before build. Groundhog also uses <a href="maven.apache.org">Maven</a>, so to build the project you will need to download and install the tool.</p>
+
+<h4>
+<a name="bulding-for-eclipse" class="anchor" href="#bulding-for-eclipse"><span class="octicon octicon-link"></span></a>Bulding for Eclipse</h4>
+
+<p>In order for it to behave like an Eclipse project, you'll need to run the following command in the command line:</p>
+
+<pre><code>$ mvn eclipse:eclipse
+</code></pre>
+
+<p>If you prefer, you can just use the groundhog.jar file from command line. You can generate this file in two ways:</p>
+
+<h3>
+<a name="generating-the-jar-via-eclipse" class="anchor" href="#generating-the-jar-via-eclipse"><span class="octicon octicon-link"></span></a>Generating the JAR via Eclipse</h3>
+
+<p>Eclipse users can go to <code>File &gt; Export &gt; Runnable JAR File</code> and enter the <code>CmdMain</code> class for the option "Launch Configuration".</p>
+
+<h3>
+<a name="generating-the-jar-via-command-line" class="anchor" href="#generating-the-jar-via-command-line"><span class="octicon octicon-link"></span></a>Generating the JAR via command line</h3>
+
+<p>Maven users can simply type in the root directory:</p>
+
+<pre><code>$ mvn package
+</code></pre>
+
+<p>and the jar will be created in the target/ path.</p>
+
+<h3>
+<a name="running-tests" class="anchor" href="#running-tests"><span class="octicon octicon-link"></span></a>Running tests</h3>
+
+<pre><code>$ mvn test
+</code></pre>
+
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>You can use Groundhog in two ways: as an executable JAR from the command line or as a library in your own Java project.</p>
+
+<h3>
+<a name="using-as-a-executable-jar" class="anchor" href="#using-as-a-executable-jar"><span class="octicon octicon-link"></span></a>Using as a executable JAR</h3>
+
+<p>Search GitHub for projects matching "phonegap-facebook-plugin" and place the results (if any) in a folder called metrics:</p>
+
+<pre lang="shell"><code>$ java -jar groundhog.jar -forge github -out metrics phonegap-facebook-plugin
+</code></pre>
+
+<h3>
+<a name="using-as-a-third-party-library" class="anchor" href="#using-as-a-third-party-library"><span class="octicon octicon-link"></span></a>Using as a third-party library</h3>
+
+<h4>
+<a name="fetching-metadata" class="anchor" href="#fetching-metadata"><span class="octicon octicon-link"></span></a>Fetching Metadata</h4>
+
+<p>Metadata is fetched from GitHub's API. In order to be able to fetch more objects, you need to  <a href="https://github.com/settings/applications">obtain your GitHub API token</a> and use it in Groundhog.</p>
+
+<h4>
+<a name="project" class="anchor" href="#project"><span class="octicon octicon-link"></span></a>Project</h4>
+
+<p>You can use Groundhog to fetch metadata on a list of projects that attend to a criteria</p>
+
+<div class="highlight highlight-java"><pre><span class="c1">// Create a GitHub search object</span>
+<span class="n">Injector</span> <span class="n">injector</span> <span class="o">=</span> <span class="n">Guice</span><span class="o">.</span><span class="na">createInjector</span><span class="o">(</span><span class="k">new</span> <span class="n">SearchModule</span><span class="o">());</span>
+<span class="n">SearchGitHub</span> <span class="n">searchGitHub</span> <span class="o">=</span> <span class="n">injector</span><span class="o">.</span><span class="na">getInstance</span><span class="o">(</span><span class="n">SearchGitHub</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+
+<span class="c1">// Search for projects named "opencv" starting in page 1 and stoping and going until the 3rd project</span>
+<span class="n">List</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span> <span class="n">projects</span> <span class="o">=</span> <span class="n">searchGitHub</span><span class="o">.</span><span class="na">getProjects</span><span class="o">(</span><span class="s">"opencv"</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">3</span><span class="o">);</span>
+</pre></div>
+
+<p>Alternatively, you can search for projects without setting the limiting point. In this case Groundhog will fetch projects until your API limit is exceeded.</p>
+
+<div class="highlight highlight-java"><pre><span class="n">List</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span> <span class="n">projects</span> <span class="o">=</span> <span class="n">searchGitHub</span><span class="o">.</span><span class="na">getProjects</span><span class="o">(</span><span class="s">"eclipse"</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="n">SearchGitHub</span><span class="o">.</span><span class="na">INFINITY</span><span class="o">)</span>
+</pre></div>
+
+<h4>
+<a name="issues" class="anchor" href="#issues"><span class="octicon octicon-link"></span></a>Issues</h4>
+
+<p>Issues are objects that only make sense from a Project perspective.</p>
+
+<p>To fetch the Issues of a given project using Groundhog you should first create the Project and then tell Groundhog to hit the API and get the data.</p>
+
+<div class="highlight highlight-java"><pre><span class="n">User</span> <span class="n">user</span> <span class="o">=</span> <span class="k">new</span> <span class="n">User</span><span class="o">(</span><span class="s">"joyent"</span><span class="o">);</span>         <span class="c1">// Create the User object</span>
+<span class="n">Project</span> <span class="n">pr</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Project</span><span class="o">(</span><span class="n">user</span><span class="o">,</span> <span class="s">"node"</span><span class="o">);</span> <span class="c1">// Create the Project object</span>
+
+<span class="c1">// Tell Groundhog to fetch all Issues of that project and assign them the the Project object:</span>
+<span class="n">List</span><span class="o">&lt;</span><span class="n">Issue</span><span class="o">&gt;</span> <span class="n">issues</span> <span class="o">=</span> <span class="n">searchGitHub</span><span class="o">.</span><span class="na">getAllProjectIssues</span><span class="o">(</span><span class="n">pr</span><span class="o">);</span>
+
+<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Listing 'em Issues..."</span><span class="o">);</span>
+<span class="k">for</span> <span class="o">(</span><span class="n">Issue</span> <span class="nl">issue:</span> <span class="n">issues</span><span class="o">)</span> <span class="o">{</span>
+  <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">issue</span><span class="o">.</span><span class="na">getTitle</span><span class="o">());</span>
+<span class="o">}</span>
+</pre></div>
+
+<h4>
+<a name="commits" class="anchor" href="#commits"><span class="octicon octicon-link"></span></a>Commits</h4>
+
+<p>You can easily fetch all commits of a project</p>
+
+<div class="highlight highlight-java"><pre><span class="n">User</span> <span class="n">user</span> <span class="o">=</span> <span class="k">new</span> <span class="n">User</span><span class="o">(</span><span class="s">"gustavopinto"</span><span class="o">);</span>
+<span class="n">Project</span> <span class="n">project</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Project</span><span class="o">(</span><span class="n">user</span><span class="o">,</span> <span class="s">"groundhog-case-study"</span><span class="o">);</span>
+
+<span class="n">List</span><span class="o">&lt;</span><span class="n">Commit</span><span class="o">&gt;</span> <span class="n">commits</span> <span class="o">=</span> <span class="n">searchGitHub</span><span class="o">.</span><span class="na">getAllProjectCommits</span><span class="o">(</span><span class="n">project</span><span class="o">);</span>
+
+<span class="k">for</span> <span class="o">(</span><span class="n">Commit</span> <span class="nl">com:</span> <span class="n">commits</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">com</span><span class="o">);</span>
+<span class="o">}</span>
+</pre></div>
+
+<h4>
+<a name="milestones" class="anchor" href="#milestones"><span class="octicon octicon-link"></span></a>Milestones</h4>
+
+<p>Just like Issues, Groundhog lets you fetch the list of Milestones of a project, too.</p>
+
+<div class="highlight highlight-java"><pre><span class="n">List</span><span class="o">&lt;</span><span class="n">Milestone</span><span class="o">&gt;</span> <span class="n">milestones</span> <span class="o">=</span> <span class="n">searchGitHub</span><span class="o">.</span><span class="na">getAllProjectMilestones</span><span class="o">(</span><span class="n">pr</span><span class="o">);</span>
+</pre></div>
+
+<h4>
+<a name="languages" class="anchor" href="#languages"><span class="octicon octicon-link"></span></a>Languages</h4>
+
+<p>Software projects are often composed of more than one programming language. Groundhog lets you fetch the list of languages of a project among its LoC (lines of code) count.</p>
+
+<div class="highlight highlight-java"><pre><span class="c1">// Returns a List of Language objects for each language of project "pr"</span>
+<span class="n">List</span><span class="o">&lt;</span><span class="n">Language</span><span class="o">&gt;</span> <span class="n">languages</span> <span class="o">=</span> <span class="n">searchGitHub</span><span class="o">.</span><span class="na">fetchProjectLanguages</span><span class="o">(</span><span class="n">pr</span><span class="o">);</span>
+</pre></div>
+
+<h4>
+<a name="contributors" class="anchor" href="#contributors"><span class="octicon octicon-link"></span></a>Contributors</h4>
+
+<p>You can also get the list of people who contributed to a project on GitHub:</p>
+
+<div class="highlight highlight-java"><pre><span class="n">User</span> <span class="n">user</span> <span class="o">=</span> <span class="k">new</span> <span class="n">User</span><span class="o">(</span><span class="s">"rails"</span><span class="o">);</span>
+<span class="n">Project</span> <span class="n">project</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Project</span><span class="o">(</span><span class="n">user</span><span class="o">,</span> <span class="s">"rails"</span><span class="o">);</span> <span class="c1">// project github.com/rails/rails</span>
+
+<span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span> <span class="n">contributors</span> <span class="o">=</span> <span class="n">searchGitHub</span><span class="o">.</span><span class="na">getAllProjectContributors</span><span class="o">(</span><span class="n">project</span><span class="o">);</span>
+</pre></div>
+
+<h2>
+<a name="local-data-extraction" class="anchor" href="#local-data-extraction"><span class="octicon octicon-link"></span></a>Local Data Extraction</h2>
+
+<p>In addition to the metadata extraction allowed via the GitHub API, Groundhog covers local data extraction onto repositories via a Git interface</p>
+
+<p>You can, for example, count the number of commits in a project that include a Java file, via a <code>GitCommitExtractor</code> object:</p>
+
+<div class="highlight highlight-java"><pre><span class="n">GitCommitExtractor</span> <span class="n">extractor</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GitCommitExtractor</span><span class="o">();</span>
+<span class="n">File</span> <span class="n">project</span> <span class="o">=</span> <span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="s">"/tmp/elasticsearch"</span><span class="o">);</span>
+
+<span class="n">extractor</span><span class="o">.</span><span class="na">numberOfCommitsWithExtension</span><span class="o">(</span><span class="n">project</span><span class="o">,</span> <span class="s">"java"</span><span class="o">);</span>
+</pre></div>
+
+<h2>
+<a name="documentation" class="anchor" href="#documentation"><span class="octicon octicon-link"></span></a>Documentation</h2>
+
+<p>Groundhog features a <a href="https://github.com/spgroup/groundhog/wiki">Wiki</a>, where you can browse for more information.</p>
+
+<p>You can generate the Javadoc files with the following command:</p>
+
+<pre><code>$ cd src/
+$ javadoc -d src/src/groundhog br.cin.ufpe.groundhog
+</code></pre>
+
+<h2>
+<a name="core-team" class="anchor" href="#core-team"><span class="octicon octicon-link"></span></a>Core team</h2>
+
+<ul>
+<li><p>Flávio Junior {<a href="mailto:fjsj@cin.ufpe.br">fjsj@cin.ufpe.br</a>}</p></li>
+<li><p>Gustavo Pinto {<a href="mailto:ghlp@cin.ufpe.br">ghlp@cin.ufpe.br</a>}</p></li>
+<li><p>Rodrigo Alves {<a href="mailto:rav2@cin.ufpe.br">rav2@cin.ufpe.br</a>}</p></li>
+<li><p>Danilo Neves Ribeiro {<a href="mailto:dnr2@cin.ufpe.br">dnr2@cin.ufpe.br</a>}</p></li>
+<li><p>Fernando Castor {<a href="mailto:myfamilyname@cin.ufpe.br">myfamilyname@cin.ufpe.br</a>}</p></li>
+<li><p>Jesus Silva {<a href="mailto:jjss@cin.ufpe.br">jjss@cin.ufpe.br</a>}</p></li>
+</ul><h2>
+<a name="contributions" class="anchor" href="#contributions"><span class="octicon octicon-link"></span></a>Contributions</h2>
+
+<p>Want to contribute with code, documentation or bug report? That's great, check out the <a href="https://github.com/spgroup/groundhog/issues">Issues</a> page.</p>
+
+<p>Preferably, your contribution should be backed by JUnit tests.</p>
+
+<p>Stability and maintainability are important goals of the Groundhog project. Well-written, tested code and proper documentation are very welcome.</p>
+
+<h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>Groundhog is released under GPL 2.</p>
+        </section>
+
+        <footer>
+          Groundhog is maintained by <a href="https://github.com/spgroup">spgroup</a><br>
+          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
+    </div>
+  </body>
+</html>
