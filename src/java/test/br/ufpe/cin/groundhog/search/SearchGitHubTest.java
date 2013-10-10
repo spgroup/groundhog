@@ -6,6 +6,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import br.ufpe.cin.groundhog.Commit;
 import br.ufpe.cin.groundhog.Language;
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.SCM;
@@ -74,4 +75,17 @@ public class SearchGitHubTest {
 		}
 	}
 	
+	@Test
+	public void testGetAllProjectCommits() {
+		try {
+			User u = new User("vkostyukov");
+			Project project = new Project(u, "la4j");
+					
+			List<Commit> commits = searchGitHub.getAllProjectCommits(project);
+			Assert.assertNotNull(commits);	
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail();
+		}
+	}
 }
