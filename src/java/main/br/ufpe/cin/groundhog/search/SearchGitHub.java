@@ -30,6 +30,10 @@ import com.google.gson.JsonParser;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map.Entry;
+
 /**
  * Performs the project search on GitHub, via its official JSON API
  * 
@@ -113,7 +117,7 @@ public class SearchGitHub implements ForgeSearch {
 			for (Project project : rawData) {
 				List<Language> languages = getProjectLanguages(project);
 
-				if(languages.size() > 1){
+				if (languages.size() > 1) {
 					projects.add(project);
 				}
 			}
@@ -540,22 +544,91 @@ public class SearchGitHub implements ForgeSearch {
 			throw new SearchException(e);
 		}
 	}
+	
+	/**
+	 * Gets the top most Used languages among the projects considering the most used language
+	 * in each project. 
+	 * @param projects List of projects into consideration
+	 * @param limit Limits the size of the returning list
+	 * @return sorted list with the top most used languages
+	 */
+	public List<Language> getTopMostUsedLanguages(List<Project> projects, int limit){
+		List<Language> topLanguages = new ArrayList<Language>();
+		HashMap<String, Integer> LanguageMap = new HashMap<String, Integer>(); 
+		for (Project project: projects) {			
+			String language = project.getLanguage();
+			Integer count = 1;
+			
+			if (LanguageMap.containsKey(language)){ 
+				count += LanguageMap.get(language);
+			}						   
+			
+			LanguageMap.put(language, count);
+
+		}
+		for (Entry<String, Integer> language : LanguageMap.entrySet()) {
+			topLanguages.add(new Language(language.getKey(), language.getValue()));
+		}
+
+		Collections.sort(topLanguages);
+		if(limit < 0) limit = 0;
+		
+		topLanguages = topLanguages.subList(0, Math.min(limit, topLanguages.size()));
+		return topLanguages;		
+	}
+
+
+	/**
+	 * Gets the top most used languages among the projects according to the number 
+	 * of LOC (lines of code) that they appear. 
+	 * @param projects {@link List} of projects into consideration
+	 * @param limit for limiting (upper bound) the size of the returning list
+	 * @return sorted list with the top most used languages
+	 */
+	public List<Language> getTopMostUsedLanguagesLoc(List<Project> projects, int limit){
+		List<Language> topLanguages = new ArrayList<Language>();
+		HashMap<String, Integer> LanguageMap = new HashMap<String, Integer>(); 
+		
+		for (Project project: projects){
+			if (project.getLanguages() == null) {
+				throw new GroundhogException("languages information required");
+			}
+			
+			for (Language language : project.getLanguages()) {
+				Integer newLoc = language.getByteCount();
+				
+				if (LanguageMap.containsKey(language.getName())) {
+					newLoc += LanguageMap.get(language.getName());
+				}
+				
+				LanguageMap.put(language.getName(), newLoc);
+			}
+		}
+		
+		for (Entry<String, Integer> language : LanguageMap.entrySet()) {
+			topLanguages.add(new Language(language.getKey(), language.getValue()));
+		}
+
+		Collections.sort(topLanguages);
+		if (limit < 0 ) limit = 0;
+		
+		topLanguages = topLanguages.subList(0, Math.min(limit, topLanguages.size()));
+		return topLanguages;	
+	}
 
 	private String getWithProtection(String url){
+		String data = requests.get(url);
 
-		String retorno = requests.get(url);
-
-		if(retorno.contains("API rate limit exceeded for ")){
+		if (data.contains("API rate limit exceeded for")) {
 			try {
 				Thread.sleep(1000 * 60 * 60);
-
-				retorno = requests.get(url);
+				data = requests.get(url);
 
 			} catch (InterruptedException ex) {
 				ex.printStackTrace();
 			}
 		}
 
-		return retorno;
+		return data;
 	}
 }

@@ -2,6 +2,7 @@ package br.ufpe.cin.groundhog.main;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.SCM;
+import br.ufpe.cin.groundhog.User;
 import br.ufpe.cin.groundhog.codehistory.CodeHistoryModule;
 import br.ufpe.cin.groundhog.codehistory.GitCodeHistory;
 import br.ufpe.cin.groundhog.codehistory.SFCodeHistory;
@@ -182,8 +184,19 @@ public class TestMain {
 		}
 	}
 	
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		// gitHubExample("restfulie-java");
+		
+		List<Project> projects = searchGitHub.getAllProjectsByLanguage("java");
+		List<User> users = new ArrayList<>();
+
+		// O(n^2) algorithm. Do you have a better approach? Please bring it here
+		for (Project pr: projects) {
+			for (User u: searchGitHub.getAllProjectContributors(pr)) {
+				users.add(u);
+				System.out.println(u);
+			}
+		}
 		
 //		File folder = new File("/tmp");
 //		CrawlGitHub crawler = new CrawlGitHub(new GitClient(), folder);
@@ -193,15 +206,14 @@ public class TestMain {
 //		
 //		crawler.downloadProject(pr);
 		
-		File project = new File("/Users/rodrigovieira/Desktop/groundhog-case-study");
+//		File project = new File("/Users/rodrigovieira/Desktop/groundhog-case-study");
 		
-		GitCommitExtractor extractor = new GitCommitExtractor();
-		extractor.extractCommits(project);
+//		GitCommitExtractor extractor = new GitCommitExtractor();
+//		extractor.extractCommits(project);
 		
-		System.out.println(extractor.numberOfCommitsWithExtension(project, "md"));
+//		System.out.println(extractor.numberOfCommitsWithExtension(project, "md"));
 		
-		
-		System.out.println("Pronto!");
+//		System.out.println("Pronto!");
         // sourceForgeExample();
 		// googleCodeExample("facebook-java-api"); // Google Code SVN
 		// googleCodeExample("guava-libraries"); // Google Code Git

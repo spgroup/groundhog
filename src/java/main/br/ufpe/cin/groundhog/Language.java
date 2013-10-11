@@ -6,7 +6,7 @@ package br.ufpe.cin.groundhog;
  * Projects. As a representation of the programming language composition of such
  * objects.
  * 
- * @author Rodrigo Alves
+ * @author Rodrigo Alves, Danilo Neves
  * @since 0.0.1
  * 
  */
