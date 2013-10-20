@@ -151,8 +151,6 @@ public class Release implements GitHubEntity {
 	public String getURL() {
 		return String.format("https://api.github.com/repos/%s/%s/releases/%d", this.getProject().getOwner().getLogin(), this.getProject().getName(), this.id);
 	}
-
-
 	
 
 

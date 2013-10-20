@@ -39,9 +39,6 @@ public class ReleaseTest {
 			Assert.fail();
 		}
 
-
-
-
 	}
 
 }

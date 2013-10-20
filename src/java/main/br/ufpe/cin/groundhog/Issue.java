@@ -265,6 +265,5 @@ public class Issue implements GitHubEntity {
 			stringReturn += ", URL = " + url;   
 		}
 		return stringReturn;  
-
 	}
 }
