@@ -38,7 +38,7 @@ public class Requests {
 	
 	/**
 	 * Gets the response body of the given URL using the preview flag in the request header
-	 * This is for new API's that are in preview mode
+	 * This is for new API's that are still in preview mode
 	 * @param urlStr
 	 * @return the entire html content
 	 */
