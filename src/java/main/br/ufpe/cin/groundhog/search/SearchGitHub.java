@@ -15,6 +15,7 @@ import br.ufpe.cin.groundhog.Issue;
 import br.ufpe.cin.groundhog.Language;
 import br.ufpe.cin.groundhog.Milestone;
 import br.ufpe.cin.groundhog.Project;
+import br.ufpe.cin.groundhog.Release;
 import br.ufpe.cin.groundhog.SCM;
 import br.ufpe.cin.groundhog.User;
 import br.ufpe.cin.groundhog.http.HttpModule;
@@ -614,6 +615,36 @@ public class SearchGitHub implements ForgeSearch {
 		
 		topLanguages = topLanguages.subList(0, Math.min(limit, topLanguages.size()));
 		return topLanguages;	
+	}
+	
+	/**
+	 * Fetches all the Releases of the given {@link Project} from the GitHub API
+	 * 
+	 * @param project the @{link Project} of which the Releases are about
+	 * @return a {@link List} of {@link Release} objects
+	 */
+	public List<Release> getAllProjectReleases(Project project) {
+
+		logger.info("Searching project releases metadata");
+		
+		String searchUrl = builder.uses(GithubAPI.ROOT)
+				  .withParam("repos")
+				  .withSimpleParam("/", project.getUser().getLogin())
+				  .withSimpleParam("/", project.getName())
+				  .withParam("/releases")
+				  .build();
+		
+		String jsonString = requests.getWithPreviewHeader(searchUrl);
+		JsonArray jsonArray = gson.fromJson(jsonString, JsonElement.class).getAsJsonArray();
+
+		List<Release> releases = new ArrayList<Release>();
+		for (JsonElement element : jsonArray) {
+			Release release = gson.fromJson(element, Release.class);
+			releases.add(release);
+		}
+
+		return releases;
+	
 	}
 
 	private String getWithProtection(String url){
