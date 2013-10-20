@@ -9,6 +9,7 @@ import org.junit.Test;
 import br.ufpe.cin.groundhog.Commit;
 import br.ufpe.cin.groundhog.Language;
 import br.ufpe.cin.groundhog.Project;
+import br.ufpe.cin.groundhog.Release;
 import br.ufpe.cin.groundhog.SCM;
 import br.ufpe.cin.groundhog.User;
 import br.ufpe.cin.groundhog.http.HttpModule;
@@ -88,4 +89,20 @@ public class SearchGitHubTest {
 			Assert.fail();
 		}
 	}
+	
+	@Test
+	public void testGetAllProjectReleases() {
+		try {
+			User u = new User("vkostyukov");
+			Project project = new Project(u, "la4j");
+					
+			List<Release> releases = searchGitHub.getAllProjectReleases(project);
+			Assert.assertNotNull(releases);	
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail();
+		}
+	}
+	
+	
 }
