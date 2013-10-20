@@ -46,7 +46,7 @@ public class Requests {
 		try {
 			RequestBuilder builder = new RequestBuilder("GET");
 		    Request request = builder.setUrl(urlStr)
-		     .addHeader("X-GitHub-Media-Type", "application/vnd.github.manifold-preview")
+		     .addHeader("Accept", "application/vnd.github.manifold-preview")
 		     .build();
 			return this.httpClient.prepareRequest(request).execute().get().getResponseBody();
 		} catch (Exception e) {
