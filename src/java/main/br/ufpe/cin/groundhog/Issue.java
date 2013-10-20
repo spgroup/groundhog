@@ -9,52 +9,52 @@ import com.google.gson.annotations.SerializedName;
  * @author Rodrigo Alves
  */
 public class Issue implements GitHubEntity {
-    @SerializedName("id")
-    private int id;
+	@SerializedName("id")
+	private int id;
 
-    @SerializedName("number")
-    private int number;
-	
-    @SerializedName("comments")
-    private int commentsCount;
-	
-    private Project project;
+	@SerializedName("number")
+	private int number;
 
-    @SerializedName("pull_request")
-    private transient PullRequest pullRequest;
-	
-    private Milestone milestone;
+	@SerializedName("comments")
+	private int commentsCount;
 
-    @SerializedName("title")
-    private String title;
-	
-    @SerializedName("body")
-    private String body;
-	
-    @SerializedName("state")
-    private String state;
-	
-    @SerializedName("assignee")
-    private User assignee;
-	
-    @SerializedName("closed_by")
-    private User closedBy;
-	
-    @SerializedName("created_at")
-    private Date createdAt;
-    
-    @SerializedName("updated_at")
-    private Date updatedAt;
-    
-    @SerializedName("closed_at")
-    private Date closedAt;
-	
+	private Project project;
+
+	@SerializedName("pull_request")
+	private transient PullRequest pullRequest;
+
+	private Milestone milestone;
+
+	@SerializedName("title")
+	private String title;
+
+	@SerializedName("body")
+	private String body;
+
+	@SerializedName("state")
+	private String state;
+
+	@SerializedName("assignee")
+	private User assignee;
+
+	@SerializedName("closed_by")
+	private User closedBy;
+
+	@SerializedName("created_at")
+	private Date createdAt;
+
+	@SerializedName("updated_at")
+	private Date updatedAt;
+
+	@SerializedName("closed_at")
+	private Date closedAt;
+
 	public Issue(Project project, int number, String state) {
 		this.number = number;
 		this.project = project;
 		this.state = state;
 	}
-	
+
 	public Issue(Project project, int number, String state, String title) {
 		this(project, number, state);
 		this.title = title;
@@ -98,7 +98,7 @@ public class Issue implements GitHubEntity {
 	public void setCommentsCount(int commentsCount) {
 		this.commentsCount = commentsCount;
 	}
-	
+
 	/**
 	 * Informs the Project object to which the Issue belongs
 	 * No Issue exists without a project
@@ -111,7 +111,7 @@ public class Issue implements GitHubEntity {
 	public void setProject(Project project) {
 		this.project = project;
 	}
-	
+
 	/**
 	 * Informs the PullRequest related to the Issue. Not all Issues are Pull Request Issues.
 	 * If this method return nulls then it means the Issue is not a PullRequest Issue
@@ -232,7 +232,7 @@ public class Issue implements GitHubEntity {
 	public void setClosedAt(Date closedAt) {
 		this.closedAt = closedAt;
 	}
-	
+
 	/**
 	 * Returns true if the Issue is open. Returns false otherwise
 	 * @return
@@ -240,7 +240,7 @@ public class Issue implements GitHubEntity {
 	public boolean isOpen() {
 		return this.getState() == "closed" ? true : false;
 	}
-	
+
 	/**
 	 * Returns true if the Issue is a Pull Request Issue. Returns false otherwise
 	 * @return
@@ -256,8 +256,15 @@ public class Issue implements GitHubEntity {
 
 	@Override
 	public String toString() {
-		return "Issue number = " + number + ", "
-				+ (title != null ? "title = " + title + ", " : "")
-				+ (getURL() != null ? "URL = " + getURL() : "");
+		String stringReturn = "Issue Number = "  + this.number; // we always have a Issue number, the programmer must read the doc to contribute
+		if ( this.title != null) {
+			stringReturn += ", title: " + this.title;
+		}
+		String url = this.getURL(); // This class doesn't contains a variable referring a URL, so we create one local
+		if ( url != null ) {
+			stringReturn += ", URL = " + url;   
+		}
+		return stringReturn;  
+
 	}
 }
