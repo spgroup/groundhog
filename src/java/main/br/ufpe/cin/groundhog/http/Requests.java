@@ -6,6 +6,8 @@ import java.io.InputStream;
 import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.ListenableFuture;
+import com.ning.http.client.Request;
+import com.ning.http.client.RequestBuilder;
 
 /**
  * Utility class to perform asynchronous http requests
@@ -28,6 +30,25 @@ public class Requests {
 	public String get(String urlStr) {
 		try {
 			return this.httpClient.prepareGet(urlStr).execute().get().getResponseBody();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new HttpException(e);
+		}
+	}
+	
+	/**
+	 * Gets the response body of the given URL using the preview flag in the request header
+	 * This is for new API's that are in preview mode
+	 * @param urlStr
+	 * @return the entire html content
+	 */
+	public String getWithPreviewHeader(String urlStr) {
+		try {
+			RequestBuilder builder = new RequestBuilder("GET");
+		    Request request = builder.setUrl(urlStr)
+		     .addHeader("X-GitHub-Media-Type", "application/vnd.github.manifold-preview")
+		     .build();
+			return this.httpClient.prepareRequest(request).execute().get().getResponseBody();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new HttpException(e);
