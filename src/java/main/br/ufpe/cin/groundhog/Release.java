@@ -5,6 +5,33 @@ import java.util.Date;
 import com.google.gson.annotations.SerializedName;
 
 /**Represents a Release object in Groundhog
+ * "Releases are first-class objects with changelogs and binary 
+ * assets that present a full project history beyond Git artifacts.
+ *  They're accessible from a repository's homepage" 
+ *  Release description at GitHub oficial website, for more informations you can check at this <a href= https://github.com/blog/1547-release-your-software> link </a>.
+ *	
+ * <p>This class have a list of attributes whom <b> should be set </b> after the instantiation, see they below. 
+ * These attributes represent the entities of a Release on the GitHub. </p>
+ *	
+ * <p>The attributes are at form bellow: </p>  
+ * <p>Class/type attributeName: What he represent </p>
+ * <ul>
+ * 		 <li> String tagName: Tag Name of the Release on GitHub. 
+ *		 <li> String name: The name of the Release on GitHub.
+ *		 <li> String targetCommitish: The Commitish value that determines where the Git tag is created from. Can be any branch or commit SHA. Defaults to the repository’s default branch (usually “master”). Unused if the Git tag already exists.
+ *		 <li> String body: The Markdown-syntax-based description of the Release.
+ * 		  
+ * 		 <li> boolean draft: If the Release is a draft (unpublished) or not.
+ *		 <li> booelan preRelease: If the Release is or not a full release.
+ *		 <li> Date createdAt: When the Release was created.
+ *		 <li> Date publishedAt: When the Release was published.
+ *		
+ * </ul> 	
+ * <p> These descriptions can also be seen in the Get methods.
+ * @author Marlon Reghert (mras) & Tomer Simis (tls)
+ * 
+
+ *
  **/
 public class Release implements GitHubEntity {
 
@@ -13,12 +40,14 @@ public class Release implements GitHubEntity {
 
 	@SerializedName("tag_name")
 	private String tagName;
-	
+
 	@SerializedName("target_commitish")
 	private String targetCommitish;
 
 	@SerializedName("name")
 	private String name;
+	
+	
 
 	@SerializedName("body")
 	private String body;
@@ -26,8 +55,8 @@ public class Release implements GitHubEntity {
 	@SerializedName("draft")
 	private boolean draft;
 
-	@SerializedName("prerelease")
-	private boolean prerelease;
+	@SerializedName("preRelease")
+	private boolean preRelease;
 
 	@SerializedName("created_at")
 	private Date createdAt;
@@ -36,13 +65,18 @@ public class Release implements GitHubEntity {
 	private Date publishedAt;
 
 	private Project project; 
-	
-	
-	public Release(Project project, String tagName) {
+
+
+	public Release(Project project, int id) {
 		this.project = project;
+		this.id = id;
+	}
+	
+	public Release(Project project, int id, String tagName) {
+		this.project = project;
+		this.id = id;
 		this.tagName = tagName;
 	}
-
 
 	/**
 	 * Returns the ID of the Release on GitHub. This ID is unique for every Release on GitHub, which means that
@@ -57,18 +91,19 @@ public class Release implements GitHubEntity {
 		this.id = id;
 	}
 
-	
-	
+
+
 	/**
 	 * Returns the Tag Name of the Release on GitHub.
 	 * @return the tag_name
 	 */
 	public String getTagName() {
 		return tagName;
+
 	}
 
 
-	public void setTag_name(String tagName) {
+	public void setTagName(String tagName) {
 		this.tagName = tagName;
 	}
 
@@ -81,7 +116,7 @@ public class Release implements GitHubEntity {
 		return targetCommitish;
 	}
 
-	public void setTarget_commitish(String targetCommitish) {
+	public void setTargetCommitish(String targetCommitish) {
 		this.targetCommitish = targetCommitish;
 	}
 
@@ -140,15 +175,15 @@ public class Release implements GitHubEntity {
 
 
 	/**
-	 * Returns true if the Release is a prerelease or false if the Release is a full release
-	 * @return the prerelease
+	 * Returns true if the Release is a preRelease or false if the Release is a full release
+	 * @return the preRelease
 	 */
-	public boolean isPrerelease() {
-		return prerelease;
+	public boolean isPreRelease() {
+		return preRelease;
 	}
 
-	public void setPrerelease(boolean prerelease) {
-		this.prerelease = prerelease;
+	public void setPreRelease(boolean preRelease) {
+		this.preRelease = preRelease;
 	}
 
 
@@ -163,8 +198,7 @@ public class Release implements GitHubEntity {
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
 	}
-
-
+	
 	/**
 	 * Returns the date when the Release was published
 	 * @return the published_at
@@ -177,7 +211,14 @@ public class Release implements GitHubEntity {
 		this.publishedAt = publishedAt;
 	}
 
-	
+	/**Return a String representation of the Release, this String contains (if they are not null):
+	 * <ul>
+	 * 		<li> The Release id
+	 * 		<li> The Target Commitish
+	 * 	    <li> A URL representation of the Release	
+	 * </ul>
+	 * 
+	 * */
 	@Override
 	public String toString() {
 		String stringReturn = "Release id = " + this.id;// we always have a Issue number, the programmer must read the doc to contribute
@@ -193,13 +234,16 @@ public class Release implements GitHubEntity {
 		}
 		return stringReturn;
 	}
+
 	
-	/*get URL bellow*/
+	/**This method return the URL of the release*/
 	@Override
 	public String getURL() {
 		return String.format("https://api.github.com/repos/%s/%s/releases/%d", this.getProject().getOwner().getLogin(), this.getProject().getName(), this.id);
 	}
-	
+
+
+
 
 
 }
