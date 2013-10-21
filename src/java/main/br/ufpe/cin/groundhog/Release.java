@@ -4,23 +4,23 @@ import java.util.Date;
 
 import com.google.gson.annotations.SerializedName;
 
-/**Represents a Release object in Groundhog
- * "Releases are first-class objects with changelogs and binary 
+/** <p>This class represents a Release in Groundhog 
+ * 
+ * <p> <i>"Releases are first-class objects with changelogs and binary 
  * assets that present a full project history beyond Git artifacts.
- *  They're accessible from a repository's homepage" 
- *  Release description at GitHub oficial website, for more informations you can check at this <a href= https://github.com/blog/1547-release-your-software> link </a>.
- *	
- * <p>This class have a list of attributes whom <b> should be set </b> after the instantiation, see they below. 
- * These attributes represent the entities of a Release on the GitHub. </p>
- *	
- * <p>The attributes are at form bellow: </p>  
- * <p>Class/type attributeName: What he represent </p>
+ *  They're accessible from a repository's homepage" </i> 
+ *  - Release description at GitHub oficial website, for more informations you can check at this <a href= https://github.com/blog/1547-release-your-software> link </a>.
+ *	 
+ *@see
+ * <p>This class have a list of attributes whom <b> should be set </b> after the instantiation. These attributes represent the entities of a Release on the GitHub, see they below.   
+ * <p>The attributes are at form bellow:    
+ * <p>Class/type attributeName: What he represent  
  * <ul>
  * 		 <li> String tagName: Tag Name of the Release on GitHub. 
  *		 <li> String name: The name of the Release on GitHub.
  *		 <li> String targetCommitish: The Commitish value that determines where the Git tag is created from. Can be any branch or commit SHA. Defaults to the repository’s default branch (usually “master”). Unused if the Git tag already exists.
  *		 <li> String body: The Markdown-syntax-based description of the Release.
- * 		  
+ * 		 <li> String assetsUrl: That present a full project history beyond Git artifacts
  * 		 <li> boolean draft: If the Release is a draft (unpublished) or not.
  *		 <li> booelan preRelease: If the Release is or not a full release.
  *		 <li> Date createdAt: When the Release was created.
@@ -46,8 +46,9 @@ public class Release implements GitHubEntity {
 
 	@SerializedName("name")
 	private String name;
-	
-	
+
+	@SerializedName("assets_url")
+	private String assetsUrl;
 
 	@SerializedName("body")
 	private String body;
@@ -71,7 +72,7 @@ public class Release implements GitHubEntity {
 		this.project = project;
 		this.id = id;
 	}
-	
+
 	public Release(Project project, int id, String tagName) {
 		this.project = project;
 		this.id = id;
@@ -148,6 +149,15 @@ public class Release implements GitHubEntity {
 	}
 
 
+	/**Return the String to Assets url, that present a full project history beyond Git artifacts*/
+	public String getAssetsUrl() {
+		return this.assetsUrl;
+	}
+
+	public void setAssetsUrl(String assetsUrl) {
+		this.assetsUrl = assetsUrl;
+	}
+
 	/**
 	 * Returns the Markdown-syntax-based description of the Release
 	 * @return the body
@@ -198,7 +208,7 @@ public class Release implements GitHubEntity {
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
 	}
-	
+
 	/**
 	 * Returns the date when the Release was published
 	 * @return the published_at
@@ -235,7 +245,7 @@ public class Release implements GitHubEntity {
 		return stringReturn;
 	}
 
-	
+
 	/**This method return the URL of the release*/
 	@Override
 	public String getURL() {
