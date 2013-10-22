@@ -34,7 +34,6 @@ import com.google.gson.annotations.SerializedName;
  *
  **/
 public class Release implements GitHubEntity {
-
 	@SerializedName("id")
 	private int id;
 
@@ -67,7 +66,6 @@ public class Release implements GitHubEntity {
 
 	private Project project; 
 
-
 	public Release(Project project, int id) {
 		this.project = project;
 		this.id = id;
@@ -92,22 +90,17 @@ public class Release implements GitHubEntity {
 		this.id = id;
 	}
 
-
-
 	/**
 	 * Returns the Tag Name of the Release on GitHub.
 	 * @return the tag_name
 	 */
 	public String getTagName() {
-		return tagName;
-
+		return this.tagName;
 	}
-
 
 	public void setTagName(String tagName) {
 		this.tagName = tagName;
 	}
-
 
 	/**
 	 * Returns the commitish value that determines where the Git tag is created from. Can be any branch or commit SHA. Defaults to the repository’s default branch (usually “master”). Unused if the Git tag already exists.
@@ -148,7 +141,6 @@ public class Release implements GitHubEntity {
 		this.name = name;
 	}
 
-
 	/**Return the String to Assets url, that present a full project history beyond Git artifacts*/
 	public String getAssetsUrl() {
 		return this.assetsUrl;
@@ -163,46 +155,43 @@ public class Release implements GitHubEntity {
 	 * @return the body
 	 */
 	public String getBody() {
-		return body;
+		return this.body;
 	}
 
 	public void setBody(String body) {
 		this.body = body;
 	}
 
-
 	/**
 	 * Returns true if the Release is a draft (unpublished) or false if it's published
 	 * @return the draft
 	 */
 	public boolean isDraft() {
-		return draft;
+		return this.draft;
 	}
 
 	public void setDraft(boolean draft) {
 		this.draft = draft;
 	}
 
-
 	/**
 	 * Returns true if the Release is a preRelease or false if the Release is a full release
 	 * @return the preRelease
 	 */
 	public boolean isPreRelease() {
-		return preRelease;
+		return this.preRelease;
 	}
 
 	public void setPreRelease(boolean preRelease) {
 		this.preRelease = preRelease;
 	}
 
-
 	/**
 	 * Returns the date when the Release was created
 	 * @return the createdAt
 	 */
 	public Date getCreatedAt() {
-		return createdAt;
+		return this.createdAt;
 	}
 
 	public void setCreatedAt(Date createdAt) {
@@ -214,7 +203,7 @@ public class Release implements GitHubEntity {
 	 * @return the published_at
 	 */
 	public Date getPublishedAt() {
-		return publishedAt;
+		return this.publishedAt;
 	}
 
 	public void setPublishedAt(Date publishedAt) {
@@ -232,28 +221,22 @@ public class Release implements GitHubEntity {
 	@Override
 	public String toString() {
 		String stringReturn = "Release id = " + this.id;// we always have a Issue number, the programmer must read the doc to contribute
-		if ( this.name != null ) {
-			stringReturn += ", Name = " + this.name;
-		}
-		if ( this.targetCommitish != null ) {
-			stringReturn += ", Target Commitish = " + this.targetCommitish;
-		}
-		String url = this.getURL(); // This class doesn't contains a variable referring a URL, so we create one local
-		if ( url != null ) {
-			stringReturn += ", URL = " + url;   
-		}
+		
+		if (this.name != null) stringReturn += ", Name = " + this.name;
+		if (this.targetCommitish != null) stringReturn += ", Target Commitish = " + this.targetCommitish;
+		
+		String url = this.getURL(); // This class doesn't contain a variable referring to a URL, so we create one locally
+		if (url != null) stringReturn += ", URL = " + url;
+		
 		return stringReturn;
 	}
-
 
 	/**This method return the URL of the release*/
 	@Override
 	public String getURL() {
-		return String.format("https://api.github.com/repos/%s/%s/releases/%d", this.getProject().getOwner().getLogin(), this.getProject().getName(), this.id);
+		return String.format("https://api.github.com/repos/%s/%s/releases/%d",
+				this.getProject().getOwner().getLogin(),
+				this.getProject().getName(), this.id
+			  );
 	}
-
-
-
-
-
 }

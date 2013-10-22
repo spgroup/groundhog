@@ -93,16 +93,17 @@ public class SearchGitHubTest {
 	@Test
 	public void testGetAllProjectReleases() {
 		try {
-			User u = new User("vkostyukov");
-			Project project = new Project(u, "la4j");
-					
+			User u = new User("twbs");
+			Project project = new Project(u, "bootstrap");
+			
 			List<Release> releases = searchGitHub.getAllProjectReleases(project);
+			
+//			for (Release r: releases) System.out.println(r.getBody());
+			
 			Assert.assertNotNull(releases);	
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail();
 		}
 	}
-	
-	
 }
