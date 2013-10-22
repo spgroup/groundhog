@@ -189,6 +189,10 @@ $ javadoc -d src/src/groundhog br.cin.ufpe.groundhog
 
 * Jesus Silva {jjss@cin.ufpe.br}
 
+* Marlon Reghert {mras@cin.ufpe.br}
+
+* Tomer Simis {tls@cin.ufpe.br}
+
 ## Contributions
 
 Want to contribute with code, documentation or bug report? That's great, check out the [Issues] page.
