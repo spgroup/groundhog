@@ -1,7 +1,7 @@
 package br.ufpe.cin.groundhog;
 
 /**
- * Represents the license used in the project
+ * Represents the License used in the {@link Project}
  * @author ghlp
  * @since 0.0.1
  */
@@ -9,6 +9,7 @@ public class License {
 
 	private String name;
 	private String entireContent;
+	private String version;
 
 	public License(String name) {
 		this.name = name;
@@ -19,14 +20,27 @@ public class License {
 	}
 
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	public String getEntireContent() {
-		return entireContent;
+		return this.entireContent;
+	}
+	
+	public String getVersion() {
+		return this.version;
 	}
 	
 	public String toString() {
-		return name;
+		return this.name;
+	}
+	
+	/**
+	 * Two {@link License} objects are considered equal when they both have the same name and version
+	 * @param lic
+	 * @return
+	 */
+	public boolean equals(License lic) {
+		return this.name == lic.getName() && this.version == lic.version;
 	}
 }

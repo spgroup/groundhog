@@ -254,6 +254,15 @@ public class User implements GitHubEntity {
     public String getURL() {
         return String.format("https://api.github.com/users/%s", this.getLogin());
     }
+    
+    /**
+     * Two {@link User} objects X and Y are the same if both X and Y have the same login attribute
+     * @param user
+     * @return
+     */
+    public boolean equals(User user) {
+    	return this.login == user.login;
+    }
 
     @Override
     public String toString() {

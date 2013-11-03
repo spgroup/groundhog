@@ -133,6 +133,16 @@ public class Organization implements GitHubEntity {
 	public String getURL() {
 		return String.format("https://api.github.com/orgs/%s", this.getLogin());
 	}
+	
+	/**
+	 * For two {@link Organization} objects to be considered equal they only need
+	 * to refer to the same login on GitHub
+	 * @param org
+	 * @return
+	 */
+	public boolean equals(Organization org) {
+		return this.login == org.login;
+	}
 
 	@Override
 	public String toString() {

@@ -133,6 +133,15 @@ public class Commit implements GitHubEntity {
 				this.project.getUser().getLogin(), this.project.getName(), this.sha);
 	}
 	
+	/**
+	 * Two {@link Commit} objects are considered equal if and only if both have the same SHA hash
+	 * @param commit
+	 * @return
+	 */
+	public boolean equals(Commit commit) {
+		return this.sha == commit.sha;
+	}
+	
 	@Override
 	public String toString() {
 		return String.format("Commit(%s - %s, %s) - %d",

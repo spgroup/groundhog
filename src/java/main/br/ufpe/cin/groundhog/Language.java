@@ -47,8 +47,8 @@ public class Language implements Comparable<Language> {
 
 	@Override
 	public int compareTo(Language o) {
-		if( this.getByteCount() < o.getByteCount()) return -1;
-		if( this.getByteCount() > o.getByteCount()) return 1;
+		if (this.getByteCount() < o.getByteCount()) return -1;
+		if (this.getByteCount() > o.getByteCount()) return 1;
 		
 		return 0;
 	}

@@ -253,6 +253,16 @@ public class Issue implements GitHubEntity {
 		return String.format("https://api.github.com/repos/%s/%s/issues/%d",
 				this.getProject().getOwner().getLogin(), this.getProject().getName(), this.getNumber());
 	}
+	
+	/**
+	 * Two {@link Issue} objects are considered equal when they have the same GitHub API ID,
+	 * the same number and the same {@link Project}. 
+	 * @param issue
+	 * @return
+	 */
+	public boolean equals(Issue issue) {
+		return this.id == issue.id && this.number == issue.number && this.project.equals(issue.getProject());
+	}
 
 	@Override
 	public String toString() {

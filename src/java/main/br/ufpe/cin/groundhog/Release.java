@@ -209,6 +209,16 @@ public class Release implements GitHubEntity {
 	public void setPublishedAt(Date publishedAt) {
 		this.publishedAt = publishedAt;
 	}
+	
+	/**
+	 * Two {@link Release} objects are considered equal if and only if they share the same
+	 * GitHub API ID and belong to the same {@link Project}
+	 * @param rel
+	 * @return
+	 */
+	public boolean equals(Release rel) {
+		return this.id == rel.id && this.project.equals(rel.getProject());
+	}
 
 	/**Return a String representation of the Release, this String contains (if they are not null):
 	 * <ul>

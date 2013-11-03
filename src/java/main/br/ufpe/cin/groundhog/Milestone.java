@@ -216,6 +216,17 @@ public class Milestone implements GitHubEntity {
 		this.dueOn = dueOn;
 	}
 
+	/**
+	 * Two {@link Milestone} objects are considered equal when they have the same GitHub API ID,
+	 * the same number and belong to the same {@link Project}. 
+	 * @param issue
+	 * @return
+	 */
+	public boolean equals(Milestone ms) {
+		return this.id == ms.id && this.number == ms.number && this.project.equals(ms.getProject());
+	}
+	
+	@Override
 	public String getURL() {
 		return String.format("https://api.github.com/repos/%s/%s/issues/%d",
 				this.getProject().getOwner().getLogin(), this.getProject().getName(), this.getNumber());
