@@ -66,16 +66,6 @@ public class Project implements GitHubEntity {
 
 	public Project() {
 	}
-
-	/**
-	 * 2-parameter constructor
-	 * @param name the project name
-	 * @param description description the project description
-	 */
-	public Project(String name, String description) {
-		this.name = name;
-		this.description = description;
-	}
 	
 	/**
 	 * 2-parameter complimentary constructor
@@ -86,6 +76,18 @@ public class Project implements GitHubEntity {
 		this.user = user;
 		this.name = name;
 		this.scmURL = "https://github.com/" + user.getLogin() + "/" + name + ".git";
+	}
+	
+	/**
+	 * 2-parameter complimentary constructor so the Groundhog user does not have to create a user object every time
+	 * you want to initialize a new {@link Project}
+	 * @param user the {@link String} representing the user login on GitHub
+	 * @param name the name of the {@link Project}
+	 */
+	public Project(String userLogin, String name) {
+		User u = new User(userLogin);
+		this.user = u;
+		this.name = name;
 	}
 
 	/**

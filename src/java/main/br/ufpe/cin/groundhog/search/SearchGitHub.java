@@ -467,28 +467,26 @@ public class SearchGitHub implements ForgeSearch {
 	 * @return a {@link List} of {@link User} objects
 	 */
 	public List<User> getAllProjectContributors(Project project) {
-		
 		logger.info("Searching project contributors metadata");
 		
-		List<User> collection = new ArrayList<>();
+		List<User> users = new ArrayList<>();
 
 		String searchUrl = builder.uses(GithubAPI.ROOT)
 				  .withParam("repos")
 				  .withSimpleParam("/", project.getUser().getLogin())
 				  .withSimpleParam("/", project.getName())
-				  .withParam("/", "contributors")
+				  .withParam("/contributors")
 				  .build();
 		
-		String jsonString = requests.get(searchUrl);
+		String jsonString = requests.getWithPreviewHeader(searchUrl);
+        JsonArray jsonArray = gson.fromJson(jsonString, JsonElement.class).getAsJsonArray();
+        
+		for (JsonElement element: jsonArray) {
+        	User user = gson.fromJson(element, User.class);
+            users.add(user);
+        }
 
-		JsonArray jsonArray = gson.fromJson(jsonString, JsonElement.class).getAsJsonArray();
-
-		for (JsonElement element : jsonArray) {
-			User contributor = gson.fromJson(element, User.class);
-			collection.add(contributor);
-		}
-
-		return collection;
+		return users;
 	}
 
 	public List<Project> getAllForgeProjects(int start, int limit) throws SearchException{
@@ -499,7 +497,7 @@ public class SearchGitHub implements ForgeSearch {
 			int totalRepositories = 0;
 			List<Project> projects = new ArrayList<>();
 			
-			while(totalRepositories < limit || limit < 0){
+			while (totalRepositories < limit || limit < 0) {
 
 				String searchUrl = builder.uses(GithubAPI.REPOSITORIES)
 										  .withParam("since", since)
@@ -522,8 +520,7 @@ public class SearchGitHub implements ForgeSearch {
 					JsonObject jsonObject = gson.fromJson(jsonLegacy, JsonElement.class).getAsJsonObject();			
 					JsonArray jsonArrayLegacy = jsonObject.get("repositories").getAsJsonArray();
 
-					if( jsonArrayLegacy.size() > 0) {
-
+					if (jsonArrayLegacy.size() > 0) {
 						JsonObject rawJsonObject = jsonArrayLegacy.get(0).getAsJsonObject();
 						String stringElement = rawJsonObject.toString();
 						Project p = gson.fromJson(stringElement, Project.class);
@@ -535,7 +532,8 @@ public class SearchGitHub implements ForgeSearch {
 						projects.add(p);
 						totalRepositories++;
 					}
-				}				
+				}
+				
 				JsonElement lastPagesRepository = jsonArray.get(jsonArray.size() -1);
 				since = lastPagesRepository.getAsJsonObject().get("id").getAsInt();
 			}

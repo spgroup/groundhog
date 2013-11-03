@@ -1,6 +1,7 @@
 package br.ufpe.cin.groundhog;
 
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
@@ -256,7 +257,10 @@ public class User implements GitHubEntity {
 
 	@Override
 	public String toString() {
-		return "User id = " + id + ", " + (login != null ? "login = " + login + ", " : "")
-				+ (getURL() != null ? "URL = " + getURL() : "");
+		return "id=" + id + ", "
+				+ (name != null ? "Name = " + name + ", " : "")
+				+ (login != null ? "Login = " + login + ", " : "")
+				+ "Public repos = " + public_repos + ", "
+				+ (created_at != null ? "Created at = " + created_at : "") + ", Url: " + this.getURL();
 	}
 }

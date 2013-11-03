@@ -190,13 +190,16 @@ public class TestMain {
 		List<Project> projects = searchGitHub.getAllProjectsByLanguage("java");
 		List<User> users = new ArrayList<>();
 
-		// O(n^2) algorithm. Do you have a better approach? Please bring it here
-		for (Project pr: projects) {
+//		for (Project pr: projects) {
+		
+		Project pr = new Project("spgroup", "groundhog");
+		
 			for (User u: searchGitHub.getAllProjectContributors(pr)) {
 				users.add(u);
 				System.out.println(u);
 			}
-		}
+//		}
+		
 		
 //		File folder = new File("/tmp");
 //		CrawlGitHub crawler = new CrawlGitHub(new GitClient(), folder);
