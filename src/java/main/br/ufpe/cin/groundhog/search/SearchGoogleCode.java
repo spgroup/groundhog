@@ -24,7 +24,6 @@ import com.ning.http.client.Response;
 /**
  * Responsible for performing the project searches on Google Code
  * @author fjsj, gustavopinto, Rodrigo Alves
- *
  */
 public class SearchGoogleCode implements ForgeSearch {
 	private static String root = "http://code.google.com";

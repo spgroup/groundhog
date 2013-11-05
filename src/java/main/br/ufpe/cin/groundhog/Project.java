@@ -97,19 +97,22 @@ public class Project implements GitHubEntity {
 	 * @param sourceCodeURL the project's source code URL
 	 */
 	public Project(String name, String description, String sourceCodeURL) {
-		this(name, description);
+		this.name = name;
+		this.description = description;
 		this.sourceCodeURL = sourceCodeURL;
 	}
 
 	public Project(String name, String description, SCM scm, String scmURL) {
-		this(name, description);
+		this.name = name;
+		this.description = description;
 		this.scm = scm;
 		this.scmURL = scmURL;
 	}
 
 	public Project(String name, String description, SCM scm, String scmURL,
 			String sourceCodeURL) {
-		this(name, description, scm, scmURL);
+		this.name = name;
+		this.description = description;
 		this.sourceCodeURL = sourceCodeURL;
 	}
 
