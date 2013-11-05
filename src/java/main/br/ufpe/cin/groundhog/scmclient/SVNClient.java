@@ -9,6 +9,7 @@ import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNUpdateClient;
 
+@Deprecated
 public class SVNClient {
 	private SVNClientManager svn;
 	

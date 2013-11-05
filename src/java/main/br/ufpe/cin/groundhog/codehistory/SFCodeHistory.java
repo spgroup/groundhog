@@ -14,6 +14,7 @@ import br.ufpe.cin.groundhog.util.FileUtil;
 /**
  * The code history analysis implementation for SourceForge
  * @author fjsj
+ * @deprecated
  */
 public class SFCodeHistory implements CodeHistory {
 	

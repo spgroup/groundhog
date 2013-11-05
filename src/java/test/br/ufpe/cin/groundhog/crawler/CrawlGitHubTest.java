@@ -1,5 +1,6 @@
 package br.ufpe.cin.groundhog.crawler;
 
+
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -19,6 +20,7 @@ import com.google.common.io.Files;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
+@Deprecated
 public class CrawlGitHubTest {
 
 	private GitClient gitClient;

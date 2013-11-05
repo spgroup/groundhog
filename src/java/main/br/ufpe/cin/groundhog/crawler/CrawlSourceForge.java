@@ -32,7 +32,7 @@ import com.ning.http.client.Response;
 
 import static br.ufpe.cin.groundhog.http.URLsDecoder.*;
 
-
+@Deprecated
 public class CrawlSourceForge extends ForgeCrawler {
 	private static String rootUrl = "http://sourceforge.net";
 

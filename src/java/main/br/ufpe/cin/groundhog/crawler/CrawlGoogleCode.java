@@ -13,6 +13,7 @@ import br.ufpe.cin.groundhog.scmclient.GitClient;
  * A concrete class to crawl GitHub.
  * 
  * @author fjsj
+ * @deprecated
  */
 public class CrawlGoogleCode extends ForgeCrawler {
 	private static Logger logger = LoggerFactory.getLogger(CrawlGoogleCode.class);

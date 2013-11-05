@@ -12,6 +12,7 @@ import br.ufpe.cin.groundhog.http.HttpModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
+@Deprecated
 public class SearchSourceForgeTest {
 	private SearchSourceForge searchSourceForge;
 

@@ -14,6 +14,7 @@ import com.google.inject.Inject;
 /**
  * The code history analysis implementation for the SVN SCM
  * @author fjsj
+ * @deprecated
  */
 public class SvnCodeHistory implements CodeHistory {
 	private final SVNClient svnClient;

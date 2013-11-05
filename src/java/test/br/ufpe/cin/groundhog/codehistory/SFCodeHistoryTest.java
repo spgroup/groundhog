@@ -10,6 +10,7 @@ import java.util.GregorianCalendar;
 import org.junit.Before;
 import org.junit.Test;
 
+@Deprecated
 public class SFCodeHistoryTest {
 	
 	private GitCodeHistory gitCodeHistory;

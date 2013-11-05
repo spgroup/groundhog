@@ -19,7 +19,7 @@ import com.google.inject.Inject;
 /**
  * Performs the search for projects on SourceForge
  * @author fjsj, gustavopinto, Rodrigo Alves
- *
+ * @deprecated
  */
 public class SearchSourceForge implements ForgeSearch {
 	

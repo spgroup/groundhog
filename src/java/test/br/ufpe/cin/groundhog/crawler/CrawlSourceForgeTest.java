@@ -18,6 +18,7 @@ import com.google.common.io.Files;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
+@Deprecated
 public class CrawlSourceForgeTest {
 
 	private SearchSourceForge searchSourceForge;
