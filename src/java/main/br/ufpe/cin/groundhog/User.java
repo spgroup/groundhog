@@ -1,7 +1,6 @@
 package br.ufpe.cin.groundhog;
 
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
@@ -48,10 +47,10 @@ public class User implements GitHubEntity {
     public int public_gists;
   
     @SerializedName("created_at")
-    private GregorianCalendar created_at;
+    private String created_at;
   
     @SerializedName("updated_at")
-    private GregorianCalendar updated_at;
+    private String updated_at;
   
     private List<String> emailAddresses;
   
@@ -166,15 +165,14 @@ public class User implements GitHubEntity {
     }
 
    /**
-    * Informs the creation date of the {@link User}. In other words, the date
-    * when the user signed up for GitHub
-    * @return a {@link Date} object
+    * Informs the date when the {@link User} signed up for GitHub
+    * @return a {@link String} object
     */
-    public GregorianCalendar getCreated_at() {
+    public String getCreated_at() {
         return this.created_at;
     }
 
-    public void setCreated_at(GregorianCalendar created_at) {
+    public void setCreated_at(String created_at) {
         this.created_at = created_at;
     }
 
@@ -182,11 +180,11 @@ public class User implements GitHubEntity {
     * Informs the last date when the {@link User} performed activity on GitHub
     * @return a {@link Date} object
     */
-    public GregorianCalendar getUpdatedAt() {
+    public String getUpdatedAt() {
         return this.updated_at;
     }
 
-    public void setUpdatedAt(GregorianCalendar updated_at) {
+    public void setUpdatedAt(String updated_at) {
         this.updated_at = updated_at;
     }
   

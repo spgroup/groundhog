@@ -23,7 +23,6 @@ import br.ufpe.cin.groundhog.crawler.CrawlGitHub;
 import br.ufpe.cin.groundhog.crawler.CrawlGoogleCode;
 import br.ufpe.cin.groundhog.crawler.CrawlSourceForge;
 import br.ufpe.cin.groundhog.crawler.ForgeCrawler;
-import br.ufpe.cin.groundhog.extractor.GitCommitExtractor;
 import br.ufpe.cin.groundhog.http.HttpModule;
 import br.ufpe.cin.groundhog.http.Requests;
 import br.ufpe.cin.groundhog.parser.java.JavaParser;
@@ -184,21 +183,21 @@ public class TestMain {
 		}
 	}
 	
-	public static void main(String[] args) {
-		// gitHubExample("restfulie-java");
+	public static void main(String[] args) throws Exception {
+		gitHubExample("restfulie-java");
 		
-		List<Project> projects = searchGitHub.getAllProjectsByLanguage("java");
-		List<User> users = new ArrayList<>();
-
-//		for (Project pr: projects) {
-		
-		Project pr = new Project("spgroup", "groundhog");
-		
-			for (User u: searchGitHub.getAllProjectContributors(pr)) {
-				users.add(u);
-				System.out.println(u);
-			}
-//		}
+//		List<Project> projects = searchGitHub.getAllProjectsByLanguage("java");
+//		List<User> users = new ArrayList<>();
+//
+////		for (Project pr: projects) {
+//		
+//		Project pr = new Project("spgroup", "groundhog");
+//		
+//			for (User u: searchGitHub.getAllProjectContributors(pr)) {
+//				users.add(u);
+//				System.out.println(u);
+//			}
+////		}
 		
 		
 //		File folder = new File("/tmp");
