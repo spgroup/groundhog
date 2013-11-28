@@ -179,6 +179,12 @@
       <artifactId>gitective-core</artifactId>
       <version>0.9.9</version>
     </dependency>
+    <dependency>
+    	<groupId>org.jongo</groupId>
+    	<artifactId>jongo</artifactId>
+    	<version>0.4</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
