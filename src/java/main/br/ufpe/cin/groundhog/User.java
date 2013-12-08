@@ -5,10 +5,14 @@ import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.mongodb.morphia.annotations.Entity;
+
 /**
  * Represents a GitHub User in Groundhog
  * @author gustavopinto, Rodrigo Alves
  */
+
+@Entity("users")
 public class User implements GitHubEntity {
     @SerializedName("id")
     private int id;
@@ -51,7 +55,8 @@ public class User implements GitHubEntity {
   
     @SerializedName("updated_at")
     private String updated_at;
-  
+    
+	private List<Commit> commits;  
     private List<String> emailAddresses;
   
     public User(String login) {
@@ -235,6 +240,14 @@ public class User implements GitHubEntity {
    public void setLocation(String location) {
        this.location = location;
    }
+   
+   public List<Commit> getCommits() {
+		return this.commits;
+	}
+
+	public void setCommits(List<Commit> commits) {
+		this.commits = commits;
+	}
   
    /**
     * Informs the list of email addresses that belongs to the user.

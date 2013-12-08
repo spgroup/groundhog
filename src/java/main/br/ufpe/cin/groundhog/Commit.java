@@ -3,8 +3,11 @@ package br.ufpe.cin.groundhog;
 import java.util.Date;
 
 import br.ufpe.cin.groundhog.util.Dates;
+
 import com.google.gson.annotations.SerializedName;
+
 import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Reference;
 
 /**
  * Represents a Commit object in Groundhog
@@ -18,12 +21,12 @@ public class Commit implements GitHubEntity {
 	private String sha;
 	
 	@SerializedName("commiter")
-	private User commiter;
+	@Reference private User commiter;
 	
 	@SerializedName("message")
 	private String message;
 	
-	private Project project;
+	@Reference private Project project;
 	
 	private Date commitDate;
 	

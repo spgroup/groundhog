@@ -67,9 +67,6 @@ public class Project implements GitHubEntity {
 	@SerializedName("open_issues_count")
 	private int issuesCount;
 
-	public Project() {
-	}
-	
 	/**
 	 * 2-parameter complimentary constructor
 	 * @param user the {@link User} to who the project belongs
