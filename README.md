@@ -166,11 +166,11 @@ extractor.numberOfCommitsWithExtension(project, "java");
 
 ## Database Support
 
-Groundhog comes with built-in support for MongoDB as data storage system.
+Groundhog comes with built-in support for MongoDB as data storage system. Here's an example of how you can persist objects into a datastore:
 
 ```java
-
-// Estabilishes connection with the local MongoDB server
+// Establishes connection with the local MongoDB server
+// declaring the host of Mongo and the name of the DB
 GroundhogDB db = new GroundhogDB("127.0.0.1", "myGitHubResearch");
 
 Project project = new Project("yahoo", "samoa");
