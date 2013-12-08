@@ -5,6 +5,7 @@ import java.util.List;
 
 import br.ufpe.cin.groundhog.util.Dates;
 
+import org.mongodb.morphia.annotations.Entity;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -12,6 +13,8 @@ import com.google.gson.annotations.SerializedName;
  * @author fjsj, gustavopinto, Rodrigo Alves
  * @since 0.0.1
  */
+
+@Entity("projects")
 public class Project implements GitHubEntity {
 	@SerializedName("name")
 	private String name;
@@ -85,8 +88,7 @@ public class Project implements GitHubEntity {
 	 * @param name the name of the {@link Project}
 	 */
 	public Project(String userLogin, String name) {
-		User u = new User(userLogin);
-		this.user = u;
+		this.user = new User(userLogin);
 		this.name = name;
 	}
 
