@@ -15,8 +15,8 @@ import com.mongodb.MongoClient;
  */
 public class GroundhogDB {
 	private String dbName;
-	private static MongoClient mongo;
-    private static Datastore datastore;
+	private MongoClient mongo;
+    private Datastore datastore;
     
 	public GroundhogDB(String host, String dbName) throws UnknownHostException {
 		this.dbName = dbName;
@@ -30,5 +30,29 @@ public class GroundhogDB {
 	 */
 	public void save(Object entity) {
 		this.datastore.save(entity);
+	}
+
+	public String getDbName() {
+		return dbName;
+	}
+
+	public void setDbName(String dbName) {
+		this.dbName = dbName;
+	}
+
+	public MongoClient getMongo() {
+		return this.mongo;
+	}
+
+	public void setMongo(MongoClient mongo) {
+		this.mongo = mongo;
+	}
+
+	public Datastore getDatastore() {
+		return this.datastore;
+	}
+
+	public void setDatastore(Datastore datastore) {
+		this.datastore = datastore;
 	}
 }
