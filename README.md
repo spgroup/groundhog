@@ -164,6 +164,28 @@ File project = new File("/tmp/elasticsearch");
 extractor.numberOfCommitsWithExtension(project, "java");
 ```
 
+## Database Support
+
+Groundhog comes with built-in support for MongoDB as data storage system.
+
+```java
+
+// Estabilishes connection with the local MongoDB server
+GroundhogDB db = new GroundhogDB("127.0.0.1", "myGitHubResearch");
+
+Project project = new Project("yahoo", "samoa");
+
+// Fetches all commits of the project and persists each one of them to the database
+List<Commit> commits = searchGitHub.getAllProjectCommits(project);
+
+for (Commit comm: commits) {
+    db.save(comm);
+    System.out.println(comm);
+}
+
+Refer to the [full Database Support Guide] in the wiki for more information.
+```
+
 ## Documentation
 
 Groundhog features a [Wiki], where you can browse for more information.
@@ -208,3 +230,4 @@ Groundhog is released under GPL 2.
 [GitHub API v3]: http://developer.github.com/
 [Wiki]: https://github.com/spgroup/groundhog/wiki
 [Issues]: https://github.com/spgroup/groundhog/issues
+[full Database Support Guide]: https://github.com/spgroup/groundhog/wiki/Database-Support
