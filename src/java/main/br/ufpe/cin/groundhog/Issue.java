@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
  * Represents an Issue object in Groundhog
  * @author Rodrigo Alves
  */
-public class Issue implements GitHubEntity {
+public class Issue extends GitHubEntity {
 	@SerializedName("id")
 	private int id;
 

@@ -15,7 +15,7 @@ import com.google.gson.annotations.SerializedName;
  */
 
 @Entity("projects")
-public class Project implements GitHubEntity {
+public class Project extends GitHubEntity {
 	@SerializedName("name")
 	private String name;
 

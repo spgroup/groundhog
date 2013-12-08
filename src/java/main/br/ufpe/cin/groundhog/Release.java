@@ -33,7 +33,7 @@ import com.google.gson.annotations.SerializedName;
 
  *
  **/
-public class Release implements GitHubEntity {
+public class Release extends GitHubEntity {
 	@SerializedName("id")
 	private int id;
 

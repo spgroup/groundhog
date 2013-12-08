@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
  * Represents a Pull Request object in Groundhog
  * @author Rodrigo Alves
  */
-public class PullRequest extends Issue implements GitHubEntity {
+public class PullRequest extends Issue {
 	@SerializedName("merged_at")
 	private Date mergedAt;
 	

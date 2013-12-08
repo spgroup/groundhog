@@ -7,6 +7,7 @@ import br.ufpe.cin.groundhog.util.Dates;
 import com.google.gson.annotations.SerializedName;
 
 import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Indexed;
 import org.mongodb.morphia.annotations.Reference;
 
 /**
@@ -16,8 +17,9 @@ import org.mongodb.morphia.annotations.Reference;
  */
 
 @Entity("commits")
-public class Commit implements GitHubEntity {
+public class Commit extends GitHubEntity {
 	@SerializedName("sha")
+    @Indexed(unique=true, dropDups=true)
 	private String sha;
 	
 	@SerializedName("commiter")

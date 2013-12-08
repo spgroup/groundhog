@@ -13,7 +13,7 @@ import org.mongodb.morphia.annotations.Entity;
  */
 
 @Entity("users")
-public class User implements GitHubEntity {
+public class User extends GitHubEntity {
     @SerializedName("id")
     private int id;
   

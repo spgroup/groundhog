@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
  * Represents a GitHub Organization in Groundhog
  * @author gustavopinto, Rodrigo Alves
  */
-public class Organization implements GitHubEntity {
+public class Organization extends GitHubEntity {
 	@SerializedName("id")
 	private int id;
 

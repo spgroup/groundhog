@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
  * Represents a Milestone object in Groundhog
  * @author Rodrigo Alves
  */
-public class Milestone implements GitHubEntity {
+public class Milestone extends GitHubEntity {
 	@SerializedName("id")
 	private int id;
 	

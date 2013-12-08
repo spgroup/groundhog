@@ -5,11 +5,11 @@ package br.ufpe.cin.groundhog;
  * @author Rodrigo Alves
  *
  */
-public interface GitHubEntity {
+public abstract class GitHubEntity {
 	
 	/**
 	 * Returns the Entity's API URL
 	 * @return a String 
 	 */
-	public String getURL();
+	public abstract String getURL();
 }
