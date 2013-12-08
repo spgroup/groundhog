@@ -3,14 +3,16 @@ package br.ufpe.cin.groundhog;
 import java.util.Date;
 
 import br.ufpe.cin.groundhog.util.Dates;
-
 import com.google.gson.annotations.SerializedName;
+import org.mongodb.morphia.annotations.Entity;
 
 /**
  * Represents a Commit object in Groundhog
  * @author Rodrigo Alves, gustavopinto
  * @since 0.0.1
  */
+
+@Entity("commits")
 public class Commit implements GitHubEntity {
 	@SerializedName("sha")
 	private String sha;
@@ -126,12 +128,6 @@ public class Commit implements GitHubEntity {
 	public String getabbrevSHA() {
 		return this.sha.substring(0, 7);
 	}
-
-	@Override
-	public String getURL() {
-		return String.format("https://api.github.com/repos/%s/%s/commits/%s",
-				this.project.getUser().getLogin(), this.project.getName(), this.sha);
-	}
 	
 	/**
 	 * Two {@link Commit} objects are considered equal if and only if both have the same SHA hash
@@ -144,7 +140,18 @@ public class Commit implements GitHubEntity {
 	
 	@Override
 	public String toString() {
-		return String.format("Commit(%s - %s, %s) - %d",
-				this.getabbrevSHA(), this.commitDate, this.message, this.getCommiter().getLogin());
+		return "Commit [" + (sha != null ? "sha=" + sha + ", " : "")
+				+ (commiter != null ? "commiter=" + commiter + ", " : "")
+				+ (message != null ? "message=" + message + ", " : "")
+				+ (project != null ? "project=" + project + ", " : "")
+				+ (commitDate != null ? "commitDate=" + commitDate : "") + "]";
+	}
+
+	@Override
+	public String getURL() {
+		return String.format("https://api.github.com/repos/%s/%s/commits/%s",
+				this.getProject().getUser().getLogin(),
+				this.getProject().getName(),
+				this.sha);
 	}
 }
