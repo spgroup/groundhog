@@ -183,8 +183,9 @@ for (Commit comm: commits) {
     System.out.println(comm);
 }
 
-Refer to the [full Database Support Guide] in the wiki for more information.
 ```
+
+Refer to the [full Database Support Guide] in the wiki for more information.
 
 ## Documentation
 
