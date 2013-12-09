@@ -2,7 +2,7 @@ package br.ufpe.cin.groundhog;
 
 import java.util.Date;
 import java.util.List;
-
+import org.mongodb.morphia.annotations.Entity;
 import com.google.gson.annotations.SerializedName;
 
 import org.mongodb.morphia.annotations.Entity;
@@ -11,9 +11,14 @@ import org.mongodb.morphia.annotations.Entity;
  * Represents a GitHub User in Groundhog
  * @author gustavopinto, Rodrigo Alves
  */
+<<<<<<< HEAD
 
 @Entity("users")
 public class User extends GitHubEntity {
+=======
+@Entity("users")
+public class User implements GitHubEntity {
+>>>>>>> Adding suport for some Groundhog entities
     @SerializedName("id")
     private int id;
   

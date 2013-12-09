@@ -2,12 +2,18 @@ package br.ufpe.cin.groundhog;
 
 import java.util.Date;
 import com.google.gson.annotations.SerializedName;
+import org.mongodb.morphia.annotations.Entity;
 
 /**
  * Represents a Pull Request object in Groundhog
  * @author Rodrigo Alves
  */
+<<<<<<< HEAD
 public class PullRequest extends Issue {
+=======
+@Entity("pullRequests")
+public class PullRequest extends Issue implements GitHubEntity {
+>>>>>>> Adding suport for some Groundhog entities
 	@SerializedName("merged_at")
 	private Date mergedAt;
 	
