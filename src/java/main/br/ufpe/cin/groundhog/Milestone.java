@@ -2,11 +2,13 @@ package br.ufpe.cin.groundhog;
 
 import java.util.Date;
 import com.google.gson.annotations.SerializedName;
+import org.mongodb.morphia.annotations.Entity;
 
 /**
  * Represents a Milestone object in Groundhog
  * @author Rodrigo Alves
  */
+@Entity("milestones")
 public class Milestone extends GitHubEntity {
 	@SerializedName("id")
 	private int id;

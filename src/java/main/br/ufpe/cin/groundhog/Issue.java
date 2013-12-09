@@ -2,12 +2,15 @@ package br.ufpe.cin.groundhog;
 
 import java.util.Date;
 
+import org.mongodb.morphia.annotations.Entity;
+
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Represents an Issue object in Groundhog
  * @author Rodrigo Alves
  */
+@Entity("issues")
 public class Issue extends GitHubEntity {
 	@SerializedName("id")
 	private int id;

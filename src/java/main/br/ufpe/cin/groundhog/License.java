@@ -1,10 +1,13 @@
 package br.ufpe.cin.groundhog;
 
+import org.mongodb.morphia.annotations.Entity;
+
 /**
  * Represents the License used in the {@link Project}
  * @author ghlp
  * @since 0.0.1
  */
+@Entity("licenses")
 public class License {
 
 	private String name;

@@ -1,5 +1,7 @@
 package br.ufpe.cin.groundhog;
 
+import org.mongodb.morphia.annotations.Entity;
+
 /**
  * Represents languages - an important set of components of a {@link Project} -
  * in Groundhog. This class is only important/meaningful in the context of
@@ -10,6 +12,7 @@ package br.ufpe.cin.groundhog;
  * @since 0.0.1
  * 
  */
+@Entity("languages")
 public class Language implements Comparable<Language> {
 	public static final String JAVA = "Java";
 	
