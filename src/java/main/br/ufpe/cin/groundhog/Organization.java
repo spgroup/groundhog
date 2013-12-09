@@ -1,8 +1,13 @@
 package br.ufpe.cin.groundhog;
 
 import java.util.Date;
+import java.util.List;
+
 import com.google.gson.annotations.SerializedName;
 import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Indexed;
+import org.mongodb.morphia.annotations.Reference;
+
 /**
  * Represents a GitHub Organization in Groundhog
  * @author gustavopinto, Rodrigo Alves
@@ -10,7 +15,7 @@ import org.mongodb.morphia.annotations.Entity;
 
 @Entity("organizations")
 public class Organization extends GitHubEntity {
-
+    @Indexed(unique=true, dropDups=true)
 	@SerializedName("id")
 	private int id;
 
@@ -22,6 +27,8 @@ public class Organization extends GitHubEntity {
 	
 	@SerializedName("location")
 	private String location;
+	
+	@Reference private List<User> members;
 	
 	@SerializedName("created_at")
 	private Date created_at;

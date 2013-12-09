@@ -6,6 +6,7 @@ import java.util.List;
 import br.ufpe.cin.groundhog.util.Dates;
 
 import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Reference;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -26,12 +27,12 @@ public class Project extends GitHubEntity {
 	private String language;
 	private List<Language> languages;
 	
-	private List<Issue> issues;
-	private List<Milestone> milestones;
-	private List<Commit> commits;
-	private List<User> contributors;
+	@Reference private List<Issue> issues;
+	@Reference private List<Milestone> milestones;
+	@Reference private List<Commit> commits;
+	@Reference private List<User> contributors;
 
-	private User user;
+	@Reference private User user;
 	private SCM scm;
 
 	@SerializedName("clone_url")

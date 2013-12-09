@@ -2,7 +2,10 @@ package br.ufpe.cin.groundhog;
 
 import java.util.Date;
 import com.google.gson.annotations.SerializedName;
+
 import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Indexed;
+import org.mongodb.morphia.annotations.Reference;
 
 /**
  * Represents a Milestone object in Groundhog
@@ -10,13 +13,14 @@ import org.mongodb.morphia.annotations.Entity;
  */
 @Entity("milestones")
 public class Milestone extends GitHubEntity {
+    @Indexed(unique=true, dropDups=true)
 	@SerializedName("id")
 	private int id;
 	
 	@SerializedName("number")
 	private int number;
 	
-	private Project project;
+	@Reference private Project project;
 
 	@SerializedName("state")
 	private String state;
@@ -28,7 +32,7 @@ public class Milestone extends GitHubEntity {
 	private String description;
 	
 	@SerializedName("creator")
-	private User creator;
+	@Reference private User creator;
 	
 	@SerializedName("open_issues")
 	private int openIssuesCount;

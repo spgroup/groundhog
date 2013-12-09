@@ -3,9 +3,11 @@ package br.ufpe.cin.groundhog;
 import java.util.Date;
 import java.util.List;
 import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Indexed;
+
 import com.google.gson.annotations.SerializedName;
 
-import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Reference;
 
 /**
  * Represents a GitHub User in Groundhog
@@ -13,8 +15,8 @@ import org.mongodb.morphia.annotations.Entity;
  */
 @Entity("users")
 public class User extends GitHubEntity {
-
     @SerializedName("id")
+    @Indexed(unique=true, dropDups=true)
     private int id;
   
     @SerializedName("name")
@@ -56,7 +58,7 @@ public class User extends GitHubEntity {
     @SerializedName("updated_at")
     private String updated_at;
     
-	private List<Commit> commits;  
+	@Reference private List<Commit> commits;
     private List<String> emailAddresses;
   
     public User(String login) {

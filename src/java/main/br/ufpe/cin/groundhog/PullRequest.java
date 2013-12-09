@@ -1,8 +1,11 @@
 package br.ufpe.cin.groundhog;
 
 import java.util.Date;
+
 import com.google.gson.annotations.SerializedName;
+
 import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Indexed;
 
 /**
  * Represents a Pull Request object in Groundhog
@@ -15,6 +18,7 @@ public class PullRequest extends Issue  {
 	private Date mergedAt;
 	
 	@SerializedName("merge_commit_sha")
+    @Indexed(unique=true, dropDups=true)
 	private String mergeCommitSha;
 	
 	@SerializedName("review_comments_url")

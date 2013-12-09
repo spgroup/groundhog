@@ -3,7 +3,11 @@ package br.ufpe.cin.groundhog;
 import java.util.Date;
 
 import com.google.gson.annotations.SerializedName;
+
 import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Indexed;
+import org.mongodb.morphia.annotations.Reference;
+
 /** <p>This class represents a Release in Groundhog 
  * 
  * <p> <i>"Releases are first-class objects with changelogs and binary 
@@ -36,7 +40,7 @@ import org.mongodb.morphia.annotations.Entity;
 
 @Entity("releases")
 public class Release extends GitHubEntity {
-
+    @Indexed(unique=true, dropDups=true)
 	@SerializedName("id")
 	private int id;
 
@@ -67,7 +71,7 @@ public class Release extends GitHubEntity {
 	@SerializedName("published_at")
 	private Date publishedAt;
 
-	private Project project; 
+	@Reference private Project project; 
 
 	public Release(Project project, int id) {
 		this.project = project;

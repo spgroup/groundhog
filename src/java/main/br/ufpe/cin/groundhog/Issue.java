@@ -3,6 +3,8 @@ package br.ufpe.cin.groundhog;
 import java.util.Date;
 
 import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Indexed;
+import org.mongodb.morphia.annotations.Reference;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -12,7 +14,8 @@ import com.google.gson.annotations.SerializedName;
  */
 @Entity("issues")
 public class Issue extends GitHubEntity {
-	@SerializedName("id")
+    @Indexed(unique=true, dropDups=true)
+    @SerializedName("id")
 	private int id;
 
 	@SerializedName("number")
@@ -21,12 +24,12 @@ public class Issue extends GitHubEntity {
 	@SerializedName("comments")
 	private int commentsCount;
 
-	private Project project;
+	@Reference private Project project;
 
 	@SerializedName("pull_request")
 	private transient PullRequest pullRequest;
 
-	private Milestone milestone;
+	@Reference private Milestone milestone;
 
 	@SerializedName("title")
 	private String title;
