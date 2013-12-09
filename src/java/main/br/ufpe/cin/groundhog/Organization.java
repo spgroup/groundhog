@@ -7,12 +7,10 @@ import org.mongodb.morphia.annotations.Entity;
  * Represents a GitHub Organization in Groundhog
  * @author gustavopinto, Rodrigo Alves
  */
-<<<<<<< HEAD
-public class Organization extends GitHubEntity {
-=======
+
 @Entity("organizations")
-public class Organization implements GitHubEntity {
->>>>>>> Adding suport for some Groundhog entities
+public class Organization extends GitHubEntity {
+
 	@SerializedName("id")
 	private int id;
 

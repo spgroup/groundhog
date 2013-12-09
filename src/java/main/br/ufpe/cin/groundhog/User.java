@@ -11,14 +11,9 @@ import org.mongodb.morphia.annotations.Entity;
  * Represents a GitHub User in Groundhog
  * @author gustavopinto, Rodrigo Alves
  */
-<<<<<<< HEAD
-
 @Entity("users")
 public class User extends GitHubEntity {
-=======
-@Entity("users")
-public class User implements GitHubEntity {
->>>>>>> Adding suport for some Groundhog entities
+
     @SerializedName("id")
     private int id;
   

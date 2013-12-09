@@ -33,12 +33,10 @@ import org.mongodb.morphia.annotations.Entity;
 
  *
  **/
-<<<<<<< HEAD
-public class Release extends GitHubEntity {
-=======
+
 @Entity("releases")
-public class Release implements GitHubEntity {
->>>>>>> Adding suport for some Groundhog entities
+public class Release extends GitHubEntity {
+
 	@SerializedName("id")
 	private int id;
 
