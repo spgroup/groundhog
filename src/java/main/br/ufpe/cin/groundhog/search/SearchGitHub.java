@@ -313,7 +313,7 @@ public class SearchGitHub implements ForgeSearch {
 		
 		String searchUrl = builder.uses(GithubAPI.ROOT)
 				  .withParam("repos")
-				  .withSimpleParam("/", project.getUser().getLogin())
+				  .withSimpleParam("/", project.getSourceCodeURL().split("/")[3])
 				  .withSimpleParam("/", project.getName())
 				  .withParam("/issues")
 				  .build();
@@ -405,12 +405,11 @@ public class SearchGitHub implements ForgeSearch {
 	 * @return a {@link List} of {@link Commit} objects
 	 */
 	public List<Commit> getAllProjectCommits(Project project) {
-		
 		logger.info("Searching project commits metadata");
 		
 		String searchUrl = builder.uses(GithubAPI.ROOT)
 				  .withParam("repos")
-				  .withSimpleParam("/", project.getUser().getLogin())
+				  .withSimpleParam("/", project.getSourceCodeURL().split("/")[3])
 				  .withSimpleParam("/", project.getName())
 				  .withParam("/commits")
 				  .build();

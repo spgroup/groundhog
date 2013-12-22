@@ -12,6 +12,8 @@ import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.ufpe.cin.groundhog.Commit;
+import br.ufpe.cin.groundhog.Issue;
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.SCM;
 import br.ufpe.cin.groundhog.codehistory.CodeHistoryModule;
@@ -190,16 +192,16 @@ public class TestMain {
 	    
 	    System.out.println(projects.size());
 	    
-	    for (Project pr: projects) {
-//	    	System.out.println(pr);
-	    }
-	    
 	    Project githubAndroidApp = projects.get(0);
 	    
 	    System.out.println("projeto é:");
 	    System.out.println(githubAndroidApp);
 	    
-//	    githubAndroidApp.setCommits(searchGitHub.getAllProjectCommits(githubAndroidApp));
-//	    githubAndroidApp.setIssues(searchGitHub.getAllProjectIssues(githubAndroidApp));
+	    githubAndroidApp.setCommits(searchGitHub.getAllProjectCommits(githubAndroidApp));
+	    githubAndroidApp.setIssues(searchGitHub.getAllProjectIssues(githubAndroidApp));
+	    
+	    for (Commit cm: githubAndroidApp.getCommits()) {
+	    	System.out.println(cm);
+	    }
 	}
 }
