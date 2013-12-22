@@ -22,7 +22,6 @@ import br.ufpe.cin.groundhog.http.HttpModule;
 import br.ufpe.cin.groundhog.http.Requests;
 import br.ufpe.cin.groundhog.search.UrlBuilder.GithubAPI;
 
-import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -230,12 +229,11 @@ public class SearchGitHub implements ForgeSearch {
 	}
 
 	@Override
-	public List<Project> getProjects(String term, String username, int page)
-			throws SearchException {
-
+	public List<Project> getProjects(String term, String username, int page) throws SearchException {
 		try {
-			
 			logger.info("Searching project metadata by term");
+			
+			List<Project> projects = new ArrayList<>();
 			
 			String searchUrl = builder.uses(GithubAPI.LEGACY_V2)
 					  .withParam(encodeURL(term))
@@ -243,18 +241,28 @@ public class SearchGitHub implements ForgeSearch {
 					  .withParam("language", "java")
 					  .build();
 
-			String json = requests.get(searchUrl);
+			JsonParser parser = new JsonParser();
+			String jsonLegacy = getWithProtection(searchUrl);
+			JsonElement jsonElement = parser.parse(jsonLegacy);
+			
+			JsonObject jsonObject = jsonElement.getAsJsonObject();
+			JsonArray jsonArray = jsonObject.get("repositories").getAsJsonArray();
+			
+			for (JsonElement j: jsonArray) {
+				Project p = gson.fromJson(j, Project.class);
+				JsonObject jsonObj = j.getAsJsonObject();	
 
-			Project p = gson.fromJson(json, Project.class);
-			p.setSCM(SCM.GIT);
-			p.setScmURL(String.format("git@github.com:%s/%s.git", username, p.getName()));
+				p.setSCM(SCM.GIT);
+				p.setScmURL(String.format("git@github.com:%s/%s.git", username, p.getName()));
+				p.setSourceCodeURL(jsonObj.get("url").toString());
+				
+				User u = new User(jsonObj.get("owner").toString());
+				p.setUser(u);
+				
+				projects.add(p);
+			}
 
-			json = requests.get(builder.uses(GithubAPI.USERS).withParam(username).build());
-			User user = gson.fromJson(json, User.class);
-			p.setOwner(user);
-
-			return Lists.newArrayList(p);
-
+			return projects;
 		} catch (Throwable e) {
 			e.printStackTrace();
 			throw new SearchException(e);
@@ -385,8 +393,7 @@ public class SearchGitHub implements ForgeSearch {
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.out.println("Causado por " + jsonString);
-			}
-			
+			}	
 		}
 		
 		return retorno;
@@ -407,6 +414,8 @@ public class SearchGitHub implements ForgeSearch {
 				  .withSimpleParam("/", project.getName())
 				  .withParam("/commits")
 				  .build();
+		
+		System.out.println(searchUrl);
 
 		JsonElement jsonElement = gson.fromJson(requests.get(searchUrl), JsonElement.class);
 		JsonArray jsonArray = jsonElement.getAsJsonArray();

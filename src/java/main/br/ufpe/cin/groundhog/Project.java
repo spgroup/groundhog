@@ -479,13 +479,17 @@ public class Project extends GitHubEntity {
 	/**
 	 * Return true if the project is considered mature
 	 * 
-	 * A project is considered active if it has at least 1 commmit and more the
+	 * A project is considered active if it has at least 1 {@link Commit} and more the
 	 * 1 contributor
 	 * 
 	 * @return
 	 */
 	public boolean isActive() {
-		return ((commits.size() > 1) && (contributors.size() > 2));
+		if (commits == null && contributors == null) {
+			return false;
+		} else {
+			return ((commits.size() > 1) && (contributors.size() > 2));			
+		}
 	}
 	
 	/**
@@ -511,6 +515,6 @@ public class Project extends GitHubEntity {
 
 	@Override
 	public String toString() {
-		return String.format("Project(%s, (%s, %s), %s)", this.name, this.isActive(), this.isMature(), this.sourceCodeURL);
+		return String.format("Project(%s, %s)", this.name, this.sourceCodeURL);
 	}
 }
