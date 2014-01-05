@@ -1,6 +1,7 @@
 package br.ufpe.cin.groundhog;
 
 import java.util.Date;
+import java.util.List;
 
 import br.ufpe.cin.groundhog.util.Dates;
 
@@ -35,6 +36,8 @@ public class Commit extends GitHubEntity {
 	private int additionsCount;
 	
 	private int deletionsCount;
+
+	private List<CommitFile> files;
 	
 	public Commit(String sha, Project project) {
 		this.sha = sha;
@@ -133,7 +136,15 @@ public class Commit extends GitHubEntity {
 	public String getabbrevSHA() {
 		return this.sha.substring(0, 7);
 	}
-	
+
+	public List<CommitFile> getFiles() {
+		return this.files;
+	}
+
+	public void setFiles(List<CommitFile> files) {
+		this.files = files;
+	}
+
 	/**
 	 * Two {@link Commit} objects are considered equal if and only if both have the same SHA hash
 	 * @param commit
@@ -158,5 +169,34 @@ public class Commit extends GitHubEntity {
 				this.getProject().getUser().getLogin(),
 				this.getProject().getName(),
 				this.sha);
+	}
+
+	public static final class CommitFile {
+		@SerializedName(value="filename")
+		private String fileName;
+
+		@SerializedName(value="additions")
+		private int additionsCount;
+
+		@SerializedName(value="deletions")
+		private int deletionsCount;
+
+		@SerializedName(value="changes")
+		private int changesCount;
+
+		@SerializedName(value="status")
+		private String status;
+
+		@SerializedName(value="patch")
+		private String patch;
+		
+		@Override
+		public String toString() {
+			return "CommitFile [fileName=" + fileName + ", additionsCount="
+					+ additionsCount + ", deletionsCount=" + deletionsCount
+					+ ", changesCount=" + changesCount + ", status=" + status
+					+ ", patch=" + patch + "]";
+		}
+
 	}
 }

@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.ufpe.cin.groundhog.Commit;
+import br.ufpe.cin.groundhog.Commit.CommitFile;
 import br.ufpe.cin.groundhog.GroundhogException;
 import br.ufpe.cin.groundhog.Issue;
 import br.ufpe.cin.groundhog.Language;
@@ -485,7 +486,30 @@ public class SearchGitHub implements ForgeSearch {
 			String date = element.getAsJsonObject().get("commit").getAsJsonObject().get("author").getAsJsonObject().get("date").getAsString();
 			commit.setCommitDate(date);
 			commits.add(commit);
+
+			searchUrl = builder.uses(GithubAPI.ROOT)
+					.withParam("repos")
+					.withSimpleParam("/", project.getUser().getLogin().replace("\"", ""))
+					.withSimpleParam("/", project.getName())
+					.withParam("/commits")
+					.withSimpleParam("/", commit.getSha())
+					.build();
+			logger.info("searchUrl="+searchUrl);
+			jsonElement = gson.fromJson(requests.get(searchUrl), JsonElement.class);
+			JsonObject statsObject = jsonElement.getAsJsonObject().get("stats").getAsJsonObject();
+			int additions = statsObject.get("additions").getAsInt();
+			int deletions = statsObject.get("deletions").getAsInt();
+			commit.setAdditionsCount(additions);
+			commit.setDeletionsCount(deletions);
+			JsonArray filesArray = jsonElement.getAsJsonObject().get("files").getAsJsonArray();
+			List<CommitFile> files = new ArrayList<>();
+			for (JsonElement fileElement : filesArray) {
+				CommitFile gitFile = gson.fromJson(fileElement, CommitFile.class);
+				files.add(gitFile);
+			}
+			commit.setFiles(files);
 		}
+
 
 		return commits;
 	}
