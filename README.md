@@ -21,6 +21,20 @@ Before becoming beta, we want to add the following to Groundhog:
 
 Groundhog uses Java 7 features, so you must have it installed before build. Groundhog also uses [Maven](maven.apache.org), so to build the project you will need to download and install the tool.
 
+#### Compiling
+
+You can run the following command:
+
+```
+$ mvn package
+```
+
+To compile without running the test suite:
+
+```
+$ mvn package -DskipTests
+```
+
 #### Bulding for Eclipse
 
 In order for it to behave like an Eclipse project, you'll need to run the following command in the command line:
