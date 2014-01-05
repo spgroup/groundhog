@@ -279,7 +279,7 @@ public class Issue extends GitHubEntity {
 	public String getURL() {
 		return String.format("https://api.github.com/repos/%s/%s/issues/%d",
 				this.getProject().getOwner().getLogin(), this.getProject().getName(), this.getNumber());
-	}
+	} //api.github.com/repos/"github"/android/issues/461
 
 	@Override
 	public String toString() {
