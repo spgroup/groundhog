@@ -265,11 +265,6 @@ public class Issue extends GitHubEntity {
 	public boolean isPullRequest() {
 		return this.getPullRequest() != null ? true : false;
 	}
-
-	public String getURL() {
-		return String.format("https://api.github.com/repos/%s/%s/issues/%d",
-				this.getProject().getOwner().getLogin(), this.getProject().getName(), this.getNumber());
-	}
 	
 	/**
 	 * Two {@link Issue} objects are considered equal when they have the same GitHub API ID,
@@ -280,17 +275,26 @@ public class Issue extends GitHubEntity {
 	public boolean equals(Issue issue) {
 		return this.id == issue.id && this.number == issue.number && this.project.equals(issue.getProject());
 	}
+	
+	public String getURL() {
+		return String.format("https://api.github.com/repos/%s/%s/issues/%d",
+				this.getProject().getOwner().getLogin(), this.getProject().getName(), this.getNumber());
+	}
 
 	@Override
 	public String toString() {
-		String stringReturn = "Issue Number = "  + this.number; // we always have a Issue number, the programmer must read the doc to contribute
-		if ( this.title != null) {
+		String stringReturn = "Issue Number = "  + this.number;
+		
+		if (this.title != null) {
 			stringReturn += ", title: " + this.title;
 		}
+		
 		String url = this.getURL(); // This class doesn't contains a variable referring a URL, so we create one local
-		if ( url != null ) {
+		
+		if (url != null) {
 			stringReturn += ", URL = " + url;   
 		}
+		
 		return stringReturn;  
 	}
 }

@@ -190,18 +190,15 @@ public class TestMain {
 	    SearchGitHub searchGitHub = injector.getInstance(SearchGitHub.class);
 	    List<Project> projects = searchGitHub.getProjects("github", "android", 1);
 	    
-	    System.out.println(projects.size());
-	    
 	    Project githubAndroidApp = projects.get(0);
-	    
-	    System.out.println("projeto é:");
-	    System.out.println(githubAndroidApp);
-	    
-	    githubAndroidApp.setCommits(searchGitHub.getAllProjectCommits(githubAndroidApp));
 	    githubAndroidApp.setIssues(searchGitHub.getAllProjectIssues(githubAndroidApp));
 	    
-	    for (Commit cm: githubAndroidApp.getCommits()) {
-	    	System.out.println(cm);
+	    List<Issue> issues = githubAndroidApp.getIssues();
+	    
+	    System.out.println("Issues for project: " + githubAndroidApp.getName());
+
+	    for (Issue issue : issues) {
+	    	System.out.println(issue);
 	    }
 	}
 }

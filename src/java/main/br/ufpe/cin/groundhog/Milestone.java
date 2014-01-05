@@ -246,15 +246,17 @@ public class Milestone extends GitHubEntity {
 	
 	@Override
 	public String getURL() {
-		return String.format("https://api.github.com/repos/%s/%s/issues/%d",
+		String result = String.format("https://api.github.com/repos/%s/%s/issues/%d",
 				this.getProject().getOwner().getLogin(), this.getProject().getName(), this.getNumber());
+		
+		return result;
 	}
 
 	@Override
 	public String toString() {
 		return "Milestone number = " + number + ", "
-				+ (state != null ? "state = " + state + ", " : "")
-				+ (title != null ? "title = " + title + ", " : "")
-				+ (getURL() != null ? "URL = " + getURL() : "");
+				+ (this.state != null ? "state = " + this.state + ", " : "")
+				+ (this.title != null ? "title = " + this.title + ", " : "")
+				+ (this.getURL() != null ? "url= " + this.getURL() : " ");
 	}
 }

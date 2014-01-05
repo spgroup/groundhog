@@ -322,8 +322,10 @@ public class SearchGitHub implements ForgeSearch {
 		JsonArray jsonArray = gson.fromJson(jsonString, JsonElement.class).getAsJsonArray();
 
 		List<Issue> issues = new ArrayList<Issue>();
+		
 		for (JsonElement element : jsonArray) {
 			Issue issue = gson.fromJson(element, Issue.class);
+			issue.setProject(project);
 			issues.add(issue);
 		}
 
@@ -353,6 +355,8 @@ public class SearchGitHub implements ForgeSearch {
 		List<Milestone> milestones = new ArrayList<>();
 		for (JsonElement element : jsonArray) {
 			Milestone milestone = gson.fromJson(element, Milestone.class);
+			milestone.setProject(project);
+			
 			milestones.add(milestone);
 		}
 
@@ -422,8 +426,11 @@ public class SearchGitHub implements ForgeSearch {
 		List<Commit> commits = new ArrayList<>();
 		for (JsonElement element : jsonArray) {
 			Commit commit = gson.fromJson(element, Commit.class);
+			commit.setProject(project);
+			
 			User user = gson.fromJson(element.getAsJsonObject().get("committer"), User.class);
 			commit.setCommiter(user);
+			
 			commit.setMessage(element.getAsJsonObject().get("commit").getAsJsonObject().get("message").getAsString());
 
 			String date = element.getAsJsonObject().get("commit").getAsJsonObject().get("author").getAsJsonObject().get("date").getAsString();
@@ -460,6 +467,7 @@ public class SearchGitHub implements ForgeSearch {
 		List<Commit> commits = new ArrayList<>();
 		for (JsonElement element : jsonArray) {
 			Commit commit = gson.fromJson(element, Commit.class);
+			commit.setProject(project);
 
 			String date = element.getAsJsonObject().get("commit").getAsJsonObject().get("author").getAsJsonObject().get("date").getAsString();
 			commit.setCommitDate(date);
@@ -646,6 +654,8 @@ public class SearchGitHub implements ForgeSearch {
 		List<Release> releases = new ArrayList<Release>();
 		for (JsonElement element : jsonArray) {
 			Release release = gson.fromJson(element, Release.class);
+			release.setProject(project);
+			
 			releases.add(release);
 		}
 
