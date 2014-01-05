@@ -42,7 +42,12 @@ import java.util.Map.Entry;
  */
 public class SearchGitHub implements ForgeSearch {
 	private static Logger logger = LoggerFactory.getLogger(SearchGitHub.class);
-	
+
+	/*
+	 *  Default number of items per page as defined in http://developer.github.com/v3/#pagination
+	 */
+	private static final int DEFAULT_PAGINATION_LIMIT = 30;
+
 	public static int INFINITY = -1;
 
 	private final Gson gson;
@@ -251,7 +256,7 @@ public class SearchGitHub implements ForgeSearch {
 			for (JsonElement j: jsonArray) {
 				Project p = gson.fromJson(j, Project.class);
 				JsonObject jsonObj = j.getAsJsonObject();	
-				
+
 				p.setSCM(SCM.GIT);
 				p.setScmURL(String.format("git@github.com:%s/%s.git", username, p.getName()));
 				p.setSourceCodeURL(jsonObj.get("url").getAsString());
@@ -308,28 +313,69 @@ public class SearchGitHub implements ForgeSearch {
 	 * @return a {@link List} of {@link Issues} objects
 	 */
 	public List<Issue> getAllProjectIssues(Project project) {
+		//XXX: Instead fetching ALL issues at once we could return a lazy collection that would
+		// do it on the fly
+		int pageLimit = INFINITY;
+		return getProjectIssues(project, pageLimit);
+	}
 
-		logger.info("Searching project issues metadata");
-		
-		String searchUrl = builder.uses(GithubAPI.ROOT)
-				  .withParam("repos")
-				  .withSimpleParam("/", project.getSourceCodeURL().split("/")[3])
-				  .withSimpleParam("/", project.getName())
-				  .withParam("/issues")
-				  .build();
-		
-		String jsonString = requests.get(searchUrl);
-		JsonArray jsonArray = gson.fromJson(jsonString, JsonElement.class).getAsJsonArray();
+	/**
+	 * Returns all projects up to <code>pageLimit</code> pages.
+	 * The default number of projects per page as defined by version V3 of the GitHub API is <i>30</i>.
+	 * @param project the project to fetch issues for
+	 * @param pageLimit the maximum number of pages for which issues should be retrieved, use
+	 * {@link #INFINITY} for all issues ever opened.
+	 * @return
+	 */
+	public List<Issue>getProjectIssues(Project project, int pageLimit) {
+		if(project == null){
+			throw new IllegalArgumentException("project must not be null");
+		}
+		if(pageLimit != INFINITY && pageLimit <= 0){
+			throw new IllegalArgumentException("pageLimit must be > 0 or INFINITY");
+		}
+		return getProjectIssues(project.getUser().getLogin().replace("\"", ""),
+								project.getName(), pageLimit);
+	}
 
+	private List<Issue> getProjectIssues(String user, String project, int pageLimit) {
 		List<Issue> issues = new ArrayList<Issue>();
 		
+		
+		JsonObject firstPageJson = getIssuesJson(user, project, 1);
+		JsonArray jsonArray = firstPageJson.get("items").getAsJsonArray();
 		for (JsonElement element : jsonArray) {
 			Issue issue = gson.fromJson(element, Issue.class);
-			issue.setProject(project);
 			issues.add(issue);
 		}
-
+		int totalItems = firstPageJson.get("total_count").getAsInt();
+		int pages = ((totalItems - 1)/ DEFAULT_PAGINATION_LIMIT) + 1;
+		if(pageLimit != INFINITY){
+			pages = Math.min(pages, pageLimit);
+		}
+		for(int i = 2; i <= pages; i++){
+			JsonObject ithPageJson = getIssuesJson(user, project, i);
+			JsonArray ithJsonArray = ithPageJson.get("items").getAsJsonArray();
+			for (JsonElement element : ithJsonArray) {
+				Issue issue = gson.fromJson(element, Issue.class);
+				issues.add(issue);
+			}
+		}
 		return issues;
+	}
+
+	private JsonObject getIssuesJson(String user, String project, int page) {
+		logger.info("Searching project issues metadata");
+		String searchUrl = builder.uses(GithubAPI.ROOT)
+				  .withParam("search/issues")
+				  .withParam("q", "user:" + user + "+" + "repo:" + project)
+				  .withParam("page", "" + page)
+				  .build();
+		String jsonString = requests.get(searchUrl);
+		
+		JsonObject jsonObject = gson.fromJson(jsonString, JsonElement.class).getAsJsonObject();
+
+		return jsonObject;
 	}
 
 	/**
