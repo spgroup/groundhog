@@ -1,6 +1,7 @@
 package br.ufpe.cin.groundhog;
 
 import java.util.Date;
+import java.util.List;
 
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Indexed;
@@ -28,6 +29,8 @@ public class Issue extends GitHubEntity {
 
 	@SerializedName("pull_request")
 	private transient PullRequest pullRequest;
+
+    private List<IssueLabel> labels;
 
 	@Reference private Milestone milestone;
 
@@ -129,6 +132,14 @@ public class Issue extends GitHubEntity {
 
 	public void setPullRequest(PullRequest pullRequest) {
 		this.pullRequest = pullRequest;
+	}
+
+	public List<IssueLabel> getLabels() {
+		return this.labels;
+	}
+
+	public void setLabels(List<IssueLabel> labels) {
+		this.labels = labels;
 	}
 
 	public Milestone getMilestone() {

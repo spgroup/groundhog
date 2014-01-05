@@ -1,6 +1,8 @@
 package br.ufpe.cin.groundhog;
 
 import java.util.Date;
+import java.util.List;
+
 import com.google.gson.annotations.SerializedName;
 
 import org.mongodb.morphia.annotations.Entity;
@@ -33,6 +35,8 @@ public class Milestone extends GitHubEntity {
 	
 	@SerializedName("creator")
 	@Reference private User creator;
+	
+    private List<IssueLabel> labels;
 	
 	@SerializedName("open_issues")
 	private int openIssuesCount;
@@ -152,6 +156,14 @@ public class Milestone extends GitHubEntity {
 
 	public void setCreator(User creator) {
 		this.creator = creator;
+	}
+	
+	public List<IssueLabel> getLabels() {
+		return this.labels;
+	}
+
+	public void setLabels(List<IssueLabel> labels) {
+		this.labels = labels;
 	}
 
 	/**
