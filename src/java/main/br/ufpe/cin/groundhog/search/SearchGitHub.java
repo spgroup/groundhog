@@ -334,18 +334,19 @@ public class SearchGitHub implements ForgeSearch {
 		if(pageLimit != INFINITY && pageLimit <= 0){
 			throw new IllegalArgumentException("pageLimit must be > 0 or INFINITY");
 		}
-		return getProjectIssues(project.getUser().getLogin().replace("\"", ""),
-								project.getName(), pageLimit);
+		return getProjectIssuesInner(project, pageLimit);
 	}
 
-	private List<Issue> getProjectIssues(String user, String project, int pageLimit) {
+	private List<Issue> getProjectIssuesInner(Project project, int pageLimit) {
 		List<Issue> issues = new ArrayList<Issue>();
 		
 		
-		JsonObject firstPageJson = getIssuesJson(user, project, 1);
+		JsonObject firstPageJson = getIssuesJson(project.getUser().getLogin(),
+													project.getName(), 1);
 		JsonArray jsonArray = firstPageJson.get("items").getAsJsonArray();
 		for (JsonElement element : jsonArray) {
 			Issue issue = gson.fromJson(element, Issue.class);
+			issue.setProject(project);
 			issues.add(issue);
 		}
 		int totalItems = firstPageJson.get("total_count").getAsInt();
@@ -354,10 +355,12 @@ public class SearchGitHub implements ForgeSearch {
 			pages = Math.min(pages, pageLimit);
 		}
 		for(int i = 2; i <= pages; i++){
-			JsonObject ithPageJson = getIssuesJson(user, project, i);
+			JsonObject ithPageJson = getIssuesJson(project.getUser().getLogin(),
+													project.getName(), i);
 			JsonArray ithJsonArray = ithPageJson.get("items").getAsJsonArray();
 			for (JsonElement element : ithJsonArray) {
 				Issue issue = gson.fromJson(element, Issue.class);
+				issue.setProject(project);
 				issues.add(issue);
 			}
 		}
