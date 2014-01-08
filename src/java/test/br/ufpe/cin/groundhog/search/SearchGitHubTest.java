@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import br.ufpe.cin.groundhog.Commit;
+import br.ufpe.cin.groundhog.Issue;
 import br.ufpe.cin.groundhog.Language;
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.Release;
@@ -113,6 +114,45 @@ public class SearchGitHubTest {
 			List<Release> releases = searchGitHub.getAllProjectReleases(project);
 						
 			Assert.assertNotNull(releases);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail();
+		}
+	}
+
+	@Test
+	public void testGetProjectIssues(){
+		try {
+			User u = new User("spgroup");
+			Project project = new Project(u, "groundhog");
+			
+			List<Issue> projectIssues = searchGitHub.getProjectIssues(project, 2);
+						
+			Assert.assertNotNull(projectIssues);
+			// The default number of items per page is 30 so for 2 pages we should have 60 items
+			// As of 01-Jan-2014 the number of issues for project spgroup/groundhog is 315 so it
+			// should be guaranteed to have 2 pages at least.
+			Assert.assertEquals(projectIssues.size(), 60);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail();
+		}
+	}
+
+	// Note that in the future this test may have to be reworked as the number of issues in the
+	// target project grows
+	@Test
+	public void testGetAllProjectIssues(){
+		try {
+			User u = new User("spgroup");
+			Project project = new Project(u, "groundhog");
+			
+			List<Issue> projectIssues = searchGitHub.getAllProjectIssues(project);
+						
+			Assert.assertNotNull(projectIssues);
+			// As of 01-Jan-2014 the number of issues for project spgroup/groundhog is 315 and 
+			// this number can only grow
+			Assert.assertTrue(projectIssues.size() >= 315);
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail();
