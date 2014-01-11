@@ -2,9 +2,11 @@ package br.ufpe.cin.groundhog.search;
 
 import static br.ufpe.cin.groundhog.http.URLsDecoder.encodeURL;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,17 +25,22 @@ import br.ufpe.cin.groundhog.http.HttpModule;
 import br.ufpe.cin.groundhog.http.Requests;
 import br.ufpe.cin.groundhog.search.UrlBuilder.GithubAPI;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
+import com.ning.http.client.Response;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Performs the project search on GitHub, via its official JSON API
@@ -42,12 +49,19 @@ import java.util.Map.Entry;
  * @since 0.0.1
  */
 public class SearchGitHub implements ForgeSearch {
+
 	private static Logger logger = LoggerFactory.getLogger(SearchGitHub.class);
 
 	/*
 	 *  Default number of items per page as defined in http://developer.github.com/v3/#pagination
 	 */
+	@SuppressWarnings("unused")
 	private static final int DEFAULT_PAGINATION_LIMIT = 30;
+
+	/*
+	 * Pattern for a Github Link header
+	 */
+	private static final Pattern LINK_PATTERN = Pattern.compile("\\<(?<link>\\S+)\\>\\; rel=\\\"(?<rel>\\S+)\\\"");
 
 	public static int INFINITY = -1;
 
@@ -308,7 +322,7 @@ public class SearchGitHub implements ForgeSearch {
 	}
 
 	/**
-	 * Fetches all the Issues of the given {@link Project} from the GitHub API
+	 * Fetches all the Issues (open and closed) of the given {@link Project} from the GitHub API
 	 * 
 	 * @param project the @{link Project} of which the Issues are about
 	 * @return a {@link List} of {@link Issues} objects
@@ -316,70 +330,85 @@ public class SearchGitHub implements ForgeSearch {
 	public List<Issue> getAllProjectIssues(Project project) {
 		//XXX: Instead fetching ALL issues at once we could return a lazy collection that would
 		// do it on the fly
-		int pageLimit = INFINITY;
-		return getProjectIssues(project, pageLimit);
+		try {
+			return getProjectIssuesInner(project);
+		} catch (JsonSyntaxException | IOException e) {
+			throw new SearchException(e);
+		}
 	}
 
-	/**
-	 * Returns all projects up to <code>pageLimit</code> pages.
-	 * The default number of projects per page as defined by version V3 of the GitHub API is <i>30</i>.
-	 * @param project the project to fetch issues for
-	 * @param pageLimit the maximum number of pages for which issues should be retrieved, use
-	 * {@link #INFINITY} for all issues ever opened.
-	 * @return
-	 */
-	public List<Issue>getProjectIssues(Project project, int pageLimit) {
-		if(project == null){
-			throw new IllegalArgumentException("project must not be null");
-		}
-		if(pageLimit != INFINITY && pageLimit <= 0){
-			throw new IllegalArgumentException("pageLimit must be > 0 or INFINITY");
-		}
-		return getProjectIssuesInner(project, pageLimit);
+	private List<Issue> getProjectIssuesInner(Project project) throws JsonSyntaxException, IOException {
+		logger.info("Searching project issues metadata");
+		List<Issue> issues = getAllProjectIssuesForState(project, "open");
+		issues.addAll(getAllProjectIssuesForState(project, "closed"));
+		return issues;
 	}
 
-	private List<Issue> getProjectIssuesInner(Project project, int pageLimit) {
+	private List<Issue> getAllProjectIssuesForState(Project project,
+			String state) throws IOException {
 		List<Issue> issues = new ArrayList<Issue>();
-		
-		
-		JsonObject firstPageJson = getIssuesJson(project.getUser().getLogin(),
-													project.getName(), 1);
-		JsonArray jsonArray = firstPageJson.get("items").getAsJsonArray();
+		String searchUrl = buildListIssuesUrl(project.getUser().getLogin(), project.getName(), 1, state);
+		Response response = getResponseWithProtection(searchUrl);
+		String jsonResponse = response.getResponseBody();
+		extractIssues(project, jsonResponse, issues);
+		while((searchUrl = getNextUrl(response)) != null){
+			response = getResponseWithProtection(searchUrl);
+			jsonResponse = response.getResponseBody();
+			extractIssues(project, jsonResponse, issues);
+		}
+		return issues;
+	}
+
+	private void extractIssues(Project project, String jsonResponse,
+			List<Issue> issues) {
+		JsonArray jsonArray = gson.fromJson(jsonResponse, JsonElement.class).getAsJsonArray();
 		for (JsonElement element : jsonArray) {
 			Issue issue = gson.fromJson(element, Issue.class);
 			issue.setProject(project);
 			issues.add(issue);
 		}
-		int totalItems = firstPageJson.get("total_count").getAsInt();
-		int pages = ((totalItems - 1)/ DEFAULT_PAGINATION_LIMIT) + 1;
-		if(pageLimit != INFINITY){
-			pages = Math.min(pages, pageLimit);
-		}
-		for(int i = 2; i <= pages; i++){
-			JsonObject ithPageJson = getIssuesJson(project.getUser().getLogin(),
-													project.getName(), i);
-			JsonArray ithJsonArray = ithPageJson.get("items").getAsJsonArray();
-			for (JsonElement element : ithJsonArray) {
-				Issue issue = gson.fromJson(element, Issue.class);
-				issue.setProject(project);
-				issues.add(issue);
-			}
-		}
-		return issues;
 	}
 
-	private JsonObject getIssuesJson(String user, String project, int page) {
-		logger.info("Searching project issues metadata");
+	private String buildListIssuesUrl(String user, String project, int page, String state){
 		String searchUrl = builder.uses(GithubAPI.ROOT)
-				  .withParam("search/issues")
-				  .withParam("q", "user:" + user + "+" + "repo:" + project)
+				  .withParam("repos")
+				  .withSimpleParam("/", user)
+				  .withSimpleParam("/", project)
+				  .withSimpleParam("/", "issues")
+				  .withParam("state", state)
 				  .withParam("page", "" + page)
 				  .build();
-		String jsonString = requests.get(searchUrl);
-		
-		JsonObject jsonObject = gson.fromJson(jsonString, JsonElement.class).getAsJsonObject();
+		return searchUrl;
+	}
 
-		return jsonObject;
+	private String getNextUrl(Response response) {
+		String nextLink = null;
+		String linkHeader = response.getHeader("Link");
+		if(linkHeader != null){
+			Map<String, String> relToLinks = getLinks(linkHeader);
+			if(relToLinks.containsKey("next")){
+				nextLink = relToLinks.get("next");
+			}
+		}
+		return nextLink;
+	}
+
+	/*
+	 * Extract the links out of a Link header
+	 */
+	private Map<String, String> getLinks(String linkHeader) {
+		Map<String, String> relToLinks = new HashMap<>();
+		Matcher linkMatcher = LINK_PATTERN.matcher(linkHeader);
+		while(linkMatcher.find()){
+			String rel = linkMatcher.group("rel");
+			String link = linkMatcher.group("link");
+			if(!relToLinks.containsKey(rel)) relToLinks.put(rel, link);
+			else {
+				logger.warn("Duplicate rel, previous link " + relToLinks.get(rel) +
+							" , new link " + link);
+			}
+		}
+		return relToLinks;
 	}
 
 	/**
@@ -459,18 +488,55 @@ public class SearchGitHub implements ForgeSearch {
 	 * @return a {@link List} of {@link Commit} objects
 	 */
 	public List<Commit> getAllProjectCommits(Project project) {
-		logger.info("Searching project commits metadata");
-		
-		String searchUrl = builder.uses(GithubAPI.ROOT)
-				  .withParam("repos")
-				  .withSimpleParam("/", project.getSourceCodeURL().split("/")[3])
-				  .withSimpleParam("/", project.getName())
-				  .withParam("/commits")
-				  .build();
-		
-		System.out.println(searchUrl);
+		checkNotNull(project, "project must not be null");
+		logger.info("Searching all project commits metadata");
+		return getProjectCommits(project, null, null);
+	}
 
-		JsonElement jsonElement = gson.fromJson(requests.get(searchUrl), JsonElement.class);
+	/**
+	 * Fetches all the Commits of the given {@link Project} from the GitHub API for the specified
+	 * period. If either since or until are <code>null</code> the period is open-ended, if both are
+	 * <code>null</code> then this method behaves exactly like {@link #getAllProjectCommits(Project)}
+	 * @param project project to fetch commits metadata for
+	 * @param since initial date of the period in the ISO 8601 format YYYY-MM-DDTHH:MM:SSZ
+	 * @param until end date of the period in the ISO 8601 format YYYY-MM-DDTHH:MM:SSZ
+	 * @return the list of commits from project <code>project</code> within the specified period,
+	 * or an empty list if no such commits exist
+	 */
+	public List<Commit> getProjectCommitsByPeriod(Project project, String since, String until){
+		checkNotNull(project, "project must not be null");
+		logger.info("Searching project commits metadata by period");
+		return getProjectCommits(project, since, until);
+	}
+
+	/**
+	 * Utility method for <code>getAllProjectCommitsByPeriod(project, since, null)</code>
+	 * @param project project to fetch commits metadata for
+	 * @param since initial date of the period in the ISO 8601 format YYYY-MM-DDTHH:MM:SSZ
+	 * @return the list of commits from <code>project</code> within the specified period,
+	 * or an empty list if no such commits exist
+	 */
+	public List<Commit> getProjectCommitsSince(Project project, String since){
+		return getProjectCommitsByPeriod(project, since, null);
+	}
+
+	/**
+	 * Utility method for <code>getAllProjectCommitsByPeriod(project, null, until)</code>
+	 * @param project project to fetch commits metadata for
+	 * @param until end date of the period in the ISO 8601 format YYYY-MM-DDTHH:MM:SSZ
+	 * @return the list of commits from project <code>project</code> within the specified period,
+	 * or an empty list if no such commits exist
+	 */
+	public List<Commit> getProjectCommitsUntil(Project project, String until){
+		return getProjectCommitsByPeriod(project, null, until);
+	}
+
+	private List<Commit> getProjectCommits(Project project, String since, String until) {
+		String searchUrl = buildListCommitsUrl(project, since, until);
+		
+		String response = getWithProtection(searchUrl);
+
+		JsonElement jsonElement = gson.fromJson(response, JsonElement.class);
 		JsonArray jsonArray = jsonElement.getAsJsonArray();
 
 		List<Commit> commits = new ArrayList<>();
@@ -487,67 +553,61 @@ public class SearchGitHub implements ForgeSearch {
 			commit.setCommitDate(date);
 			commits.add(commit);
 
-			searchUrl = builder.uses(GithubAPI.ROOT)
-					.withParam("repos")
-					.withSimpleParam("/", project.getUser().getLogin().replace("\"", ""))
-					.withSimpleParam("/", project.getName())
-					.withParam("/commits")
-					.withSimpleParam("/", commit.getSha())
-					.build();
-			logger.info("searchUrl="+searchUrl);
-			jsonElement = gson.fromJson(requests.get(searchUrl), JsonElement.class);
-			JsonObject statsObject = jsonElement.getAsJsonObject().get("stats").getAsJsonObject();
-			int additions = statsObject.get("additions").getAsInt();
-			int deletions = statsObject.get("deletions").getAsInt();
-			commit.setAdditionsCount(additions);
-			commit.setDeletionsCount(deletions);
-			JsonArray filesArray = jsonElement.getAsJsonObject().get("files").getAsJsonArray();
-			List<CommitFile> files = new ArrayList<>();
-			for (JsonElement fileElement : filesArray) {
-				CommitFile gitFile = gson.fromJson(fileElement, CommitFile.class);
-				files.add(gitFile);
-			}
-			commit.setFiles(files);
+			populateRemainingMetadata(commit);
 		}
-
 
 		return commits;
 	}
 
-	/**
-	 * Fetches all the Commits of the given {@link Project} from the GitHub API
-	 * @param project the @{link Project} to which the commits belong
-	 * @return a {@link List} of {@link Commit} objects
-	 */
-	public List<Commit> getAllProjectCommitsByDate(Project project, String start, String end) {
-
-		logger.info("Searching all project commits metadata by date");
-		
-		String searchUrl = builder.uses(GithubAPI.ROOT)
+	private String buildListCommitsUrl(Project project, String since,
+			String until) {
+		UrlBuilder listCommitsBuilder = builder.uses(GithubAPI.ROOT)
 				  .withParam("repos")
 				  .withSimpleParam("/", project.getUser().getLogin())
 				  .withSimpleParam("/", project.getName())
-				  .withSimpleParam("/", "commits")
-				  .withParam("since", start)
-				  .withParam("until", end)
-				  .build();
+				  .withSimpleParam("/", "commits");
 		
-		String response = getWithProtection(searchUrl);
-
-		JsonElement jsonElement = gson.fromJson(response, JsonElement.class);
-		JsonArray jsonArray = jsonElement.getAsJsonArray();
-
-		List<Commit> commits = new ArrayList<>();
-		for (JsonElement element : jsonArray) {
-			Commit commit = gson.fromJson(element, Commit.class);
-			commit.setProject(project);
-
-			String date = element.getAsJsonObject().get("commit").getAsJsonObject().get("author").getAsJsonObject().get("date").getAsString();
-			commit.setCommitDate(date);
-			commits.add(commit);
+		if(since != null){
+			listCommitsBuilder = listCommitsBuilder.withParam("since", since);
 		}
 
-		return commits;
+		if(until != null) {
+			listCommitsBuilder = listCommitsBuilder.withParam("until", until);
+		}
+
+		String searchUrl = listCommitsBuilder.build();
+		return searchUrl;
+	}
+
+	private void populateRemainingMetadata(Commit commit) {
+		JsonElement jsonElement;
+		String searchUrl = buildCommitSearchUrl(commit);
+		jsonElement = gson.fromJson(getWithProtection(searchUrl), JsonElement.class);
+		JsonObject statsObject = jsonElement.getAsJsonObject().get("stats").getAsJsonObject();
+		int additions = statsObject.get("additions").getAsInt();
+		int deletions = statsObject.get("deletions").getAsInt();
+		commit.setAdditionsCount(additions);
+		commit.setDeletionsCount(deletions);
+		JsonArray filesArray = jsonElement.getAsJsonObject().get("files").getAsJsonArray();
+		List<CommitFile> files = new ArrayList<>();
+		for (JsonElement fileElement : filesArray) {
+			CommitFile gitFile = gson.fromJson(fileElement, CommitFile.class);
+			files.add(gitFile);
+		}
+		commit.setFiles(files);
+	}
+
+	private String buildCommitSearchUrl(Commit commit) {
+		String searchUrl;
+		Project project = commit.getProject();
+		searchUrl = builder.uses(GithubAPI.ROOT)
+				.withParam("repos")
+				.withSimpleParam("/", project.getUser().getLogin())
+				.withSimpleParam("/", project.getName())
+				.withParam("/commits")
+				.withSimpleParam("/", commit.getSha())
+				.build();
+		return searchUrl;
 	}
 
 	/**
@@ -751,5 +811,25 @@ public class SearchGitHub implements ForgeSearch {
 		}
 
 		return data;
+	}
+
+	private Response getResponseWithProtection(String url){
+		Response response = requests.getResponse(url);
+		String data;
+		try {
+			data = response.getResponseBody();
+			if(data != null && data.contains("API rate limit exceeded for")) {
+				try {
+					Thread.sleep(1000 * 60 * 60);
+					data = requests.get(url);
+					
+				} catch (InterruptedException ex) {
+					ex.printStackTrace();
+				}
+			}
+		} catch (IOException e) {
+			throw new SearchException(e);
+		}
+		return response;
 	}
 }
