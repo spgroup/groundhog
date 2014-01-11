@@ -8,6 +8,7 @@ import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.ListenableFuture;
 import com.ning.http.client.Request;
 import com.ning.http.client.RequestBuilder;
+import com.ning.http.client.Response;
 
 /**
  * Utility class to perform asynchronous http requests
@@ -32,6 +33,19 @@ public class Requests {
 			return this.httpClient.prepareGet(urlStr).execute().get().getResponseBody();
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw new HttpException(e);
+		}
+	}
+
+	/**
+	 * Gets the {@link Response} object for a given URL request
+	 * @param urlStr the URL for the request to be performed
+	 * @return the {@link Response} object for this request
+	 */
+	public Response getResponse(String urlStr) {
+		try {
+			return this.httpClient.prepareGet(urlStr).execute().get();
+		} catch (Exception e) {
 			throw new HttpException(e);
 		}
 	}
