@@ -1,12 +1,18 @@
 package br.ufpe.cin.groundhog.search;
 
 import static br.ufpe.cin.groundhog.http.URLsDecoder.encodeURL;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +31,6 @@ import br.ufpe.cin.groundhog.http.HttpModule;
 import br.ufpe.cin.groundhog.http.Requests;
 import br.ufpe.cin.groundhog.search.UrlBuilder.GithubAPI;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -35,12 +40,6 @@ import com.google.gson.JsonSyntaxException;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.ning.http.client.Response;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Performs the project search on GitHub, via its official JSON API
@@ -490,7 +489,11 @@ public class SearchGitHub implements ForgeSearch {
 	public List<Commit> getAllProjectCommits(Project project) {
 		checkNotNull(project, "project must not be null");
 		logger.info("Searching all project commits metadata");
-		return getProjectCommits(project, null, null);
+		try {
+			return getProjectCommits(project, null, null);
+		} catch (IOException e) {
+			throw new SearchException(e);
+		}
 	}
 
 	/**
@@ -506,7 +509,11 @@ public class SearchGitHub implements ForgeSearch {
 	public List<Commit> getProjectCommitsByPeriod(Project project, String since, String until){
 		checkNotNull(project, "project must not be null");
 		logger.info("Searching project commits metadata by period");
-		return getProjectCommits(project, since, until);
+		try {
+			return getProjectCommits(project, since, until);
+		} catch (IOException e) {
+			throw new SearchException(e);
+		}
 	}
 
 	/**
@@ -531,15 +538,31 @@ public class SearchGitHub implements ForgeSearch {
 		return getProjectCommitsByPeriod(project, null, until);
 	}
 
-	private List<Commit> getProjectCommits(Project project, String since, String until) {
+	private List<Commit> getProjectCommits(Project project, String since, String until) throws IOException {
+		List<Commit> commits = new ArrayList<>();
+		int page = 1;
 		String searchUrl = buildListCommitsUrl(project, since, until);
+		logger.info("getting commits for page " + page);
+		logger.info("searchUrl=" + searchUrl);
+		Response response = getResponseWithProtection(searchUrl);
+		extractCommits(project, response, commits);
 		
-		String response = getWithProtection(searchUrl);
+		while((searchUrl = getNextUrl(response)) != null){
+			logger.info("getting commits for page " + ++page);
+			response = getResponseWithProtection(searchUrl);
+			extractCommits(project, response, commits);
+			logger.info("done extracting page " + page);
+		}
 
-		JsonElement jsonElement = gson.fromJson(response, JsonElement.class);
+		return commits;
+	}
+
+	private void extractCommits(Project project, Response response,
+			List<Commit> commits) throws IOException {
+		String jsonResponse = response.getResponseBody();
+		JsonElement jsonElement = gson.fromJson(jsonResponse, JsonElement.class);
 		JsonArray jsonArray = jsonElement.getAsJsonArray();
 
-		List<Commit> commits = new ArrayList<>();
 		for (JsonElement element : jsonArray) {
 			Commit commit = gson.fromJson(element, Commit.class);
 			commit.setProject(project);
@@ -551,12 +574,11 @@ public class SearchGitHub implements ForgeSearch {
 
 			String date = element.getAsJsonObject().get("commit").getAsJsonObject().get("author").getAsJsonObject().get("date").getAsString();
 			commit.setCommitDate(date);
-			commits.add(commit);
 
 			populateRemainingMetadata(commit);
-		}
 
-		return commits;
+			commits.add(commit);
+		}
 	}
 
 	private String buildListCommitsUrl(Project project, String since,
