@@ -820,31 +820,27 @@ public class SearchGitHub implements ForgeSearch {
 	}
 
 	private String getWithProtection(String url){
-		String data = requests.get(url);
-
-		if (data.contains("API rate limit exceeded for")) {
-			try {
-				Thread.sleep(1000 * 60 * 60);
-				data = requests.get(url);
-
-			} catch (InterruptedException ex) {
-				ex.printStackTrace();
-			}
+		try {
+			return getResponseWithProtection(url).getResponseBody();
+		} catch (IOException e) {
+			// This should never happen, but let's be safe
+			throw new SearchException(e);
 		}
-
-		return data;
 	}
 
 	private Response getResponseWithProtection(String url){
 		Response response = requests.getResponse(url);
 		String data;
 		try {
+			int statusCode = response.getStatusCode();
+			
 			data = response.getResponseBody();
-			if(data != null && data.contains("API rate limit exceeded for")) {
+			// 403 == forbidden
+			if(statusCode == 403 &&  data != null && data.contains("API rate limit exceeded")) {
 				try {
+					logger.info("API rate limit exceeded, waiting for " + (60 * 60) + " seconds");
 					Thread.sleep(1000 * 60 * 60);
 					data = requests.get(url);
-					
 				} catch (InterruptedException ex) {
 					ex.printStackTrace();
 				}
