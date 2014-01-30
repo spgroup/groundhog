@@ -18,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.ufpe.cin.groundhog.Commit;
-import br.ufpe.cin.groundhog.Commit.CommitFile;
 import br.ufpe.cin.groundhog.GroundhogException;
 import br.ufpe.cin.groundhog.Issue;
 import br.ufpe.cin.groundhog.Language;
@@ -482,18 +481,67 @@ public class SearchGitHub implements ForgeSearch {
 	}
 
 	/**
-	 * Fetches all the Commits of the given {@link Project} from the GitHub API
-	 * @param project the @{link Project} to which the commits belong
-	 * @return a {@link List} of {@link Commit} objects
+	 * Returns the commit with the given SHA <code>sha</code> for <code>project</code>
+	 * @param project
+	 * @param sha
+	 * @return
 	 */
-	public List<Commit> getAllProjectCommits(Project project) {
-		checkNotNull(project, "project must not be null");
-		logger.info("Searching all project commits metadata");
-		try {
-			return getProjectCommits(project, null, null);
-		} catch (IOException e) {
-			throw new SearchException(e);
+	public Commit getProjectCommit(Project project, String sha) {
+		checkNotNull(project);
+		checkNotNull(sha);
+		Commit commit = null;
+		String searchUrl = buildCommitSearchUrl(project, sha);
+		String responseBody = getWithProtection(searchUrl);
+		commit = gson.fromJson(responseBody, Commit.class);
+		return commit;
+	}
+
+	private String buildCommitSearchUrl(Project project, String sha) {
+		String searchUrl;
+		searchUrl = builder.uses(GithubAPI.ROOT)
+				.withParam("repos")
+				.withSimpleParam("/", project.getUser().getLogin())
+				.withSimpleParam("/", project.getName())
+				.withParam("/commits")
+				.withSimpleParam("/", sha)
+				.build();
+		return searchUrl;
+	}
+
+	/**
+	 * Returns the commit pointed by <code>refSpec</code> for Project <code>project</code>.
+	 * @param project
+	 * @return
+	 */
+	public Commit getProjectCommitByRef(Project project, String refSpec){
+		checkNotNull(project);
+		checkNotNull(refSpec);
+		Commit head = null;
+		String refSHA = getRefSHA(project, refSpec);
+		if(refSHA != null) {
+			head = getProjectCommit(project, refSHA);
 		}
+		return head;
+	}
+
+	private String getRefSHA(Project project, String refName) {
+		String sha = null;
+		String searchUrl = buildRefSearchUrl(project, refName);
+		String responseBody = getWithProtection(searchUrl);
+		JsonElement ref = gson.fromJson(responseBody, JsonElement.class);
+		JsonElement object = ref.getAsJsonObject().get("object");
+		sha = object.getAsJsonObject().get("sha").getAsString();
+		return sha;
+	}
+
+	private String buildRefSearchUrl(Project project, String refName) {
+		return builder.uses(GithubAPI.ROOT).
+								withParam("repos").
+								withSimpleParam("/", project.getUser().getLogin()).
+								withSimpleParam("/", project.getName()).
+								withSimpleParam("/", "git").
+								withSimpleParam("/", "refs").
+								withSimpleParam("/", refName).build();
 	}
 
 	/**
@@ -538,12 +586,26 @@ public class SearchGitHub implements ForgeSearch {
 		return getProjectCommitsByPeriod(project, null, until);
 	}
 
+	/**
+	 * Fetches all the Commits of the given {@link Project} from the GitHub API
+	 * @param project the @{link Project} to which the commits belong
+	 * @return a {@link List} of {@link Commit} objects
+	 */
+	public List<Commit> getAllProjectCommits(Project project) {
+		checkNotNull(project, "project must not be null");
+		logger.info("Searching all project commits metadata");
+		try {
+			return getProjectCommits(project, null, null);
+		} catch (IOException e) {
+			throw new SearchException(e);
+		}
+	}
+
 	private List<Commit> getProjectCommits(Project project, String since, String until) throws IOException {
 		List<Commit> commits = new ArrayList<>();
 		int page = 1;
 		String searchUrl = buildListCommitsUrl(project, since, until);
 		logger.info("getting commits for page " + page);
-		logger.info("searchUrl=" + searchUrl);
 		Response response = getResponseWithProtection(searchUrl);
 		extractCommits(project, response, commits);
 		
@@ -551,34 +613,9 @@ public class SearchGitHub implements ForgeSearch {
 			logger.info("getting commits for page " + ++page);
 			response = getResponseWithProtection(searchUrl);
 			extractCommits(project, response, commits);
-			logger.info("done extracting page " + page);
 		}
 
 		return commits;
-	}
-
-	private void extractCommits(Project project, Response response,
-			List<Commit> commits) throws IOException {
-		String jsonResponse = response.getResponseBody();
-		JsonElement jsonElement = gson.fromJson(jsonResponse, JsonElement.class);
-		JsonArray jsonArray = jsonElement.getAsJsonArray();
-
-		for (JsonElement element : jsonArray) {
-			Commit commit = gson.fromJson(element, Commit.class);
-			commit.setProject(project);
-			
-			User user = gson.fromJson(element.getAsJsonObject().get("committer"), User.class);
-			commit.setCommiter(user);
-			
-			commit.setMessage(element.getAsJsonObject().get("commit").getAsJsonObject().get("message").getAsString());
-
-			String date = element.getAsJsonObject().get("commit").getAsJsonObject().get("author").getAsJsonObject().get("date").getAsString();
-			commit.setCommitDate(date);
-
-			populateRemainingMetadata(commit);
-
-			commits.add(commit);
-		}
 	}
 
 	private String buildListCommitsUrl(Project project, String since,
@@ -601,35 +638,27 @@ public class SearchGitHub implements ForgeSearch {
 		return searchUrl;
 	}
 
-	private void populateRemainingMetadata(Commit commit) {
-		JsonElement jsonElement;
-		String searchUrl = buildCommitSearchUrl(commit);
-		jsonElement = gson.fromJson(getWithProtection(searchUrl), JsonElement.class);
-		JsonObject statsObject = jsonElement.getAsJsonObject().get("stats").getAsJsonObject();
-		int additions = statsObject.get("additions").getAsInt();
-		int deletions = statsObject.get("deletions").getAsInt();
-		commit.setAdditionsCount(additions);
-		commit.setDeletionsCount(deletions);
-		JsonArray filesArray = jsonElement.getAsJsonObject().get("files").getAsJsonArray();
-		List<CommitFile> files = new ArrayList<>();
-		for (JsonElement fileElement : filesArray) {
-			CommitFile gitFile = gson.fromJson(fileElement, CommitFile.class);
-			files.add(gitFile);
-		}
-		commit.setFiles(files);
-	}
+	private void extractCommits(Project project, Response response,
+			List<Commit> commits) throws IOException {
+		String jsonResponse = response.getResponseBody();
+		JsonElement jsonElement = gson.fromJson(jsonResponse, JsonElement.class);
+		JsonArray jsonArray = jsonElement.getAsJsonArray();
 
-	private String buildCommitSearchUrl(Commit commit) {
-		String searchUrl;
-		Project project = commit.getProject();
-		searchUrl = builder.uses(GithubAPI.ROOT)
-				.withParam("repos")
-				.withSimpleParam("/", project.getUser().getLogin())
-				.withSimpleParam("/", project.getName())
-				.withParam("/commits")
-				.withSimpleParam("/", commit.getSha())
-				.build();
-		return searchUrl;
+		for (JsonElement element : jsonArray) {
+			Commit commit = gson.fromJson(element, Commit.class);
+			commit = getProjectCommit(project, commit.getSha());
+			commit.setProject(project);
+			
+			User user = gson.fromJson(element.getAsJsonObject().get("committer"), User.class);
+			commit.setCommiter(user);
+			
+			commit.setMessage(element.getAsJsonObject().get("commit").getAsJsonObject().get("message").getAsString());
+
+			String date = element.getAsJsonObject().get("commit").getAsJsonObject().get("author").getAsJsonObject().get("date").getAsString();
+			commit.setCommitDate(date);
+
+			commits.add(commit);
+		}
 	}
 
 	/**

@@ -33,11 +33,11 @@ public class Commit extends GitHubEntity {
 	
 	private Date commitDate;
 	
-	private int additionsCount;
-	
-	private int deletionsCount;
+	private CommitStats stats;
 
 	private List<CommitFile> files;
+
+	private List<CommitParent> parents;
 	
 	public Commit(String sha, Project project) {
 		this.sha = sha;
@@ -106,30 +106,6 @@ public class Commit extends GitHubEntity {
 	}
 
 	/**
-	 * Informs the sum of added lines among the files committed
-	 * @param deletionsCount
-	 */
-	public int getAdditionsCount() {
-		return this.additionsCount;
-	}
-
-	public void setAdditionsCount(int additionsCount) {
-		this.additionsCount = additionsCount;
-	}
-
-	/**
-	 * Informs the sum of deleted lines among the files committed
-	 * @param deletionsCount
-	 */
-	public int getDeletionsCount() {
-		return this.deletionsCount;
-	}
-
-	public void setDeletionsCount(int deletionsCount) {
-		this.deletionsCount = deletionsCount;
-	}
-	
-	/**
 	 * Gives the abbreviated SHA of the {@link Commit} object
 	 * @return a {@link String} object
 	 */
@@ -141,8 +117,20 @@ public class Commit extends GitHubEntity {
 		return this.files;
 	}
 
-	public void setFiles(List<CommitFile> files) {
-		this.files = files;
+	public CommitStats getStats() {
+		return this.stats;
+	}
+
+	public List<CommitParent> getParents() {
+		return this.parents;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((sha == null) ? 0 : sha.hashCode());
+		return result;
 	}
 
 	/**
@@ -150,10 +138,23 @@ public class Commit extends GitHubEntity {
 	 * @param commit
 	 * @return
 	 */
-	public boolean equals(Commit commit) {
-		return this.sha == commit.sha;
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Commit other = (Commit) obj;
+		if (sha == null) {
+			if (other.sha != null)
+				return false;
+		} else if (!sha.equals(other.sha))
+			return false;
+		return true;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Commit [" + (sha != null ? "sha=" + sha + ", " : "")
@@ -169,6 +170,38 @@ public class Commit extends GitHubEntity {
 				this.getProject().getUser().getLogin(),
 				this.getProject().getName(),
 				this.sha);
+	}
+
+	/**
+	 * The commit changes stats, i.e., number of additions, deletions and total
+	 * @author Irineu
+	 *
+	 */
+	public static final class CommitStats {
+		private int additions;
+
+		private int deletions;
+
+		private int total;
+
+		public int getAdditions() {
+			return additions;
+		}
+
+		public int getDeletions() {
+			return deletions;
+		}
+
+		public int getTotal() {
+			return total;
+		}
+
+		@Override
+		public String toString() {
+			return "CommitStats [additions=" + additions + ", deletions="
+					+ deletions + ", total=" + total + "]";
+		}
+
 	}
 
 	public static final class CommitFile {
@@ -189,7 +222,31 @@ public class Commit extends GitHubEntity {
 
 		@SerializedName(value="patch")
 		private String patch;
-		
+
+		public String getFileName() {
+			return fileName;
+		}
+
+		public int getAdditionsCount() {
+			return additionsCount;
+		}
+
+		public int getDeletionsCount() {
+			return deletionsCount;
+		}
+
+		public int getChangesCount() {
+			return changesCount;
+		}
+
+		public String getStatus() {
+			return status;
+		}
+
+		public String getPatch() {
+			return patch;
+		}
+
 		@Override
 		public String toString() {
 			return "CommitFile [fileName=" + fileName + ", additionsCount="
@@ -197,6 +254,25 @@ public class Commit extends GitHubEntity {
 					+ ", changesCount=" + changesCount + ", status=" + status
 					+ ", patch=" + patch + "]";
 		}
+	}
 
+	public static class CommitParent {
+
+		private String url;
+
+		private String sha;
+
+		public String getUrl() {
+			return url;
+		}
+
+		public String getSha() {
+			return sha;
+		}
+
+		@Override
+		public String toString() {
+			return "CommitParent [url=" + url + ", sha=" + sha + "]";
+		}
 	}
 }
