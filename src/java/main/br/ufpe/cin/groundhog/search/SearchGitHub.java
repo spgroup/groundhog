@@ -413,7 +413,7 @@ public class SearchGitHub implements ForgeSearch {
 		
 		String searchUrl = builder.uses(GithubAPI.ROOT)
 				  .withParam("repos")
-				  .withSimpleParam("/", project.getSourceCodeURL().split("/")[3])
+				  .withSimpleParam("/", project.getOwner().getLogin())
 				  .withSimpleParam("/", project.getName())
 				  .withParam("/commits")
 				  .build();
