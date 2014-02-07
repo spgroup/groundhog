@@ -79,10 +79,11 @@ public class SearchGitHubTest {
 	@Test
 	public void testGetAllProjectCommits() {
 		try {
-			User u = new User("vkostyukov");
-			Project project = new Project(u, "la4j");
-					
+
+			Project project = new Project("github","android");
+		 
 			List<Commit> commits = searchGitHub.getAllProjectCommits(project);
+			
 			Assert.assertNotNull(commits);	
 		} catch (Exception e) {
 			e.printStackTrace();
