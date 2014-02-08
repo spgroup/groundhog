@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import br.ufpe.cin.groundhog.Commit;
 import br.ufpe.cin.groundhog.GroundhogException;
 import br.ufpe.cin.groundhog.Issue;
+import br.ufpe.cin.groundhog.IssueLabel;
 import br.ufpe.cin.groundhog.Language;
 import br.ufpe.cin.groundhog.Milestone;
 import br.ufpe.cin.groundhog.Project;
@@ -317,15 +318,23 @@ public class SearchGitHub implements ForgeSearch {
 				  .withSimpleParam("/", project.getName())
 				  .withParam("/issues")
 				  .build();
-		
+				
 		String jsonString = requests.get(searchUrl);
 		JsonArray jsonArray = gson.fromJson(jsonString, JsonElement.class).getAsJsonArray();
 
 		List<Issue> issues = new ArrayList<Issue>();
+		List<IssueLabel> labels = new ArrayList<IssueLabel>();
 		
 		for (JsonElement element : jsonArray) {
 			Issue issue = gson.fromJson(element, Issue.class);
 			issue.setProject(project);
+			
+			for (JsonElement lab : element.getAsJsonObject().get("labels").getAsJsonArray()) {
+				IssueLabel label = gson.fromJson(lab, IssueLabel.class);				
+				labels.add(label);
+			}
+			
+			issue.setLabels(labels);
 			issues.add(issue);
 		}
 

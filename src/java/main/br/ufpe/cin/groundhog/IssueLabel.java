@@ -1,5 +1,9 @@
 package br.ufpe.cin.groundhog;
 
+import org.mongodb.morphia.annotations.Entity;
+
+import com.google.gson.annotations.SerializedName;
+
 /**
  * This class does not represent a full-fledged GitHub entity.
  *  It is just for the Issue labels
@@ -7,9 +11,15 @@ package br.ufpe.cin.groundhog;
  * @author Rodrigo Alves
  *
  */
+//@Entity("issue_labels")
 public class IssueLabel {
+	@SerializedName("url")
 	private String url;
+	
+	@SerializedName("name")
 	private String name;
+	
+	@SerializedName("color")
 	private String color;
 	
 	public IssueLabel(String url, String name, String color) {

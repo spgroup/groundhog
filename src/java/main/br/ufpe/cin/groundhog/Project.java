@@ -77,6 +77,7 @@ public class Project extends GitHubEntity {
 		this.user = user;
 		this.name = name;
 		this.scmURL = "https://github.com/" + user.getLogin() + "/" + name + ".git";
+		this.sourceCodeURL = "https://github.com/" + user.getLogin() + "/" + name;
 	}
 	
 	/**
@@ -88,6 +89,8 @@ public class Project extends GitHubEntity {
 	public Project(String userLogin, String name) {
 		this.user = new User(userLogin);
 		this.name = name;
+		this.scmURL = "https://github.com/" + user.getLogin() + "/" + name + ".git";
+		this.sourceCodeURL = "https://github.com/" + userLogin + "/" + name;
 	}
 
 	/**
