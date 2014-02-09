@@ -23,6 +23,7 @@ import br.ufpe.cin.groundhog.crawler.CrawlGitHub;
 import br.ufpe.cin.groundhog.crawler.CrawlGoogleCode;
 import br.ufpe.cin.groundhog.crawler.CrawlSourceForge;
 import br.ufpe.cin.groundhog.crawler.ForgeCrawler;
+import br.ufpe.cin.groundhog.database.GroundhogDB;
 import br.ufpe.cin.groundhog.http.HttpModule;
 import br.ufpe.cin.groundhog.http.Requests;
 import br.ufpe.cin.groundhog.parser.java.JavaParser;
@@ -188,17 +189,29 @@ public class TestMain {
 		
 		Injector injector = Guice.createInjector(new SearchModule());
 	    SearchGitHub searchGitHub = injector.getInstance(SearchGitHub.class);
-	    List<Project> projects = searchGitHub.getProjects("github", "android", 1);
+//	    List<Project> projects = searchGitHub.getProjects("github", "android", 1);
 	    
-	    Project githubAndroidApp = projects.get(0);
-	    githubAndroidApp.setIssues(searchGitHub.getAllProjectIssues(githubAndroidApp));
+	    GroundhogDB db = new GroundhogDB("127.0.0.1", "myGitHubResearch");
 	    
-	    List<Issue> issues = githubAndroidApp.getIssues();
+	    Project project = new Project("rails", "rails");
 	    
-	    System.out.println("Issues for project: " + githubAndroidApp.getName());
-
-	    for (Issue issue : issues) {
-	    	System.out.println(issue);
+	    // Fetches all commits of the project and persists each one of them to the database
+	    List<Commit> commits = searchGitHub.getAllProjectCommits(project);
+	    
+	    for (Commit comm: commits) {
+	    	db.save(comm);
+	    	System.out.println(comm);
 	    }
+	    
+//	    Project githubAndroidApp = projects.get(0);
+//	    githubAndroidApp.setIssues(searchGitHub.getAllProjectIssues(githubAndroidApp));
+//	    
+//	    List<Issue> issues = githubAndroidApp.getIssues();
+//	    
+//	    System.out.println("Issues for project: " + githubAndroidApp.getName());
+//
+//	    for (Issue issue : issues) {
+//	    	System.out.println(issue);
+//	    }
 	}
 }

@@ -11,7 +11,8 @@ import com.google.gson.annotations.SerializedName;
  * @author Rodrigo Alves
  *
  */
-//@Entity("issue_labels")
+
+@Entity("issue_labels")
 public class IssueLabel {
 	@SerializedName("url")
 	private String url;

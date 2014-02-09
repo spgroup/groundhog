@@ -11,7 +11,7 @@ import org.mongodb.morphia.annotations.Indexed;
  * Represents a Pull Request object in Groundhog
  * @author Rodrigo Alves
  */
-@Entity("pullRequests")
+@Entity("pull_requests")
 public class PullRequest extends Issue  {
 
 	@SerializedName("merged_at")

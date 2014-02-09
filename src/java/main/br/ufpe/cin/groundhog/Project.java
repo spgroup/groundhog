@@ -6,6 +6,7 @@ import java.util.List;
 import br.ufpe.cin.groundhog.util.Dates;
 
 import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Reference;
 import com.google.gson.annotations.SerializedName;
 
@@ -17,6 +18,9 @@ import com.google.gson.annotations.SerializedName;
 
 @Entity("projects")
 public class Project extends GitHubEntity {
+	@SerializedName("id")
+	@Id private int id;
+	
 	@SerializedName("name")
 	private String name;
 
