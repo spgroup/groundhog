@@ -356,10 +356,7 @@ public class SearchGitHub implements ForgeSearch {
 				  .withParam("/milestones")
 				  .build();
 		
-		System.out.println(searchUrl);
-
 		String jsonString = requests.get(searchUrl);
-
 		JsonArray jsonArray = gson.fromJson(jsonString, JsonElement.class).getAsJsonArray();
 
 		List<Milestone> milestones = new ArrayList<>();
