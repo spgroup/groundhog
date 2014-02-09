@@ -353,8 +353,10 @@ public class SearchGitHub implements ForgeSearch {
 				  .withParam("repos")
 				  .withSimpleParam("/", project.getUser().getLogin())
 				  .withSimpleParam("/", project.getName())
-				  .withParam("milestones")
+				  .withParam("/milestones")
 				  .build();
+		
+		System.out.println(searchUrl);
 
 		String jsonString = requests.get(searchUrl);
 
