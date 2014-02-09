@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Indexed;
 import org.mongodb.morphia.annotations.Reference;
 
@@ -17,7 +18,7 @@ import com.google.gson.annotations.SerializedName;
 public class Issue extends GitHubEntity {
     @Indexed(unique=true, dropDups=true)
     @SerializedName("id")
-	private int id;
+	@Id private int id;
 
 	@SerializedName("number")
 	private int number;
@@ -31,7 +32,7 @@ public class Issue extends GitHubEntity {
 	private transient PullRequest pullRequest;
 
     private List<IssueLabel> labels;
-
+    
 	@Reference private Milestone milestone;
 
 	@SerializedName("title")
