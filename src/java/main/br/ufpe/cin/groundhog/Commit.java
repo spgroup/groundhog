@@ -220,6 +220,9 @@ public class Commit extends GitHubEntity {
 		@SerializedName(value="status")
 		private String status;
 
+		@SerializedName(value="blob_url")
+		private String blobUrl;
+
 		@SerializedName(value="patch")
 		private String patch;
 
@@ -241,6 +244,10 @@ public class Commit extends GitHubEntity {
 
 		public String getStatus() {
 			return status;
+		}
+
+		public String getBlobUrl() {
+			return blobUrl;
 		}
 
 		public String getPatch() {
