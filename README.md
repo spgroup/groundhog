@@ -118,7 +118,7 @@ List<Issue> issues = searchGitHub.getAllProjectIssues(pr);
 
 System.out.println("Listing 'em Issues...");
 for (Issue issue: issues) {
-  System.out.println(issue.getTitle());
+    System.out.println(issue.getTitle());
 }
 ```
 
@@ -159,8 +159,7 @@ List<Language> languages = searchGitHub.fetchProjectLanguages(pr);
 You can also get the list of people who contributed to a project on GitHub:
 
 ```java
-User user = new User("rails");
-Project project = new Project(user, "rails"); // project github.com/rails/rails
+Project project = new Project("rails", "rails"); // project github.com/rails/rails
 
 List<User> contributors = searchGitHub.getAllProjectContributors(project);
 ```

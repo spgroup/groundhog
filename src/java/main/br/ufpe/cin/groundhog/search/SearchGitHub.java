@@ -347,7 +347,6 @@ public class SearchGitHub implements ForgeSearch {
 	 * @return a {@link List} of {@link Milestone} objects
 	 */
 	public List<Milestone> getAllProjectMilestones(Project project) {
-
 		logger.info("Searching project milestones metadata");
 		
 		String searchUrl = builder.uses(GithubAPI.ROOT)
@@ -362,6 +361,7 @@ public class SearchGitHub implements ForgeSearch {
 		JsonArray jsonArray = gson.fromJson(jsonString, JsonElement.class).getAsJsonArray();
 
 		List<Milestone> milestones = new ArrayList<>();
+		
 		for (JsonElement element : jsonArray) {
 			Milestone milestone = gson.fromJson(element, Milestone.class);
 			milestone.setProject(project);
