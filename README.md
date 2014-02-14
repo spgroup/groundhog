@@ -1,7 +1,7 @@
 # Groundhog
 [![Build Status](https://travis-ci.org/spgroup/groundhog.png?branch=master)](https://travis-ci.org/spgroup/groundhog)
 
-For discussions and suggestions, please refer to the [Groundhog list](https://groups.google.com/forum/#!forum/projeto-groundhog) on Google Groups
+For discussions and suggestions, please refer to the [Groundhog list](https://groups.google.com/forum/#!forum/projeto-groundhog) on Google Groups.
 
 Groundhog is an easy to use framework for crawling raw GitHub data and to extract metrics from it. It leverages the power of the Java language, as well as the Github plataform, to help researchers to better understand software repositories. Groundhog goals are flexibility, extensibility and simplicity.
 
@@ -197,7 +197,6 @@ for (Commit comm: commits) {
     db.save(comm);
     System.out.println(comm);
 }
-
 ```
 
 Refer to the [full Database Support Guide] in the wiki for more information.
