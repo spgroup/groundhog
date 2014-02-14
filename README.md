@@ -1,6 +1,8 @@
 # Groundhog
 [![Build Status](https://travis-ci.org/spgroup/groundhog.png?branch=master)](https://travis-ci.org/spgroup/groundhog)
 
+For discussions and suggestions, please refer to the [Groundhog list](https://groups.google.com/forum/#!forum/projeto-groundhog) on Google Groups
+
 Groundhog is an easy to use framework for crawling raw GitHub data and to extract metrics from it. It leverages the power of the Java language, as well as the Github plataform, to help researchers to better understand software repositories. Groundhog goals are flexibility, extensibility and simplicity.
 
 **WARNING:** Groundhog is currently alpha-software and its API **will** suffer major changes. The current version is an experiment that showcases using the GitHub API and the JavaCompiler.
