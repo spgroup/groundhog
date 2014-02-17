@@ -15,9 +15,9 @@ import com.google.gson.annotations.SerializedName;
 	data from a Contributor in this class.
  * </p>
  *@see
- * <p>This class have a list of attributes whom <b> should be set </b> after the instantiation because they are not being required by the constructor. These attributes represent the data of a Project <i>Contributor</i> on the <i>GitHub</i>, see they below.   
- * <p>The attributes are at form bellow:    
- * <p>Class/type attributeName: What he represent  
+ * <p>This class have a list of attributes whom <b> should be set </b> after the instantiation because they are not being required by the constructor. These attributes represent the data of a Project <i>Contributor</i> on the <i>GitHub</i>, see they below. </p>   
+ * <p>The attributes are at form bellow: </p>
+ * <p>Class/type attributeName: What he represent </p>  
  * <ul>
  * 		 <li> <b>int</b> <i>id</i>: The unique id of the Contributor in question. 
  *		 <li> <b>int</b> <i>contributions</i>: Probably the most important data stored by this Class, the number of contributions in the <i>Project</i> by this Contributor.
@@ -37,7 +37,7 @@ import com.google.gson.annotations.SerializedName;
  *		 
  * </ul> 
  * @author 
- * <p>Marlon Reghert (mras@cin.ufpe.br)<p>
+ * <p>Marlon Reghert (mras@cin.ufpe.br)</p>
  * <p>Tomer Simis (tls@cin.ufpe.br)</p>
  */
 @Entity("contributor")

@@ -9,17 +9,17 @@ import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Indexed;
 import org.mongodb.morphia.annotations.Reference;
 
-/** <p>This class represents a Release in Groundhog 
+/** <h3>This class represents a Release in Groundhog</h3>
  * 
  * <p> <i>"Releases are first-class objects with changelogs and binary 
  * assets that present a full project history beyond Git artifacts.
  *  They're accessible from a repository's homepage" </i> 
- *  - Release description at GitHub oficial website, for more informations you can check at this <a href= https://github.com/blog/1547-release-your-software> link </a>.
+ *  - Release description at GitHub oficial website, for more informations you can check at this <a href= https://github.com/blog/1547-release-your-software> link </a>.</p>
  *	 
  *@see
- * <p>This class have a list of attributes whom <b> should be set </b> after the instantiation. These attributes represent the entities of a Release on the GitHub, see they below.   
- * <p>The attributes are at form bellow:    
- * <p>Class/type attributeName: What he represent  
+ * <p>This class have a list of attributes whom <b> should be set </b> after the instantiation. These attributes represent the entities of a Release on the GitHub, see they below. </p>
+ * <p>The attributes are at form bellow:</p>
+ * <p>Class/type attributeName: What he represent </p>  
  * <ul>
  * 		 <li> String tagName: Tag Name of the Release on GitHub. 
  *		 <li> String name: The name of the Release on GitHub.
@@ -32,7 +32,7 @@ import org.mongodb.morphia.annotations.Reference;
  *		 <li> Date publishedAt: When the Release was published.
  *		
  * </ul> 	
- * <p> These descriptions can also be seen in the Get methods.
+ * <p> These descriptions can also be seen in the Get methods. </p>
  * @author Marlon Reghert (mras) & Tomer Simis (tls)
  * 
 
@@ -249,6 +249,7 @@ public class Release extends GitHubEntity {
 		return stringReturn;
 	}
 
+	
 	/**This method return the URL of the release*/
 	@Override
 	public String getURL() {
