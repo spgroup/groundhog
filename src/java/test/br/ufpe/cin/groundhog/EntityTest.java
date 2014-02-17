@@ -12,7 +12,7 @@ import org.junit.Test;
  *    feel this change and their jobs will be affected. So this Suit Test contains all sanity tests that protect a strong 
  *    behavior difference on classes after some code change.
  * </p> 
- * @author Marlon Reghert - mras 
+ * @author Marlon Reghert - mras & Tomer Simis - tls
  * */
 public class EntityTest {
 

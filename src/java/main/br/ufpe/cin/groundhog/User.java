@@ -275,7 +275,7 @@ public class User extends GitHubEntity {
      * @return
      */
     public boolean equals(User user) {
-    	return this.login == user.login;
+    	return this.login.equals(user.getLogin());
     }
 
     @Override
