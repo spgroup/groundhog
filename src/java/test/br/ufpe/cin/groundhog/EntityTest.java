@@ -40,7 +40,10 @@ public class EntityTest {
 			 * */
 			String userTestLogin = userTest.getLogin();
 			User secondUser = new User(userTestLogin);
-			Assert.assertEquals(userTest, secondUser);
+			
+			if(!userTest.equals(secondUser)){
+				Assert.fail();
+			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -59,14 +62,19 @@ public class EntityTest {
 			 * */
 			String contributorTestLogin = contributorTest.getLogin();
 			Contributor secondContributor = new Contributor(contributorTestLogin);
-			Assert.assertEquals(contributorTest, secondContributor);
+			if(!contributorTest.equals(secondContributor)){
+				Assert.fail();
+			}
+			
 			
 			/*
 			 * The Contributor URL must be equals to the URL from a User object that contains the same login.
 			 * */
 			String contributorUrl = contributorTest.getURL();
 			String userUrl = userTest.getURL();
-			Assert.assertEquals(contributorUrl, userUrl);
+			if(!userUrl.equals(contributorUrl)){
+				Assert.fail();				
+			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -85,7 +93,10 @@ public class EntityTest {
 			 **/
 			int releaseTestId = releaseTest.getId();
 			Release secondRelease = new Release(fakeProject, releaseTestId);
-			Assert.assertEquals(releaseTest, secondRelease);
+			if(!releaseTest.equals(secondRelease)){
+				Assert.fail();
+			}
+
 			
 		} catch (Exception e) {
 			e.printStackTrace();
