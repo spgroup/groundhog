@@ -27,6 +27,11 @@ public class GroundhogDB {
 		this.datastore = new Morphia().createDatastore(this.mongo, dbName);
 	}
 	
+	public GroundhogDB(MongoClient mongo, String dbName) throws UnknownHostException {
+		this.dbName = dbName;
+		this.datastore = new Morphia().createDatastore(mongo, dbName);
+	}
+	
 	public static void query(GitHubEntity entity, String params) {
 		String entityName = entity.getClass().getSimpleName().toLowerCase();
 	}
