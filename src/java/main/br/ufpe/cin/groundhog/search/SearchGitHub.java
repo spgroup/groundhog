@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.ufpe.cin.groundhog.Commit;
+import br.ufpe.cin.groundhog.Contributor;
 import br.ufpe.cin.groundhog.GroundhogException;
 import br.ufpe.cin.groundhog.Issue;
 import br.ufpe.cin.groundhog.IssueLabel;
@@ -486,15 +487,16 @@ public class SearchGitHub implements ForgeSearch {
 	}
 
 	/**
-	 * Fetches all the contributors of the given {@link Project} from the GitHub API
+	 * <p>Fetches all the contributors of the given {@link Project} from the GitHub API</p>
+	 * @see <p>We can map all {@link Contributor} into a {@link User} by {@link Contributor#getUrl} method that return is the same for a Contributor and his correspondent User ({@link User#getUrl})</p>
 	 * @param project the @{link Project} to get the contributors from
-	 * @return a {@link List} of {@link User} objects
+	 * @return a {@link List} of {@link Contributor} objects
 	 */
-	public List<User> getAllProjectContributors(Project project) {
+	public List<Contributor> getAllProjectContributors(Project project) {
 		logger.info("Searching project contributors metadata");
 		
-		List<User> users = new ArrayList<>();
-
+		
+		List<Contributor> contributors = new ArrayList<>();
 		String searchUrl = builder.uses(GithubAPI.ROOT)
 				  .withParam("repos")
 				  .withSimpleParam("/", project.getUser().getLogin())
@@ -506,11 +508,11 @@ public class SearchGitHub implements ForgeSearch {
         JsonArray jsonArray = gson.fromJson(jsonString, JsonElement.class).getAsJsonArray();
         
 		for (JsonElement element: jsonArray) {
-        	User user = gson.fromJson(element, User.class);
-            users.add(user);
+        	Contributor contributor = gson.fromJson(element, Contributor.class);
+        	contributors.add(contributor);
         }
 
-		return users;
+		return contributors;
 	}
 
 	public List<Project> getAllForgeProjects(int start, int limit) throws SearchException{

@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import br.ufpe.cin.groundhog.Commit;
+import br.ufpe.cin.groundhog.Contributor;
 import br.ufpe.cin.groundhog.Language;
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.Release;
@@ -95,10 +96,14 @@ public class SearchGitHubTest {
 	public void testGetAllProjectContributors() {
 		try {
 			
+			/*Sanity test, if the list of contributors is null, something is wrong*/
 			Project project = new Project("twitter", "ambrose");
-			List<User> contributors = searchGitHub.getAllProjectContributors(project);
-						
+			List<Contributor> contributors = searchGitHub.getAllProjectContributors(project);
 			Assert.assertNotNull(contributors);
+			
+			
+			
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail();
