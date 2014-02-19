@@ -124,7 +124,7 @@ public class EntityTest {
 				Assert.fail();
 			}
 			
-			/*((watchersCount > 3) && (forks_count > 1) && (commits.size() > 100) && (issues.size() > 5));
+			/*
 			 * 
 			 * If we have Project P that:
 			 * P.wachtersCount > 4
