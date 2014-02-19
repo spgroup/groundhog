@@ -119,6 +119,9 @@ public class SearchGitHubTest {
 			List<Release> releases = searchGitHub.getAllProjectReleases(project);
 						
 			Assert.assertNotNull(releases);
+			
+			
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail();

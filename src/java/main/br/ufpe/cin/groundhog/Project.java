@@ -7,18 +7,33 @@ import br.ufpe.cin.groundhog.util.Dates;
 
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
+import org.mongodb.morphia.annotations.Indexed;
 import org.mongodb.morphia.annotations.Reference;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Represents a software project in Groundhog
- * @author fjsj, gustavopinto, Rodrigo Alves
+ * <h1>Project -  <i>Represents a software project in Groundhog</i> </h1> 
+ * <p>
+ * 	This Class support the base of <i>Groundhog</i> and maybe the most important Class, because like
+ *  we can found at <a href="http://en.wikipedia.org/wiki/GitHub"><i>Wikipedia</i></a> <i>"GitHub is a web-based hosting service for software development projects that use the Git revision control system."</i>. 
+ *  A Project object contains all entities that in some way are connected. 
+ *  A <i>Groundhog</i> user want to extract metrics from projects hosted on <a href="https://github.com/"><i>Github</i></a>, so this Class can give support to all data that a project can have 
+ *	and consequently extract metrics from these. 
+ * </p>
+ *  
+ * @author 
+ * <ul>
+ * 		<li>fjsj</li>
+ * 		<li>gustavopinto</li>
+ * 		<li>Rodrigo Alves</li>
+ * </ul>
  * @since 0.0.1
  */
 
 @Entity("projects")
 public class Project extends GitHubEntity {
 	@SerializedName("id")
+	@Indexed(unique=true, dropDups=true)
 	@Id private int id;
 	
 	@SerializedName("name")
@@ -34,7 +49,7 @@ public class Project extends GitHubEntity {
 	@Reference private List<Issue> issues;
 	@Reference private List<Milestone> milestones;
 	@Reference private List<Commit> commits;
-	@Reference private List<User> contributors;
+	@Reference private List<Contributor> contributors;
 
 	@Reference private User user;
 	private SCM scm;
@@ -459,11 +474,11 @@ public class Project extends GitHubEntity {
 	 * Returns the list of contributors of the project as GitHub users
 	 * @return
 	 */
-	public List<User> getContributors() {
+	public List<Contributor> getContributors() {
 		return this.contributors;
 	}
 	
-	public void setContributors(List<User> contributors) {
+	public void setContributors(List<Contributor> contributors) {
 		this.contributors = contributors;
 	}
 
@@ -481,6 +496,14 @@ public class Project extends GitHubEntity {
 	 */
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	/**
@@ -520,6 +543,18 @@ public class Project extends GitHubEntity {
 		return String.format("https://api.github.com/repos/%s/%s", this.getUser().getLogin(), this.getName());
 	}
 
+	/**
+	 * If two projects have the same ID, then they are equals.
+	 * */
+	public boolean equals(Project project){
+		if(this.id == project.getId()){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	
 	@Override
 	public String toString() {
 		return String.format("Project(%s, %s)", this.name, this.sourceCodeURL);

@@ -21,15 +21,15 @@ import org.mongodb.morphia.annotations.Reference;
  * <p>The attributes are at form bellow:</p>
  * <p>Class/type attributeName: What he represent </p>  
  * <ul>
- * 		 <li> String tagName: Tag Name of the Release on GitHub. 
- *		 <li> String name: The name of the Release on GitHub.
- *		 <li> String targetCommitish: The Commitish value that determines where the Git tag is created from. Can be any branch or commit SHA. Defaults to the repository’s default branch (usually “master”). Unused if the Git tag already exists.
- *		 <li> String body: The Markdown-syntax-based description of the Release.
- * 		 <li> String assetsUrl: That present a full project history beyond Git artifacts
- * 		 <li> boolean draft: If the Release is a draft (unpublished) or not.
- *		 <li> booelan preRelease: If the Release is or not a full release.
- *		 <li> Date createdAt: When the Release was created.
- *		 <li> Date publishedAt: When the Release was published.
+ * 		 <li> <b>String</b> tagName: Tag Name of the Release on GitHub. 
+ *		 <li> <b>String</b> name: The name of the Release on GitHub.
+ *		 <li> <b>String</b> targetCommitish: The Commitish value that determines where the Git tag is created from. Can be any branch or commit SHA. Defaults to the repository’s default branch (usually “master”). Unused if the Git tag already exists.
+ *		 <li> <b>String</b> body: The Markdown-syntax-based description of the Release.
+ * 		 <li> <b>String</b> assetsUrl: That present a full project history beyond Git artifacts
+ * 		 <li> <b>boolean</b> draft: If the Release is a draft (unpublished) or not.
+ *		 <li> <b>booelan</b> preRelease: If the Release is or not a full release.
+ *		 <li> <b>Date</b> createdAt: When the Release was created.
+ *		 <li> <b>Date</b> publishedAt: When the Release was published.
  *		
  * </ul> 	
  * <p> These descriptions can also be seen in the Get methods. </p>
