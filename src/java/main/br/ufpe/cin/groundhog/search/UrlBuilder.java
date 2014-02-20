@@ -115,7 +115,7 @@ public final class UrlBuilder {
 	}
 
 	public UrlBuilder withParam(Map<String, Object> params) {
-		throw new UnsupportedOperationException("not implemented yet.");
+		throw new UnsupportedOperationException("Sorry. Not implemented yet.");
 	}
 
 	/**
@@ -124,8 +124,10 @@ public final class UrlBuilder {
 	 * @return final url
 	 */
 	public String build() {
-		String concat = isFirstParam() ? "?" : "&";
+		if(this.builder == null) 
+			throw new UnsupportedOperationException("Nenhum parametro de URL foi enviado!");
 		
+		String concat = isFirstParam() ? "?" : "&";
 		String result = this.builder.append(concat).append(oauthToken).toString();
 		this.builder.delete(0, result.length());
 		return result;

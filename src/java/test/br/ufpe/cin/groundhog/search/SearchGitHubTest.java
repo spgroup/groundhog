@@ -28,7 +28,7 @@ public class SearchGitHubTest {
 		Injector injector = Guice.createInjector(new SearchModule(), new HttpModule());
 		searchGitHub = injector.getInstance(SearchGitHub.class);
 		User user = new User("elixir-lang");
-		fakeProject = new Project("elixir", "", SCM.GIT, "git@github.com:elixir-lang/elixir.git");
+		fakeProject = new Project("elixir", "", "git@github.com:elixir-lang/elixir.git");
 		fakeProject.setUser(user);
 	}
 	
@@ -81,7 +81,7 @@ public class SearchGitHubTest {
 	public void testGetAllProjectCommits() {
 		try {
 
-			Project project = new Project("github","android");
+			Project project = new Project(new User("github"),"android");
 		 
 			List<Commit> commits = searchGitHub.getAllProjectCommits(project);
 			
@@ -97,7 +97,7 @@ public class SearchGitHubTest {
 		try {
 			
 			/*Sanity test, if the list of contributors is null, something is wrong*/
-			Project project = new Project("twitter", "ambrose");
+			Project project = new Project(new User("twitter"), "ambrose");
 			List<Contributor> contributors = searchGitHub.getAllProjectContributors(project);
 			Assert.assertNotNull(contributors);
 			

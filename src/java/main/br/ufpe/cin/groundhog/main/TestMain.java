@@ -13,9 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.ufpe.cin.groundhog.Commit;
-import br.ufpe.cin.groundhog.Issue;
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.SCM;
+import br.ufpe.cin.groundhog.User;
 import br.ufpe.cin.groundhog.codehistory.CodeHistoryModule;
 import br.ufpe.cin.groundhog.codehistory.GitCodeHistory;
 import br.ufpe.cin.groundhog.codehistory.SFCodeHistory;
@@ -193,7 +193,7 @@ public class TestMain {
 	    
 	    GroundhogDB db = new GroundhogDB("127.0.0.1", "myGitHubResearch");
 	    
-	    Project project = new Project("rails", "rails");
+	    Project project = new Project(new User("rails"), "rails");
 	    
 	    // Fetches all commits of the project and persists each one of them to the database
 	    List<Commit> commits = searchGitHub.getAllProjectCommits(project);

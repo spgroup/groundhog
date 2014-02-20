@@ -1,12 +1,17 @@
 package br.ufpe.cin.groundhog.database;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
+
+import br.ufpe.cin.groundhog.Commit;
+import br.ufpe.cin.groundhog.Project;
+import br.ufpe.cin.groundhog.User;
+import br.ufpe.cin.groundhog.http.HttpModule;
+import br.ufpe.cin.groundhog.search.SearchGitHub;
+import br.ufpe.cin.groundhog.search.SearchModule;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -22,15 +27,9 @@ import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.config.RuntimeConfigBuilder;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.config.io.ProcessOutput;
-import de.flapdoodle.embed.process.extract.ITempNaming;
 import de.flapdoodle.embed.process.io.IStreamProcessor;
 import de.flapdoodle.embed.process.io.NullProcessor;
 import de.flapdoodle.embed.process.runtime.Network;
-import br.ufpe.cin.groundhog.Project;
-import br.ufpe.cin.groundhog.Commit;
-import br.ufpe.cin.groundhog.http.HttpModule;
-import br.ufpe.cin.groundhog.search.SearchGitHub;
-import br.ufpe.cin.groundhog.search.SearchModule;
 
 /**
  * The test interface for the {@link GroundhogDB} class
@@ -75,7 +74,7 @@ public class GroundhogDBTest {
 	
 	@Test
 	public void testCommitsPersistence() {
-		Project project = new Project("yahoo", "samoa");
+		Project project = new Project(new User("yahoo"), "samoa");
 
 		// Fetches all commits of the project and persists each one of them to the database
 		List<Commit> commits = searchGitHub.getAllProjectCommits(project);

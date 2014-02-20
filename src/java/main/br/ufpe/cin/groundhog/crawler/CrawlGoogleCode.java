@@ -40,7 +40,7 @@ public class CrawlGoogleCode extends ForgeCrawler {
 				// CodeHistory shall use checkout the desired version later.
 				break;
 			case GIT:
-				String url = project.getScmURL();
+				String url = project.getCheckoutURL();
 					gitClient.clone(url, projectFolder);
 				break;
 			case NONE:

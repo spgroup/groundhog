@@ -27,7 +27,7 @@ public class EntityTest {
 	
 	@Before
 	public void setup() {
-		projectTest = new Project("projectUserLogin", "Test Project");
+		projectTest = new Project(new User("projectUserLogin"), "Test Project");
 		userTest = new User("testUserLogin");
 		contributorTest = new Contributor("testUserLogin");
 		releaseTest = new Release(projectTest, 1);
@@ -115,7 +115,7 @@ public class EntityTest {
 		try {
 			String loginProjectTest = projectTest.getUser().getLogin();
 			String nameProjectTest = projectTest.getName();
-			Project secondProject = new Project(loginProjectTest, nameProjectTest);
+			Project secondProject = new Project(new User(loginProjectTest), nameProjectTest);
 			
 			/*
 			 * If two projects have the same ID, then they are equals.
