@@ -60,6 +60,24 @@ public class SearchGitHubTest {
 		try {
 			List<Project> projects = searchGitHub.getAllProjects(0, 5);
 			Assert.assertNotNull(projects);
+			
+			for (Project project : projects){
+				Assert.assertNotNull(project.getName());
+				Assert.assertNotNull(project.getDescription());
+				Assert.assertNotNull(project.getLanguage());
+				Assert.assertNotNull(project.getLanguages());
+				Assert.assertNotNull(project.getIssues());
+				Assert.assertNotNull(project.getMilestones());
+				Assert.assertNotNull(project.getCommits());
+				Assert.assertNotNull(project.getContributors());
+				Assert.assertNotNull(project.getUser());
+				Assert.assertNotNull(project.getSCM());
+				Assert.assertNotNull(project.getScmURL());
+				Assert.assertNotNull(project.getSourceCodeURL());
+				Assert.assertNotNull(project.getCreatedAt());
+				Assert.assertNotNull(project.getLastPushedAt());
+			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail();
@@ -80,11 +98,8 @@ public class SearchGitHubTest {
 	@Test
 	public void testGetAllProjectCommits() {
 		try {
-
 			Project project = new Project("github","android");
-		 
 			List<Commit> commits = searchGitHub.getAllProjectCommits(project);
-			
 			Assert.assertNotNull(commits);	
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -101,8 +116,20 @@ public class SearchGitHubTest {
 			List<Contributor> contributors = searchGitHub.getAllProjectContributors(project);
 			Assert.assertNotNull(contributors);
 			
-			
-			
+			for(Contributor contributor : contributors){
+				Assert.assertNotNull(contributor.getGravatar_id());
+				Assert.assertNotNull(contributor.getHtml_url());
+				Assert.assertNotNull(contributor.getFollowers_url());
+				Assert.assertNotNull(contributor.getFollowing_url());
+				Assert.assertNotNull(contributor.getGists_url());
+				Assert.assertNotNull(contributor.getStarred_url());
+				Assert.assertNotNull(contributor.getSubscriptions_url());
+				Assert.assertNotNull(contributor.getAvatar_url());
+				Assert.assertNotNull(contributor.getRepos_url());
+				Assert.assertNotNull(contributor.getEvents_url());
+				Assert.assertNotNull(contributor.getReceived_events_url());
+				Assert.assertNotNull(contributor.getType());
+			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
