@@ -16,6 +16,7 @@ import com.github.junrar.rarfile.FileHeader;
  * @author fjsj, gustavopinto, Rodrigo Alves
  * Adapted from: https://github.com/edmund-wagner/junrar/blob/6f32323c983015d96c64084418793853f514b519/testutil/src/main/java/de/innosystec/unrar/testutil/ExtractArchive.java
  * Original author: Edmund Wagner
+ * @deprecated
  */
 public class RarUncompressor {
 	private static Log logger = LogFactory.getLog(RarUncompressor.class

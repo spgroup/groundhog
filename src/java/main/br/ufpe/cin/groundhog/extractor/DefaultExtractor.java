@@ -19,7 +19,7 @@ import br.ufpe.cin.groundhog.util.FileUtil;
  * Singleton class to extract files and recursively extract all files within a hierarchy of folders.
  * Supports some of the most popular compression formats: .zip, .tar.gz, .tgz, .tar.bz2, .tar.bzip2, .tar.lzma, .tlzma, .rar, .tar 
  * @author fjsj
- *
+ * @deprecated
  */
 public class DefaultExtractor implements Extractor {
 	private static Log logger = LogFactory.getLog(DefaultExtractor.class.getName());

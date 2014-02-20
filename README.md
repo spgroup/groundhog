@@ -12,12 +12,10 @@ On the developer side, Groundhog focuses on simplicity by shipping with a bare s
 It is currently alpha software and it supports:
 
 * Partially integrated with GitHub API
-* Extract and download projects from three forges
-* Collect metrics about Java code
+* Collect Java code metrics
 * Plug-and-play features
 
-Before becoming beta, we want to add the following to Groundhog:
-* Fully-integrated with GitHub API
+Groundhog will become beta, as soon as we fully-integrated it with GitHub API
 
 ## Build
 
