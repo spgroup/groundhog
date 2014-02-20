@@ -38,6 +38,14 @@ public class SearchGitHubTest {
 			List<Project> projects = searchGitHub.getProjects("groundhog", 1, SearchGitHub.INFINITY);
 			searchGitHub.getProjectLanguages(projects.get(0));
 			Assert.assertNotNull(projects);
+			
+			/*Search a inexisting project, we expect no project*/
+			projects = searchGitHub.getProjects("12k4o12samsarmorm1om1o2m21m921", 1, SearchGitHub.INFINITY);
+			Assert.assertEquals(0, projects.size());
+			
+			
+			
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail();
@@ -101,12 +109,26 @@ public class SearchGitHubTest {
 			Project project = new Project("github","android");
 			List<Commit> commits = searchGitHub.getAllProjectCommits(project);
 			Assert.assertNotNull(commits);	
+			
+			/*Assert that no object attribute is null*/
+			for(Commit commit : commits){
+				Assert.assertNotNull(commit.getSha());
+				Assert.assertNotNull(commit.getCommiter());
+				Assert.assertNotNull(commit.getMessage());
+				Assert.assertNotNull(commit.getProject());
+				Assert.assertNotNull(commit.getCommitDate());
+			}
+			
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail();
 		}
 	}
 	
+	/**
+	 * This class contains a group of tests about {@link SearchGitHub#getAllProjectCommits(Project) getAllProjectCommits} method
+	 * */
 	@Test
 	public void testGetAllProjectContributors() {
 		try {
@@ -116,6 +138,7 @@ public class SearchGitHubTest {
 			List<Contributor> contributors = searchGitHub.getAllProjectContributors(project);
 			Assert.assertNotNull(contributors);
 			
+			/*Assert that no object attribute is null*/
 			for(Contributor contributor : contributors){
 				Assert.assertNotNull(contributor.getGravatar_id());
 				Assert.assertNotNull(contributor.getHtml_url());
