@@ -189,7 +189,12 @@
         <artifactId>morphia</artifactId>
         <version>0.105</version>
     </dependency>
-	</dependencies>
+    <dependency>
+        <groupId>org.eclipse.jdt</groupId>
+        <artifactId>core</artifactId>
+        <version>3.3.0-v_771</version>
+    </dependency>
+    </dependencies>
 
 	<build>
 		<sourceDirectory>${project.basedir}/src/java/main</sourceDirectory>
