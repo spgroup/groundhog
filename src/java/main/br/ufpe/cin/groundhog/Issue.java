@@ -252,11 +252,12 @@ public class Issue extends GitHubEntity {
 	}
 
 	/**
-	 * Returns true if the Issue is open. Returns false otherwise
+	 * Returns <code>true</code> if this Issue's state equals open, i.e., if
+	 * <code>"open".equals(this.getState())</code> is <code>true</code>
 	 * @return
 	 */
 	public boolean isOpen() {
-		return this.getState() == "closed" ? true : false;
+		return "open".equals(this.getState());
 	}
 
 	/**
