@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 
+import org.apache.commons.lang3.text.translate.CodePointTranslator;
+
 import br.ufpe.cin.groundhog.metrics.exception.InvalidJavaProjectPathException;
 import br.ufpe.cin.groundhog.metrics.exception.InvalidSourceRootCodePathException;
 import br.ufpe.cin.groundhog.metrics.exception.InvalidTestSourcePathException;
@@ -79,7 +81,8 @@ public class JavaProject {
 		else{
 			detectSourceRootCode(src);
 			detectSourceRootTestCode(srtc);
-			detectCodePackages(this.src);
+			detectCodePackages();
+			detectTestCodePackages();
 			return true;
 		}
 	}
@@ -116,31 +119,39 @@ public class JavaProject {
 				+ "SRTC: " + this.srtc.getAbsolutePath(); 
 	}
 
-	private void detectCodePackages(File dir){
+	private void detectPackages(File dir,ArrayList<JavaPackage> packages, File src){
 
 		//Check if this project have files on default package
 		if(dir.equals(this.src) && hasJavaFiles(dir)){			
 			System.out.println("Package default detected!");
-			this.code_packages.add(new JavaPackage(dir,"default"));
+			packages.add(new JavaPackage(dir,"default"));
 		}
 
 		for(File file : dir.listFiles()){
 			//We have a directory and java files, so we have a package
 			if(file.isDirectory() && hasJavaFiles(file)){
-				System.out.println("Package " + extractPackageName(file) + " detected!");
-				JavaPackage java_package = new JavaPackage(file,extractPackageName(file));
-				this.code_packages.add(java_package);
-				detectCodePackages(file);
+				System.out.println("Package " + extractPackageName(src,file) + " detected!");
+				JavaPackage java_package = new JavaPackage(file,extractPackageName(src,file));
+				packages.add(java_package);
+				detectPackages(file,packages,src);
 			}else if(file.isDirectory()){
 				//Search for packages inside actual package
-				detectCodePackages(file);			
+				detectPackages(file,packages,src);			
 			}
 		}
 
 	}
-
+	
+	private void detectCodePackages(){
+		if(this.src != null){
+			detectPackages(this.src, this.code_packages, this.src);
+		}
+	}
+	
 	private void detectTestCodePackages(){
-
+		if(this.srtc != null){
+			detectPackages(this.srtc, this.test_packages, this.srtc);
+		}
 	}
 
 	private boolean hasJavaFiles(File dir){
@@ -152,9 +163,9 @@ public class JavaProject {
 		return false;
 	}
 
-	private String extractPackageName(File dir){
+	private String extractPackageName(File src, File dir){
 		return dir.getAbsolutePath().
-				replace(this.src.getAbsolutePath()+File.separator, "")
+				replace(src.getAbsolutePath()+File.separator, "")
 				.replaceAll(Matcher.quoteReplacement(File.separator), ".");
 	}
 }
