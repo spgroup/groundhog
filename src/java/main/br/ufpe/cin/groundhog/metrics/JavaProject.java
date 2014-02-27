@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
 
 import org.apache.commons.lang3.text.translate.CodePointTranslator;
 
+import br.ufpe.cin.groundhog.metrics.exception.InvalidJavaFileException;
 import br.ufpe.cin.groundhog.metrics.exception.InvalidJavaProjectPathException;
 import br.ufpe.cin.groundhog.metrics.exception.InvalidSourceRootCodePathException;
 import br.ufpe.cin.groundhog.metrics.exception.InvalidTestSourcePathException;
@@ -74,7 +75,7 @@ public class JavaProject {
 
 	}
 
-	public boolean generateStructure(String src, String srtc) throws InvalidJavaProjectPathException, InvalidSourceRootCodePathException, InvalidTestSourcePathException{
+	public boolean generateStructure(String src, String srtc) throws InvalidJavaProjectPathException, InvalidSourceRootCodePathException, InvalidTestSourcePathException, InvalidJavaFileException{
 
 		if(this.path == null || !this.path.isDirectory())
 			return false;
@@ -119,7 +120,7 @@ public class JavaProject {
 				+ "SRTC: " + this.srtc.getAbsolutePath(); 
 	}
 
-	private void detectPackages(File dir,ArrayList<JavaPackage> packages, File src){
+	private void detectPackages(File dir,ArrayList<JavaPackage> packages, File src) throws InvalidJavaFileException{
 
 		//Check if this project have files on default package
 		if(dir.equals(this.src) && hasJavaFiles(dir)){			
@@ -142,13 +143,13 @@ public class JavaProject {
 
 	}
 	
-	private void detectCodePackages(){
+	private void detectCodePackages() throws InvalidJavaFileException{
 		if(this.src != null){
 			detectPackages(this.src, this.code_packages, this.src);
 		}
 	}
 	
-	private void detectTestCodePackages(){
+	private void detectTestCodePackages() throws InvalidJavaFileException{
 		if(this.srtc != null){
 			detectPackages(this.srtc, this.test_packages, this.srtc);
 		}

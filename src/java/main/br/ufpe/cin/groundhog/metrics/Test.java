@@ -1,6 +1,7 @@
 package br.ufpe.cin.groundhog.metrics;
 
 import java.io.*;
+import java.util.Hashtable;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -144,6 +145,8 @@ public class Test {
         }else{
             System.out.println("Is not a file!");
         }
-
+        
+        Hashtable<Integer, Integer> table = new Hashtable<Integer,Integer>();
+        
     }
 }

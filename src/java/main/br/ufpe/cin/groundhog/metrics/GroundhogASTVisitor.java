@@ -1,1018 +1,169 @@
 package br.ufpe.cin.groundhog.metrics;
 
+import java.util.ArrayList;
+import java.util.Hashtable;
+
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.dom.*;
 
 class GroundhogASTVisitor extends ASTVisitor{
 	
-    @Override
-	public void endVisit(AnnotationTypeDeclaration node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
+	/*It's necessary to use final variables in order to interact with
+	* the code inside ASTVisitor class
+	*/
+	
+	/**
+	 * Accumulators for method metrics
+	 */
+	
+	private Hashtable<Integer, Integer> methodCall = new Hashtable<Integer,Integer>();
+	private Hashtable<Integer, Integer> lineCounter = new Hashtable<Integer,Integer>();
+	private Hashtable<Integer, Integer> depCounter = new Hashtable<Integer,Integer>();
+	private Hashtable<Integer, Integer> parameters = new Hashtable<Integer,Integer>();
+	private Hashtable<Integer, Integer> cycloCounter = new Hashtable<Integer,Integer>();
+	
+	/**
+	 * Accumulators for classes metrics	
+	 */
+	private Hashtable<Integer, Integer> fieldCounter = new Hashtable<Integer,Integer>();
+	private Hashtable<Integer, Integer> methodCounter = new Hashtable<Integer,Integer>();
+	private Hashtable<Integer, Integer> sFieldCounter = new Hashtable<Integer,Integer>();
+	private Hashtable<Integer, Integer> sMethodCounter = new Hashtable<Integer,Integer>();
+
+	/**
+	 * Accumulators for files metrics
+	 */
+	private long anonymousClasses = 0;
+	private long interfaces = 0;
+	private long classes = 0;
+	
+	/**
+	 *	Auxiliar fields to extract metrics
+	 */
+	int [] depthBlock = new int[1000];
+	int methods = 0;
+	int fields = 0;
+	int methodCalls = 0;
+	int staticMethod = 0;
+	int staticField = 0;
+	int cycloComplexity = 1;
+	int returns = 0;
+
+
+	private int maximum(int[] list){
+		
+		int max=0;
+		
+		for(int i = list.length-1; (i > 0) && (max == 0); i--){
+			if(list[i] > 0) max=i;
+		}
+		
+		return max;
+	}
+	
+	public boolean visit(AnonymousClassDeclaration node){
+		this.anonymousClasses++;
+		return true;
+	}
+	
+	public boolean visit(TypeDeclaration td){
+		if(Flags.isInterface(td.getModifiers())){
+			this.interfaces++;
+		}else{
+			this.classes++;
+		}
+		
+		fields = 0;
+		methods = 0;
+		staticMethod = 0;
+		staticField = 0;
+		
+		return true;
+	}
+
+	public void endVisit(TypeDeclaration td){
+		
+		safeAddToHashTable(fieldCounter, fields);
+		safeAddToHashTable(methodCounter,methods);
+		safeAddToHashTable(sMethodCounter,staticMethod);
+		safeAddToHashTable(sFieldCounter,staticField);
+	}
+	
+	private void safeAddToHashTable(Hashtable<Integer, Integer> table,int position){
+		
+		if(table.containsKey(position)){
+			table.put(position, table.get(position)+1);
+		}
+	}
+	
+	public boolean visit(MethodDeclaration md){
+		depthBlock = new int[1000];
+		methods++;
+		methodCalls = 0;
+		cycloComplexity = 1;
+		returns = 0;
+		String[] lines = md.toString().split("\n");
+		safeAddToHashTable(lineCounter,lines.length);
+		int f = md.getModifiers();
+		if(Flags.isStatic(f))staticMethod++;
+		int param = md.parameters().size();
+		safeAddToHashTable(parameters,param);
+		return true;
 	}
-
-	@Override
-	public void endVisit(AnnotationTypeMemberDeclaration node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(AnonymousClassDeclaration node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(ArrayAccess node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(ArrayCreation node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(ArrayInitializer node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(ArrayType node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(AssertStatement node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(Assignment node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(Block node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(BlockComment node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(BooleanLiteral node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(BreakStatement node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(CastExpression node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(CatchClause node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(CharacterLiteral node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(ClassInstanceCreation node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(CompilationUnit node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(ConditionalExpression node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(ConstructorInvocation node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(ContinueStatement node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(DoStatement node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(EmptyStatement node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(EnhancedForStatement node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(EnumConstantDeclaration node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(EnumDeclaration node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(ExpressionStatement node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(FieldAccess node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(FieldDeclaration node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(ForStatement node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(IfStatement node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(ImportDeclaration node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(InfixExpression node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(Initializer node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(InstanceofExpression node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(Javadoc node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(LabeledStatement node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(LineComment node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(MarkerAnnotation node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(MemberRef node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(MemberValuePair node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(MethodDeclaration node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(MethodInvocation node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(MethodRef node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(MethodRefParameter node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(Modifier node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(NormalAnnotation node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(NullLiteral node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(NumberLiteral node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(PackageDeclaration node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(ParameterizedType node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(ParenthesizedExpression node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(PostfixExpression node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(PrefixExpression node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(PrimitiveType node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(QualifiedName node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(QualifiedType node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(ReturnStatement node) {
-		// TODO Auto-generated method stub
-		System.out.println("Terminando visita a um return");
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(SimpleName node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(SimpleType node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(SingleMemberAnnotation node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(SingleVariableDeclaration node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(StringLiteral node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(SuperConstructorInvocation node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(SuperFieldAccess node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(SuperMethodInvocation node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(SwitchCase node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(SwitchStatement node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(SynchronizedStatement node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(TagElement node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(TextElement node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(ThisExpression node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(ThrowStatement node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(TryStatement node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(TypeDeclaration node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(TypeDeclarationStatement node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(TypeLiteral node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(TypeParameter node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(VariableDeclarationExpression node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(VariableDeclarationFragment node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(VariableDeclarationStatement node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(WhileStatement node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void endVisit(WildcardType node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
-	}
-
-	@Override
-	public void postVisit(ASTNode node) {
-		// TODO Auto-generated method stub
-		super.postVisit(node);
-	}
-
-	@Override
-	public void preVisit(ASTNode node) {
-		// TODO Auto-generated method stub
-		super.preVisit(node);
-	}
-
-	@Override
-	public boolean visit(AnnotationTypeDeclaration node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(AnnotationTypeMemberDeclaration node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(AnonymousClassDeclaration node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(ArrayAccess node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(ArrayCreation node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(ArrayInitializer node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(ArrayType node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(AssertStatement node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(Assignment node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(Block node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(BlockComment node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(BooleanLiteral node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(BreakStatement node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(CastExpression node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(CatchClause node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(CharacterLiteral node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(ClassInstanceCreation node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(CompilationUnit node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(ConditionalExpression node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(ConstructorInvocation node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(ContinueStatement node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(DoStatement node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(EmptyStatement node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(EnhancedForStatement node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(EnumConstantDeclaration node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(EnumDeclaration node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(ExpressionStatement node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(FieldAccess node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(FieldDeclaration node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(ForStatement node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(IfStatement node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(ImportDeclaration node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(InfixExpression node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(Initializer node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(InstanceofExpression node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(Javadoc node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(LabeledStatement node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(LineComment node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(MarkerAnnotation node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(MemberRef node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(MemberValuePair node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(MethodDeclaration node) {
-		System.out.println("Nome do método: " + node.getName());
-		System.out.println("Tamanho do metodo" + node.getLength());
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(MethodInvocation node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(MethodRef node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(MethodRefParameter node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(Modifier node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(NormalAnnotation node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(NullLiteral node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(NumberLiteral node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(PackageDeclaration node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(ParameterizedType node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(ParenthesizedExpression node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(PostfixExpression node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(PrefixExpression node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(PrimitiveType node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(QualifiedName node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(QualifiedType node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(ReturnStatement node) {
-		// TODO Auto-generated method stub
-		System.out.println("Iniciando visita a um return");
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(SimpleName node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(SimpleType node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(SingleMemberAnnotation node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(SingleVariableDeclaration node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(StringLiteral node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(SuperConstructorInvocation node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(SuperFieldAccess node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(SuperMethodInvocation node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(SwitchCase node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(SwitchStatement node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(SynchronizedStatement node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(TagElement node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(TextElement node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(ThisExpression node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(ThrowStatement node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(TryStatement node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
+		
+	public void endVisit(MethodDeclaration md){
+		int maxDepth = maximum(depthBlock);
+		cycloComplexity += 2*Math.max(0, returns-1);
+		safeAddToHashTable(cycloCounter,cycloComplexity);
+		safeAddToHashTable(depCounter,maxDepth);
+		safeAddToHashTable(methodCall,methodCalls);
 	}
-
-	@Override
-	public boolean visit(TypeDeclaration node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(TypeDeclarationStatement node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(TypeLiteral node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
+	
+	public boolean visit(MethodInvocation mi){
+		methodCalls++;
+			return true;
 	}
 
-	@Override
-	public boolean visit(TypeParameter node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
+	public boolean visit(ForStatement fs){
+		cycloComplexity++;
+		return true;
 	}
 
-	@Override
-	public boolean visit(VariableDeclarationExpression node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
+	public boolean visit(WhileStatement ws){
+		cycloComplexity++;
+		return true;
 	}
 
-	@Override
-	public boolean visit(VariableDeclarationFragment node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
+	public boolean visit(IfStatement is){
+		cycloComplexity++;
+		return true;
 	}
 
-	@Override
-	public boolean visit(VariableDeclarationStatement node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
+	public boolean visit(ReturnStatement rs){
+		this.returns++;
+		return true;
 	}
 
-	@Override
-	public boolean visit(WhileStatement node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
+	public boolean visit(FieldDeclaration fd){
+		this.fields++;
+		if(Flags.isStatic(fd.getModifiers())){
+			staticField++;
+		}
+			return true;
 	}
+	
+	public boolean visit(Block node){
+		int c = 0;
+		ASTNode nd = node;
 
-	@Override
-	public boolean visit(WildcardType node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
+		while(nd.getParent() != null){
+			if(nd.getClass().getName().endsWith("Block"))c++;
+			nd = nd.getParent();
+		}
+		
+		depthBlock[c] = 1;
+		return true;
+		
 	}
+	
 }

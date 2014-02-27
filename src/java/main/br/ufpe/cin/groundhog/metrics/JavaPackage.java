@@ -3,6 +3,8 @@ package br.ufpe.cin.groundhog.metrics;
 import java.io.File;
 import java.util.ArrayList;
 
+import br.ufpe.cin.groundhog.metrics.exception.InvalidJavaFileException;
+
 /**
  * Represents a java package in Groundhog metrics extractor
  * @author Bruno Soares, Tulio Lajes, Valdemir Andrade
@@ -17,28 +19,28 @@ public class JavaPackage {
 	
 	private String name;
 
-	public JavaPackage(File path, String name){
+	public JavaPackage(File path, String name) throws InvalidJavaFileException{
 		this.path = path;
 		this.name = name;
 		this.files = new ArrayList<JavaFile>();
 		detectJavaFiles();
 	}
 
-	public JavaPackage(File path){
+	public JavaPackage(File path) throws InvalidJavaFileException{
 		this.path = path;
 		this.name = path.getName();
 		this.files = new ArrayList<JavaFile>();
 		detectJavaFiles();
 	}
 
-	public JavaPackage(String path, String name){
+	public JavaPackage(String path, String name) throws InvalidJavaFileException{
 		this.path = new File(path);
 		this.name = name;
 		this.files = new ArrayList<JavaFile>();
 		detectJavaFiles();
 	}
 
-	public JavaPackage(String path){
+	public JavaPackage(String path) throws InvalidJavaFileException{
 		this.path = new File(path);
 		this.name = this.path.isDirectory() ? this.path.getName() : "";
 		this.files = new ArrayList<JavaFile>();
@@ -50,7 +52,7 @@ public class JavaPackage {
 		return "Package: " + this.name;
 	}
 	
-	private void detectJavaFiles(){
+	private void detectJavaFiles() throws InvalidJavaFileException{
 		for (File file : this.path.listFiles()){
 			if(file.getName().endsWith(".java")){
 				this.files.add(new JavaFile(file,file.getName()));

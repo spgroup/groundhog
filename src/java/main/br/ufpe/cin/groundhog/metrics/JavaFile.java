@@ -1,6 +1,15 @@
 package br.ufpe.cin.groundhog.metrics;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+
+import br.ufpe.cin.groundhog.metrics.exception.InvalidJavaFileException;
 
 /**
  * Represents a java class in Groundhog metrics extractor
@@ -12,34 +21,60 @@ public class JavaFile {
 	
 	private File path;
 	private String name;
+	private ASTParser parser;
+	private Scanner scanner;
+	private CompilationUnit cu;
 	
-	public JavaFile(File path, String name){
+	public JavaFile(File path, String name) throws InvalidJavaFileException{
+		
 		this.path = path;
 		this.name = name;
+		commonInit();
 	}
 
-	public JavaFile(File path){
+	public JavaFile(File path) throws InvalidJavaFileException{
+		
 		this.path = path;
 		this.name = path.getName();
+		commonInit();
 	}
 
-	public JavaFile(String path, String name){
+	public JavaFile(String path, String name) throws InvalidJavaFileException{
+		
 		this.path = new File(path);
 		this.name = name;
+		commonInit();
+		
 	}
 
-	public JavaFile(String path){
+	public JavaFile(String path) throws InvalidJavaFileException{
+		
 		this.path = new File(path);
 		this.name = this.path.isFile() ? this.path.getName() : "";
+		commonInit();
+	}
+	
+	private void commonInit() throws InvalidJavaFileException{
+		
+		try{
+			this.scanner = new Scanner(this.path);
+			this.parser = ASTParser.newParser(AST.JLS3);
+			this.cu = (CompilationUnit) parser.createAST(null);
+		}catch(FileNotFoundException e){
+			throw new InvalidJavaFileException();
+		}
+	}
+	
+	private void loadFile() throws InvalidJavaFileException, FileNotFoundException{
+		
+		this.scanner.useDelimiter("\\Z");
+		this.parser.setSource(this.scanner.next().toCharArray());
+		this.scanner.close();
 	}
 
 	@Override
 	public String toString() {
 		return "File: " + this.name;
-	}
-	
-	public JavaFile() {
-		// TODO Auto-generated constructor stub
 	}
 	
 	public File getFile() {
@@ -50,5 +85,14 @@ public class JavaFile {
 		this.path = file;
 	}
 	
+	public void generateMetrics(ASTVisitor visitor) throws InvalidJavaFileException, FileNotFoundException{
+		loadFile();
+		this.cu.accept(visitor);
+		//Falta adicionar o retorno das estatisticas. E ver se é bom manter ela aqui onde está 
+//		Statistics st = new Statistics(depCounter,lineCounter,methodCall,methodCounter,
+//				fieldCounter,classes,parameters,sMethodCounter,sFieldCounter,
+//				interfaces,cycloCounter,anonymousClasses);
+//		return st;
+	}
 	
 }
