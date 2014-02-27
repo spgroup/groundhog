@@ -1,46 +1,19 @@
 package br.ufpe.cin.groundhog.metrics;
 
-import java.util.ArrayList;
 import java.util.Hashtable;
 
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.dom.*;
 
 class GroundhogASTVisitor extends ASTVisitor{
-	
-	/*It's necessary to use final variables in order to interact with
-	* the code inside ASTVisitor class
-	*/
-	
-	/**
-	 * Accumulators for method metrics
-	 */
-	
-	private Hashtable<Integer, Integer> methodCall = new Hashtable<Integer,Integer>();
-	private Hashtable<Integer, Integer> lineCounter = new Hashtable<Integer,Integer>();
-	private Hashtable<Integer, Integer> depCounter = new Hashtable<Integer,Integer>();
-	private Hashtable<Integer, Integer> parameters = new Hashtable<Integer,Integer>();
-	private Hashtable<Integer, Integer> cycloCounter = new Hashtable<Integer,Integer>();
-	
-	/**
-	 * Accumulators for classes metrics	
-	 */
-	private Hashtable<Integer, Integer> fieldCounter = new Hashtable<Integer,Integer>();
-	private Hashtable<Integer, Integer> methodCounter = new Hashtable<Integer,Integer>();
-	private Hashtable<Integer, Integer> sFieldCounter = new Hashtable<Integer,Integer>();
-	private Hashtable<Integer, Integer> sMethodCounter = new Hashtable<Integer,Integer>();
 
-	/**
-	 * Accumulators for files metrics
-	 */
-	private long anonymousClasses = 0;
-	private long interfaces = 0;
-	private long classes = 0;
-	
+	Statistics stat;
+	Util util = new Util();
+
 	/**
 	 *	Auxiliar fields to extract metrics
 	 */
-	int [] depthBlock = new int[1000];
+	Hashtable<Integer, Integer> depthBlock = new Hashtable<Integer,Integer>();
 	int methods = 0;
 	int fields = 0;
 	int methodCalls = 0;
@@ -49,93 +22,86 @@ class GroundhogASTVisitor extends ASTVisitor{
 	int cycloComplexity = 1;
 	int returns = 0;
 
-
-	private int maximum(int[] list){
-		
-		int max=0;
-		
-		for(int i = list.length-1; (i > 0) && (max == 0); i--){
-			if(list[i] > 0) max=i;
-		}
-		
-		return max;
-	}
-	
 	public boolean visit(AnonymousClassDeclaration node){
-		this.anonymousClasses++;
+		this.stat.anonymousClasses++;
 		return true;
 	}
-	
+
 	public boolean visit(TypeDeclaration td){
 		if(Flags.isInterface(td.getModifiers())){
-			this.interfaces++;
+			this.stat.interfaces++;
 		}else{
-			this.classes++;
+			this.stat.classes++;
 		}
-		
-		fields = 0;
-		methods = 0;
-		staticMethod = 0;
-		staticField = 0;
-		
+
+		this.fields = 0;
+		this.methods = 0;
+		this.staticMethod = 0;
+		this.staticField = 0;
+
 		return true;
 	}
 
 	public void endVisit(TypeDeclaration td){
-		
-		safeAddToHashTable(fieldCounter, fields);
-		safeAddToHashTable(methodCounter,methods);
-		safeAddToHashTable(sMethodCounter,staticMethod);
-		safeAddToHashTable(sFieldCounter,staticField);
+
+		safeAddToHashTable(this.stat.fieldCounter, this.fields);
+		safeAddToHashTable(this.stat.methodCounter,this.methods);
+		safeAddToHashTable(this.stat.sMethodCounter,this.staticMethod);
+		safeAddToHashTable(this.stat.sFieldCounter,this.staticField);
 	}
-	
+
 	private void safeAddToHashTable(Hashtable<Integer, Integer> table,int position){
-		
+
 		if(table.containsKey(position)){
 			table.put(position, table.get(position)+1);
+		}else{
+			table.put(position, 1);
 		}
 	}
-	
+
 	public boolean visit(MethodDeclaration md){
-		depthBlock = new int[1000];
-		methods++;
-		methodCalls = 0;
-		cycloComplexity = 1;
-		returns = 0;
+		//TODO: Perguntar a valdemir se ele pensou na logica resetando ou nao
+		this.depthBlock.clear();
+		this.methods++;
+		this.methodCalls = 0;
+		this.cycloComplexity = 1;
+		this.returns = 0;
 		String[] lines = md.toString().split("\n");
-		safeAddToHashTable(lineCounter,lines.length);
+		safeAddToHashTable(this.stat.lineCounter,lines.length);
 		int f = md.getModifiers();
-		if(Flags.isStatic(f))staticMethod++;
+		if(Flags.isStatic(f)) this.staticMethod++;
 		int param = md.parameters().size();
-		safeAddToHashTable(parameters,param);
+		safeAddToHashTable(this.stat.parameters,param);
 		return true;
 	}
-		
+
 	public void endVisit(MethodDeclaration md){
-		int maxDepth = maximum(depthBlock);
-		cycloComplexity += 2*Math.max(0, returns-1);
-		safeAddToHashTable(cycloCounter,cycloComplexity);
-		safeAddToHashTable(depCounter,maxDepth);
-		safeAddToHashTable(methodCall,methodCalls);
+		this.util.processMax(this.depthBlock);
+		int maxDepth = this.util.getMax();
+		this.util.clear();
+		this.cycloComplexity += 2*Math.max(0, this.returns-1);
+		safeAddToHashTable(this.stat.cycloCounter,this.cycloComplexity);
+		safeAddToHashTable(this.stat.depCounter,maxDepth);
+		safeAddToHashTable(this.stat.methodCall,this.methodCalls);
 	}
-	
+
 	public boolean visit(MethodInvocation mi){
-		methodCalls++;
-			return true;
+		this.methodCalls++;
+		return true;
 	}
 
 	public boolean visit(ForStatement fs){
-		cycloComplexity++;
+		this.cycloComplexity++;
 		return true;
 	}
 
 	public boolean visit(WhileStatement ws){
-		cycloComplexity++;
+		this.cycloComplexity++;
 		return true;
 	}
 
 	public boolean visit(IfStatement is){
-		cycloComplexity++;
+		this.cycloComplexity++;
 		return true;
 	}
 
@@ -147,11 +113,11 @@ class GroundhogASTVisitor extends ASTVisitor{
 	public boolean visit(FieldDeclaration fd){
 		this.fields++;
 		if(Flags.isStatic(fd.getModifiers())){
-			staticField++;
+			this.staticField++;
 		}
-			return true;
+		return true;
 	}
-	
+
 	public boolean visit(Block node){
 		int c = 0;
 		ASTNode nd = node;
@@ -160,10 +126,19 @@ class GroundhogASTVisitor extends ASTVisitor{
 			if(nd.getClass().getName().endsWith("Block"))c++;
 			nd = nd.getParent();
 		}
-		
-		depthBlock[c] = 1;
+
+		safeAddToHashTable(this.depthBlock, c);
 		return true;
-		
+
 	}
-	
+
+	public void setStatistics(Statistics stat){
+		this.stat = stat;
+	}
+
+	public Statistics getStatistics(){
+		Statistics to_return = this.stat;
+		this.stat = null;
+		return to_return;
+	}
 }

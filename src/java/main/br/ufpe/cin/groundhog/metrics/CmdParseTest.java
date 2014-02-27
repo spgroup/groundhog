@@ -11,7 +11,7 @@ import java.util.Scanner;
 		    scanner.useDelimiter("\\Z");
 		    String source=scanner.next();
 		    scanner.close();
-			Statistics st=Parsing.parsing(source);
+			Morreu st=Parsing.parsing(source);
 			System.out.println(st.totalLine());
 			System.out.println(st.maxDepth());
 			System.out.println(st.avgMethodCall());

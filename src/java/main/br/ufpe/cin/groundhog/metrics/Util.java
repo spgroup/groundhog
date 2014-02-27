@@ -5,14 +5,14 @@ import java.math.RoundingMode;
 import java.util.Hashtable;
 import java.util.Map;
 
-public final class Statistics2 {
+public final class Util {
 	
 	private int max;
 	private double avg;
 	private long total;
 	
 	
-	public void process(Hashtable<Integer, Integer> table){
+	public void processAll(Hashtable<Integer, Integer> table){
 		long denominator = 0;
 		long numerator = 0;
 		
@@ -27,6 +27,19 @@ public final class Statistics2 {
 		
 		this.avg = bNumerator.divide(bDenominator,10,RoundingMode.HALF_EVEN).doubleValue();
 		this.total = numerator;
+	}
+	
+	public void processMax(Hashtable<Integer, Integer> table){
+		
+		for (Map.Entry<Integer, Integer> map : table.entrySet()){
+			if(this.max < map.getKey()) this.max = map.getKey();
+		}
+	}
+	
+	public void clear(){
+		
+		this.total = this.max = 0;
+		this.avg = 0.0;
 	}
 	
 	public int getMax(){

@@ -1,6 +1,7 @@
 package br.ufpe.cin.groundhog.metrics;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import br.ufpe.cin.groundhog.metrics.exception.InvalidJavaFileException;
@@ -50,6 +51,12 @@ public class JavaPackage {
 	@Override
 	public String toString() {
 		return "Package: " + this.name;
+	}
+	
+	public void generateMetrics(GroundhogASTVisitor visitor){
+		for(JavaFile file : this.files){
+			file.generateMetrics(visitor);
+		}
 	}
 	
 	private void detectJavaFiles() throws InvalidJavaFileException{

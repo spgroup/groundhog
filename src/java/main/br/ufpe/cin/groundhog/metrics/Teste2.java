@@ -2,19 +2,19 @@ package br.ufpe.cin.groundhog.metrics;
 
 import java.math.BigInteger;
 
+import br.ufpe.cin.groundhog.metrics.exception.InvalidJavaFileException;
 import br.ufpe.cin.groundhog.metrics.exception.InvalidJavaProjectPathException;
 import br.ufpe.cin.groundhog.metrics.exception.InvalidSourceRootCodePathException;
 import br.ufpe.cin.groundhog.metrics.exception.InvalidTestSourcePathException;
 
 public class Teste2 {
 
-	public static void main(String[] args) throws InvalidJavaProjectPathException, InvalidSourceRootCodePathException, InvalidTestSourcePathException {
-//		JavaProject project = new JavaProject("C:\\Users\\Bruno Soares\\Documents\\scm\\atunes-code\\aTunes");
-//		project.generateStructure("src\\main\\java", "src\\test\\java");
-//		System.out.println("Scanning packages to project:");
-//		System.out.println(project.toString());
-		BigInteger integer = new BigInteger("999999999999999999999");
-		
-		System.out.println(integer.add(new BigInteger("1")));
+	public static void main(String[] args) throws InvalidJavaProjectPathException, InvalidSourceRootCodePathException, InvalidTestSourcePathException, InvalidJavaFileException {
+		JavaProject project = new JavaProject("/home/bruno/scm/github.com/groundhog2");
+		project.generateStructure("src/java/main", "src/java/test");
+		System.out.println("Scanning packages to project:");
+		System.out.println(project.toString());
+		System.out.println("################################################");
+		project.generateMetrics(true);
 	}
 }

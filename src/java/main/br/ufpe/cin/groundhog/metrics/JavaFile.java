@@ -6,7 +6,6 @@ import java.util.Scanner;
 
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import br.ufpe.cin.groundhog.metrics.exception.InvalidJavaFileException;
@@ -24,6 +23,7 @@ public class JavaFile {
 	private ASTParser parser;
 	private Scanner scanner;
 	private CompilationUnit cu;
+	private Statistics stat;
 	
 	public JavaFile(File path, String name) throws InvalidJavaFileException{
 		
@@ -57,21 +57,27 @@ public class JavaFile {
 	private void commonInit() throws InvalidJavaFileException{
 		
 		try{
+			//Read java file
 			this.scanner = new Scanner(this.path);
+			this.scanner.useDelimiter("\\Z");
+			
+			//Generate AST
 			this.parser = ASTParser.newParser(AST.JLS3);
+			this.parser.setSource(this.scanner.next().toCharArray());
+			
+			//Close scanner 
+			this.scanner.close();
+			
+			//Generate compilation unit to be visited
 			this.cu = (CompilationUnit) parser.createAST(null);
+			
+			this.stat = new Statistics();
+			
 		}catch(FileNotFoundException e){
 			throw new InvalidJavaFileException();
 		}
 	}
 	
-	private void loadFile() throws InvalidJavaFileException, FileNotFoundException{
-		
-		this.scanner.useDelimiter("\\Z");
-		this.parser.setSource(this.scanner.next().toCharArray());
-		this.scanner.close();
-	}
-
 	@Override
 	public String toString() {
 		return "File: " + this.name;
@@ -85,14 +91,12 @@ public class JavaFile {
 		this.path = file;
 	}
 	
-	public void generateMetrics(ASTVisitor visitor) throws InvalidJavaFileException, FileNotFoundException{
-		loadFile();
+	public void generateMetrics(GroundhogASTVisitor visitor){
+		System.out.println("Before: " + this.stat);
+		visitor.setStatistics(this.stat);
 		this.cu.accept(visitor);
-		//Falta adicionar o retorno das estatisticas. E ver se é bom manter ela aqui onde está 
-//		Statistics st = new Statistics(depCounter,lineCounter,methodCall,methodCounter,
-//				fieldCounter,classes,parameters,sMethodCounter,sFieldCounter,
-//				interfaces,cycloCounter,anonymousClasses);
-//		return st;
+		this.stat = visitor.getStatistics();
+		System.err.println("After: " + this.stat);
 	}
 	
 }

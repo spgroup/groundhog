@@ -20,7 +20,7 @@ import org.eclipse.jdt.core.dom.WhileStatement;
 
 public class Parsing {
 	
-	public static Statistics parsing(String file){
+	public static Morreu parsing(String file){
 		/*It's necessary to use final variables in order to interact with
 		* the code inside ASTVisitor class
 		*/
@@ -154,7 +154,7 @@ public class Parsing {
 		
  		
  		cu.accept(gg);
-		Statistics st = new Statistics(depCounter,lineCounter,methodCall,methodCounter,
+		Morreu st = new Morreu(depCounter,lineCounter,methodCall,methodCounter,
 				fieldCounter,classes,parameters,sMethodCounter,sFieldCounter,
 				interfaces,cycloCounter,anonymousClasses);
 		return st;

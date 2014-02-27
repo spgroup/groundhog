@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 
-import org.apache.commons.lang3.text.translate.CodePointTranslator;
-
 import br.ufpe.cin.groundhog.metrics.exception.InvalidJavaFileException;
 import br.ufpe.cin.groundhog.metrics.exception.InvalidJavaProjectPathException;
 import br.ufpe.cin.groundhog.metrics.exception.InvalidSourceRootCodePathException;
@@ -32,36 +30,45 @@ public class JavaProject {
 
 	private String name;
 
+	private GroundhogASTVisitor visitor;
+
 	public JavaProject(File path, String name) throws InvalidJavaProjectPathException {
+
 		this.path = path;
 		this.name = name;
 		checkPath();
-		this.code_packages = new ArrayList<JavaPackage>();
-		this.test_packages = new ArrayList<JavaPackage>();
+		commonInit();
 	}
 
 	public JavaProject(File path) throws InvalidJavaProjectPathException{
+
 		this.path = path;
 		this.name = path.getName();
 		checkPath();
-		this.code_packages = new ArrayList<JavaPackage>();
-		this.test_packages = new ArrayList<JavaPackage>();
+		commonInit();
 	}
 
 	public JavaProject(String path, String name) throws InvalidJavaProjectPathException{
+
 		this.path = new File(path);
 		this.name = name;
 		checkPath();
-		this.code_packages = new ArrayList<JavaPackage>();
-		this.test_packages = new ArrayList<JavaPackage>();
+		commonInit();
 	}
 
 	public JavaProject(String path) throws InvalidJavaProjectPathException{
+
 		this.path = new File(path);
 		this.name = this.path.isDirectory() ? this.path.getName() : "";
 		checkPath();
+		commonInit();
+	}
+
+	private void commonInit(){
+
 		this.code_packages = new ArrayList<JavaPackage>();
 		this.test_packages = new ArrayList<JavaPackage>();
+		this.visitor = new GroundhogASTVisitor();
 	}
 
 	private void checkPath() throws InvalidJavaProjectPathException{
@@ -70,9 +77,7 @@ public class JavaProject {
 
 			System.out.println("This project have an invalid path!");
 			throw new InvalidJavaProjectPathException();
-
 		}
-
 	}
 
 	public boolean generateStructure(String src, String srtc) throws InvalidJavaProjectPathException, InvalidSourceRootCodePathException, InvalidTestSourcePathException, InvalidJavaFileException{
@@ -90,34 +95,53 @@ public class JavaProject {
 
 	private void detectSourceRootCode(String source_root_code) throws InvalidJavaProjectPathException, InvalidSourceRootCodePathException{
 		System.out.println("Detecting sorce root code...");
-		String scr = (source_root_code == null ? JavaProject.default_source_root_code : source_root_code);
+		//This line has been commented because we need to decide how to detect the correct java source root code
+		//String scr = (source_root_code == null ? JavaProject.default_source_root_code : source_root_code);
+		
+		File temp_src = null;
+		String src = source_root_code;
+		
+		try{
+			
+			temp_src = new File(this.path.getAbsolutePath(), src);
 
-		File temp_src = new File(this.path.getAbsolutePath(), scr);
+			if(temp_src.exists())
+				this.src = temp_src;
+			else
+				throw new InvalidSourceRootCodePathException();
+		}catch (NullPointerException e){
+			System.err.println("Source root code not found!");
+		}
 
-		if(temp_src.exists())
-			this.src = temp_src;
-		else
-			throw new InvalidSourceRootCodePathException();
 
 	}
 
 	private void detectSourceRootTestCode(String source_test_root_code) throws InvalidTestSourcePathException{
 		System.out.println("Detecting sorce root test code...");
 
-		File temp_srtc = new File(this.path.getAbsolutePath(),source_test_root_code);
-
-		if(temp_srtc.exists())
-			this.srtc = temp_srtc;
-		else
-			throw new InvalidTestSourcePathException();
+		File temp_srtc = null;
+		
+		try{
+			
+			temp_srtc = new File(this.path.getAbsolutePath(),source_test_root_code);
+			
+			if(temp_srtc.exists())
+				this.srtc = temp_srtc;
+			else
+				throw new InvalidTestSourcePathException();
+		}catch(NullPointerException e){
+			System.err.println("Source root test code not found!");
+		}
+		
+		
 
 	}
 
 	@Override
 	public String toString() {
 		return "Name: " + this.name + "\n"
-				+ "SRC: " + this.src.getAbsolutePath() + "\n"
-				+ "SRTC: " + this.srtc.getAbsolutePath(); 
+				+ "SRC: " + ((this.src == null) ? "not found\n" : (this.src.getAbsolutePath() + "\n"))
+				+ "SRTC: " + ((this.srtc == null) ? "not found" : this.srtc.getAbsolutePath()); 
 	}
 
 	private void detectPackages(File dir,ArrayList<JavaPackage> packages, File src) throws InvalidJavaFileException{
@@ -142,13 +166,13 @@ public class JavaProject {
 		}
 
 	}
-	
+
 	private void detectCodePackages() throws InvalidJavaFileException{
 		if(this.src != null){
 			detectPackages(this.src, this.code_packages, this.src);
 		}
 	}
-	
+
 	private void detectTestCodePackages() throws InvalidJavaFileException{
 		if(this.srtc != null){
 			detectPackages(this.srtc, this.test_packages, this.srtc);
@@ -168,5 +192,20 @@ public class JavaProject {
 		return dir.getAbsolutePath().
 				replace(src.getAbsolutePath()+File.separator, "")
 				.replaceAll(Matcher.quoteReplacement(File.separator), ".");
+	}
+
+	public void generateMetrics(boolean include_tests){
+		for (JavaPackage _package : this.code_packages){
+			_package.generateMetrics(visitor);
+		}
+		
+		System.out.println("All code packages done!");
+		
+		if(include_tests){
+			for (JavaPackage _package : this.test_packages){
+				_package.generateMetrics(visitor);
+			}
+		}
+		System.out.println("All test packages done!");
 	}
 }
