@@ -41,6 +41,21 @@ public class GitCommitExtractor {
 		return null;
 	}
 	
+	public List<RevCommit> getCommitList(File project) {
+		CommitListFilter list = new CommitListFilter();
+		
+		String path = project.getAbsolutePath() + "/.git";
+		CommitFinder finder = new CommitFinder(path);
+		
+		finder.setFilter(list).find();
+//		
+//		for (RevCommit rev : list.getCommits()){
+//		    System.out.println(rev.getName() + " " + rev.getAuthorIdent().getName() + " " + rev.getShortMessage());
+//		}
+//		
+		return list.getCommits();
+	}
+	
 	/**
 	 * A method that returns the number of commits that contain files with a given file extension
 	 * Example usage:

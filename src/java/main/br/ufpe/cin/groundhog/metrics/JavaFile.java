@@ -25,6 +25,10 @@ public class JavaFile {
 	private CompilationUnit cu;
 	private Statistics stat;
 	
+	public Statistics getStat() {
+		return stat;
+	}
+
 	public JavaFile(File path, String name) throws InvalidJavaFileException{
 		
 		this.path = path;
@@ -92,11 +96,9 @@ public class JavaFile {
 	}
 	
 	public void generateMetrics(GroundhogASTVisitor visitor){
-		System.out.println("Before: " + this.stat);
 		visitor.setStatistics(this.stat);
 		this.cu.accept(visitor);
 		this.stat = visitor.getStatistics();
-		System.err.println("After: " + this.stat);
 	}
 	
 }

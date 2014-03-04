@@ -1,14 +1,15 @@
 package br.ufpe.cin.groundhog.metrics;
 
 import java.util.Hashtable;
+import java.util.Map;
 
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.dom.*;
 
 class GroundhogASTVisitor extends ASTVisitor{
-
+	
 	Statistics stat;
-	Util util = new Util();
+	MetricsCollector util = new MetricsCollector();
 
 	/**
 	 *	Auxiliar fields to extract metrics
@@ -44,52 +45,53 @@ class GroundhogASTVisitor extends ASTVisitor{
 
 	public void endVisit(TypeDeclaration td){
 
-		safeAddToHashTable(this.stat.fieldCounter, this.fields);
-		safeAddToHashTable(this.stat.methodCounter,this.methods);
-		safeAddToHashTable(this.stat.sMethodCounter,this.staticMethod);
-		safeAddToHashTable(this.stat.sFieldCounter,this.staticField);
-	}
-
-	private void safeAddToHashTable(Hashtable<Integer, Integer> table,int position){
-
-		if(table.containsKey(position)){
-			table.put(position, table.get(position)+1);
-		}else{
-			table.put(position, 1);
-		}
+		Util.safeAddToHashTable(this.stat.fieldCounter, this.fields);
+		Util.safeAddToHashTable(this.stat.methodCounter,this.methods);
+		Util.safeAddToHashTable(this.stat.sMethodCounter,this.staticMethod);
+		Util.safeAddToHashTable(this.stat.sFieldCounter,this.staticField);
 	}
 
 	public boolean visit(MethodDeclaration md){
-		//TODO: Perguntar a valdemir se ele pensou na logica resetando ou nao
+		System.out.println("Metodo encontrado!");
 		this.depthBlock.clear();
 		this.methods++;
 		this.methodCalls = 0;
 		this.cycloComplexity = 1;
 		this.returns = 0;
 		String[] lines = md.toString().split("\n");
-		safeAddToHashTable(this.stat.lineCounter,lines.length);
+		Util.safeAddToHashTable(this.stat.lineCounter,lines.length);
 		int f = md.getModifiers();
 		if(Flags.isStatic(f)) this.staticMethod++;
 		int param = md.parameters().size();
-		safeAddToHashTable(this.stat.parameters,param);
+		Util.safeAddToHashTable(this.stat.parameters,param);
 		return true;
 	}
 
+	public int localMax(){
+		int max = 0;
+		
+		for (Map.Entry<Integer, Integer> map : this.depthBlock.entrySet()){
+			if(max < map.getKey()) max = map.getKey();
+		}
+		
+		return max;
+	}
+	
 	public void endVisit(MethodDeclaration md){
-		this.util.processMax(this.depthBlock);
-		int maxDepth = this.util.getMax();
-		this.util.clear();
+				
+		int maxDepth = localMax();
 		this.cycloComplexity += 2*Math.max(0, this.returns-1);
-		safeAddToHashTable(this.stat.cycloCounter,this.cycloComplexity);
-		safeAddToHashTable(this.stat.depCounter,maxDepth);
-		safeAddToHashTable(this.stat.methodCall,this.methodCalls);
+		Util.safeAddToHashTable(this.stat.cycloCounter,this.cycloComplexity);
+		Util.safeAddToHashTable(this.stat.depCounter,maxDepth);
+		Util.safeAddToHashTable(this.stat.methodCall,this.methodCalls);
 	}
 
 	public boolean visit(MethodInvocation mi){
 		this.methodCalls++;
 		return true;
 	}
-
+	
+	
 	public boolean visit(ForStatement fs){
 		this.cycloComplexity++;
 		return true;
@@ -104,7 +106,53 @@ class GroundhogASTVisitor extends ASTVisitor{
 		this.cycloComplexity++;
 		return true;
 	}
-
+	
+	public boolean visit(BreakStatement bs){
+		this.cycloComplexity++;
+		return true;
+	}
+	
+	public boolean visit(ContinueStatement cs){
+		this.cycloComplexity++;
+		return true;
+	}
+	
+	public boolean visit(InfixExpression is){
+		org.eclipse.jdt.core.dom.InfixExpression.Operator op =  is.getOperator();
+		if(is.toString().contains("&&") || is.toString().contains("||") || is.toString().contains("?") || is.toString().contains(":")){
+			this.cycloComplexity++;
+		}
+		return true;
+	}
+	
+	public boolean visit(DoStatement ds){
+		this.cycloComplexity++;
+		return true;
+	}
+	
+	
+	public boolean visit(TryStatement ts){
+		if(ts.getFinally()!=null){
+			this.cycloComplexity++;
+		}
+		return true;
+	}
+	
+	public boolean visit(CatchClause cc){
+		this.cycloComplexity++;
+		return true;
+	}
+	
+	public boolean visit(ThrowStatement ts){
+		this.cycloComplexity++;
+		return true;
+	}
+		
+	public boolean visit(SwitchCase sc){
+		this.cycloComplexity++;
+		return true;
+	}
+	
 	public boolean visit(ReturnStatement rs){
 		this.returns++;
 		return true;
@@ -127,7 +175,7 @@ class GroundhogASTVisitor extends ASTVisitor{
 			nd = nd.getParent();
 		}
 
-		safeAddToHashTable(this.depthBlock, c);
+		Util.safeAddToHashTable(this.depthBlock, c);
 		return true;
 
 	}

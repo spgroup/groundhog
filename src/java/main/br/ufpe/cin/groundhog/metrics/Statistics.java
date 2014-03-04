@@ -32,6 +32,21 @@ public class Statistics {
 	public long interfaces = 0;
 	public long classes = 0;
 	
+	public void merge(Statistics statistics){
+		this.methodCall = Util.mergeHashTable(this.methodCall, statistics.methodCall);
+		this.lineCounter = Util.mergeHashTable(this.lineCounter, statistics.lineCounter);
+		this.depCounter = Util.mergeHashTable(this.depCounter, statistics.depCounter);
+		this.parameters = Util.mergeHashTable(this.parameters, statistics.parameters);
+		this.cycloCounter = Util.mergeHashTable(this.cycloCounter, statistics.cycloCounter);
+		this.fieldCounter = Util.mergeHashTable(this.fieldCounter, statistics.fieldCounter);
+		this.methodCounter = Util.mergeHashTable(this.methodCounter, statistics.methodCounter);
+		this.sFieldCounter = Util.mergeHashTable(this.sFieldCounter, statistics.sFieldCounter);
+		this.sMethodCounter = Util.mergeHashTable(this.sMethodCounter, statistics.sMethodCounter);
+		this.anonymousClasses += statistics.anonymousClasses;
+		this.interfaces += statistics.interfaces;
+		this.classes += statistics.classes;
+	}
+	
 	@Override
 	public String toString() {
 		return "methodCall" + methodCall + "\n" +

@@ -19,6 +19,8 @@ public class JavaPackage {
 	private File path;
 	
 	private String name;
+	
+	Statistics statistics = new Statistics();
 
 	public JavaPackage(File path, String name) throws InvalidJavaFileException{
 		this.path = path;
@@ -54,9 +56,18 @@ public class JavaPackage {
 	}
 	
 	public void generateMetrics(GroundhogASTVisitor visitor){
+		//Collect metrics
 		for(JavaFile file : this.files){
 			file.generateMetrics(visitor);
 		}
+				
+		for(JavaFile file : this.files){
+			statistics.merge(file.getStat());
+		}
+		
+		MetricsCollector collector = new MetricsCollector();
+		//collector.processAll(statistics);
+		//System.out.println("============================================================");
 	}
 	
 	private void detectJavaFiles() throws InvalidJavaFileException{

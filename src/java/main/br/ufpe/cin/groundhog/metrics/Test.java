@@ -46,7 +46,7 @@ public class Test {
         this.encoding = encoding;
     }
 
-    public ASTVisitor visitFile( File file ) throws IOException {
+    public GroundhogASTVisitor visitFile( File file ) throws IOException {
         if(!file.exists())
             new IllegalArgumentException("File "+file.getAbsolutePath()+" doesn't exist");
 
@@ -130,6 +130,8 @@ public class Test {
 
         // AstVisitor extends org.eclipse.jdt.core.dom.ASTVisitor
         GroundhogASTVisitor visitor = new GroundhogASTVisitor();
+        Statistics statistics = new Statistics();
+        visitor.setStatistics(statistics);
         ast.accept( visitor );
 
         return visitor;
@@ -138,10 +140,11 @@ public class Test {
     public static void main(String []args) throws IOException{
         System.out.println("Vai começar!");
         Test test = new Test();
-        File file = new File("C:\\Users\\Bruno Soares\\Documents\\scm\\groundhog\\src\\java\\main\\br\\ufpe\\cin\\groundhog\\Commit.java");
+        File file = new File("/home/bruno/scm/github.com/groundhog2/src/java/main/br/ufpe/cin/groundhog/metrics/Test3.java");
         if (file.isFile()){
-            ASTVisitor visitor = test.visitFile(file);
+            GroundhogASTVisitor visitor = test.visitFile(file);
             visitor.toString();
+            System.out.println(visitor.getStatistics());
         }else{
             System.out.println("Is not a file!");
         }

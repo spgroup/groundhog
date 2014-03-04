@@ -31,7 +31,13 @@ public class JavaProject {
 	private String name;
 
 	private GroundhogASTVisitor visitor;
-
+	
+	private StatisticsTable st_code;
+	
+	private StatisticsTable st_test;
+	
+	Statistics statistics = new Statistics();
+	
 	public JavaProject(File path, String name) throws InvalidJavaProjectPathException {
 
 		this.path = path;
@@ -69,6 +75,8 @@ public class JavaProject {
 		this.code_packages = new ArrayList<JavaPackage>();
 		this.test_packages = new ArrayList<JavaPackage>();
 		this.visitor = new GroundhogASTVisitor();
+		this.st_code = new StatisticsTable();
+		this.st_test = new StatisticsTable();
 	}
 
 	private void checkPath() throws InvalidJavaProjectPathException{
@@ -198,6 +206,13 @@ public class JavaProject {
 		for (JavaPackage _package : this.code_packages){
 			_package.generateMetrics(visitor);
 		}
+				
+		for (JavaPackage _package : this.code_packages){
+			statistics.merge(_package.statistics);
+		}
+		
+		MetricsCollector collector = new MetricsCollector();
+		collector.processAll(statistics);
 		
 		System.out.println("All code packages done!");
 		
