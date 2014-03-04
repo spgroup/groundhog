@@ -79,7 +79,8 @@ class GroundhogASTVisitor extends ASTVisitor{
 	
 	public void endVisit(MethodDeclaration md){
 				
-		int maxDepth = localMax();
+		int maxDepth = localMax();		
+		//Each return that isn't the last statement of a method is being used to calculate the Cyclomatic Complexity.
 		this.cycloComplexity += 2*Math.max(0, this.returns-1);
 		Util.safeAddToHashTable(this.stat.cycloCounter,this.cycloComplexity);
 		Util.safeAddToHashTable(this.stat.depCounter,maxDepth);
@@ -94,16 +95,19 @@ class GroundhogASTVisitor extends ASTVisitor{
 	
 	public boolean visit(ForStatement fs){
 		this.cycloComplexity++;
+		this.inspecionarExpressao(fs.getExpression());
 		return true;
 	}
 
 	public boolean visit(WhileStatement ws){
 		this.cycloComplexity++;
+		this.inspecionarExpressao(ws.getExpression());
 		return true;
 	}
 
 	public boolean visit(IfStatement is){
 		this.cycloComplexity++;
+		this.inspecionarExpressao(is.getExpression());
 		return true;
 	}
 	
@@ -117,16 +121,20 @@ class GroundhogASTVisitor extends ASTVisitor{
 		return true;
 	}
 	
-	public boolean visit(InfixExpression is){
-		org.eclipse.jdt.core.dom.InfixExpression.Operator op =  is.getOperator();
-		if(is.toString().contains("&&") || is.toString().contains("||") || is.toString().contains("?") || is.toString().contains(":")){
-			this.cycloComplexity++;
-		}
+	public boolean visit(ExpressionStatement es){
+		this.inspecionarExpressao(es.getExpression());
+		return false;
+	}
+	
+	public boolean visit(ConditionalExpression ce) {
+		cycloComplexity++;
+		inspecionarExpressao(ce.getExpression());
 		return true;
 	}
 	
 	public boolean visit(DoStatement ds){
 		this.cycloComplexity++;
+		this.inspecionarExpressao(ds.getExpression());
 		return true;
 	}
 	
@@ -178,6 +186,19 @@ class GroundhogASTVisitor extends ASTVisitor{
 		Util.safeAddToHashTable(this.depthBlock, c);
 		return true;
 
+	}
+	
+	public void inspecionarExpressao(Expression e) {
+		if (e != null) {
+			String expression = e.toString();
+			char[] chars = expression.toCharArray();
+			for (int i = 0; i < chars.length-1; i++) {
+				char next = chars[i];
+				if ((next == '&' || next == '|')&&(next == chars[i+1])) {
+					this.cycloComplexity++;
+				}
+			}
+		}
 	}
 
 	public void setStatistics(Statistics stat){
