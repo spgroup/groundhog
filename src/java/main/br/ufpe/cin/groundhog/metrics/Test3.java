@@ -1,6 +1,7 @@
 package br.ufpe.cin.groundhog.metrics;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import br.ufpe.cin.groundhog.extractor.GitCommitExtractor;
 
@@ -8,9 +9,35 @@ public class Test3 {
 	public void zoeira(){
 		try {
 			int k = 0;
-			do{
-				System.out.println("Testando, testando, testando, tetetetetestando!");
-			}while(k++<10);
+			synchronized (this) {
+				do{
+					System.out.println("Testando, testando, testando, tetetetetestando!");
+					ArrayList<Integer> arr = new ArrayList<Integer>(){
+						@Override
+						public String toString() {
+							int nnumber = 10;
+							while(nnumber != 0){
+								try {
+									super.toString();
+									nnumber--;
+								} catch (ArrayIndexOutOfBoundsException e){
+									if(nnumber == 0){
+										System.out.println("Zoeira never ends");
+									}else{
+										System.out.println("kkkkkk");
+									}
+								} catch (NullPointerException e){
+									
+								} catch (Exception e) {
+									// TODO: handle exception
+								}
+							}
+							return super.toString();
+							
+						}
+					};
+				}while(k++<10);
+			}
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
