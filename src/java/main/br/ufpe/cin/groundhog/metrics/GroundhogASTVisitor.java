@@ -1,20 +1,24 @@
 package br.ufpe.cin.groundhog.metrics;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.dom.*;
 
 class GroundhogASTVisitor extends ASTVisitor{
-	
+
 	Statistics stat;
 	MetricsCollector util = new MetricsCollector();
 
 	/**
 	 *	Auxiliar fields to extract metrics
 	 */
-	Hashtable<Integer, Integer> depthBlock = new Hashtable<Integer,Integer>();
+	//Hashtable<Integer, Integer> depthBlock = new Hashtable<Integer,Integer>();
 	int methods = 0;
 	int fields = 0;
 	int methodCalls = 0;
@@ -22,7 +26,15 @@ class GroundhogASTVisitor extends ASTVisitor{
 	int staticField = 0;
 	int cycloComplexity = 1;
 	int returns = 0;
-
+	//int depth = 0;
+	//int maxDepth = 0;
+	
+	//fields used to nested block depth metric calculation
+//	List<Integer> depth = new ArrayList<Integer>();
+//	List<Integer> maxDepth = new ArrayList<Integer>();
+	Stack<Integer> depth = new Stack<Integer>();
+	Stack<Integer> maxDepth = new Stack<Integer>();
+	
 	public boolean visit(AnonymousClassDeclaration node){
 		this.stat.anonymousClasses++;
 		return true;
@@ -52,12 +64,15 @@ class GroundhogASTVisitor extends ASTVisitor{
 	}
 
 	public boolean visit(MethodDeclaration md){
-		System.out.println("Metodo encontrado!");
-		this.depthBlock.clear();
 		this.methods++;
 		this.methodCalls = 0;
 		this.cycloComplexity = 1;
 		this.returns = 0;
+
+		//nested block depth calculation
+		this.depth.push(0);
+		this.maxDepth.push(0);
+
 		String[] lines = md.toString().split("\n");
 		Util.safeAddToHashTable(this.stat.lineCounter,lines.length);
 		int f = md.getModifiers();
@@ -67,23 +82,22 @@ class GroundhogASTVisitor extends ASTVisitor{
 		return true;
 	}
 
-	public int localMax(){
-		int max = 0;
-		
-		for (Map.Entry<Integer, Integer> map : this.depthBlock.entrySet()){
-			if(max < map.getKey()) max = map.getKey();
-		}
-		
-		return max;
-	}
-	
+	//	public int localMax(){
+	//		int max = 0;
+	//		
+	//		for (Map.Entry<Integer, Integer> map : this.depthBlock.entrySet()){
+	//			if(max < map.getKey()) max = map.getKey();
+	//		}
+	//		
+	//		return max;
+	//	}
+
 	public void endVisit(MethodDeclaration md){
-				
-		int maxDepth = localMax();		
-		//Each return that isn't the last statement of a method is being used to calculate the Cyclomatic Complexity.
+
+		this.depth.pop();
 		this.cycloComplexity += 2*Math.max(0, this.returns-1);
 		Util.safeAddToHashTable(this.stat.cycloCounter,this.cycloComplexity);
-		Util.safeAddToHashTable(this.stat.depCounter,maxDepth);
+		Util.safeAddToHashTable(this.stat.depCounter,this.maxDepth.pop());
 		Util.safeAddToHashTable(this.stat.methodCall,this.methodCalls);
 	}
 
@@ -91,8 +105,7 @@ class GroundhogASTVisitor extends ASTVisitor{
 		this.methodCalls++;
 		return true;
 	}
-	
-	
+
 	public boolean visit(ForStatement fs){
 		this.cycloComplexity++;
 		this.inspecionarExpressao(fs.getExpression());
@@ -110,12 +123,12 @@ class GroundhogASTVisitor extends ASTVisitor{
 		this.inspecionarExpressao(is.getExpression());
 		return true;
 	}
-	
+
 	public boolean visit(BreakStatement bs){
 		this.cycloComplexity++;
 		return true;
 	}
-	
+
 	public boolean visit(ContinueStatement cs){
 		this.cycloComplexity++;
 		return true;
@@ -123,7 +136,7 @@ class GroundhogASTVisitor extends ASTVisitor{
 	
 	public boolean visit(ExpressionStatement es){
 		this.inspecionarExpressao(es.getExpression());
-		return false;
+		return true;
 	}
 	
 	public boolean visit(ConditionalExpression ce) {
@@ -131,36 +144,35 @@ class GroundhogASTVisitor extends ASTVisitor{
 		inspecionarExpressao(ce.getExpression());
 		return true;
 	}
-	
+
 	public boolean visit(DoStatement ds){
 		this.cycloComplexity++;
 		this.inspecionarExpressao(ds.getExpression());
 		return true;
 	}
-	
-	
+
 	public boolean visit(TryStatement ts){
 		if(ts.getFinally()!=null){
 			this.cycloComplexity++;
 		}
 		return true;
 	}
-	
+
 	public boolean visit(CatchClause cc){
 		this.cycloComplexity++;
 		return true;
 	}
-	
+
 	public boolean visit(ThrowStatement ts){
 		this.cycloComplexity++;
 		return true;
 	}
-		
+
 	public boolean visit(SwitchCase sc){
 		this.cycloComplexity++;
 		return true;
 	}
-	
+
 	public boolean visit(ReturnStatement rs){
 		this.returns++;
 		return true;
@@ -175,17 +187,31 @@ class GroundhogASTVisitor extends ASTVisitor{
 	}
 
 	public boolean visit(Block node){
-		int c = 0;
-		ASTNode nd = node;
-
-		while(nd.getParent() != null){
-			if(nd.getClass().getName().endsWith("Block"))c++;
-			nd = nd.getParent();
-		}
-
-		Util.safeAddToHashTable(this.depthBlock, c);
+		//Using an stack strategy to count the max nested block depth
+		//If I visit an block, so I have one more level of code
+		this.depth.push(this.depth.pop()+1);
 		return true;
 
+	}
+
+	public void endVisit(Block node) {
+		/**
+		 * Using an stack strategy to count the max nested block depth
+		 * If I end the visit of a block, so is time to check how deep the code are.
+		 * If the actual nested level is more than actual maximum, so set maximum to
+		 * this new maximum.
+		 */
+		int temp = this.depth.pop();
+		if(temp > this.maxDepth.peek()){
+			this.maxDepth.pop();
+			this.maxDepth.push(temp);
+		}
+
+		/**
+		 * Once I finish to visit a block, I need to reduce the nested level because
+		 * we complete one sub-level of nested block  
+		 */
+		this.depth.push(temp--);
 	}
 	
 	public void inspecionarExpressao(Expression e) {
