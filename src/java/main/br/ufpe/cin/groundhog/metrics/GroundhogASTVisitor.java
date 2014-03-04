@@ -189,7 +189,15 @@ class GroundhogASTVisitor extends ASTVisitor{
 	public boolean visit(Block node){
 		//Using an stack strategy to count the max nested block depth
 		//If I visit an block, so I have one more level of code
-		this.depth.push(this.depth.pop()+1);
+		if(!this.depth.empty()){
+			/**
+			 * We also want to calculate block nested depth for methods
+			 * so, the stack will have at least onde element if we was visited
+			 * an method before
+			 */
+			this.depth.push(this.depth.pop()+1);
+		}
+		
 		return true;
 
 	}
@@ -201,17 +209,24 @@ class GroundhogASTVisitor extends ASTVisitor{
 		 * If the actual nested level is more than actual maximum, so set maximum to
 		 * this new maximum.
 		 */
-		int temp = this.depth.pop();
-		if(temp > this.maxDepth.peek()){
-			this.maxDepth.pop();
-			this.maxDepth.push(temp);
-		}
+		if(!this.depth.empty()){
+			/**
+			 * We also want to calculate block nested depth for methods
+			 * so, the stack will have at least onde element if we was visited
+			 * an method before
+			 */
+			int temp = this.depth.pop();
+			if(temp > this.maxDepth.peek()){
+				this.maxDepth.pop();
+				this.maxDepth.push(temp);
+			}
 
-		/**
-		 * Once I finish to visit a block, I need to reduce the nested level because
-		 * we complete one sub-level of nested block  
-		 */
-		this.depth.push(temp--);
+			/**
+			 * Once I finish to visit a block, I need to reduce the nested level because
+			 * we complete one sub-level of nested block  
+			 */
+			this.depth.push(temp--);
+		}
 	}
 	
 	public void inspecionarExpressao(Expression e) {
