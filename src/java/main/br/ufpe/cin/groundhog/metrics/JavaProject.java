@@ -31,18 +31,13 @@ public class JavaProject {
 	private String name;
 
 	private GroundhogASTVisitor visitor;
-	
-	private StatisticsTable st_code;
-	
-	private StatisticsTable st_test;
-	
-	Statistics statistics = new Statistics();
+		
+	private MetricsCollector collector;
 	
 	public JavaProject(File path, String name) throws InvalidJavaProjectPathException {
 
 		this.path = path;
 		this.name = name;
-		checkPath();
 		commonInit();
 	}
 
@@ -50,7 +45,6 @@ public class JavaProject {
 
 		this.path = path;
 		this.name = path.getName();
-		checkPath();
 		commonInit();
 	}
 
@@ -58,7 +52,6 @@ public class JavaProject {
 
 		this.path = new File(path);
 		this.name = name;
-		checkPath();
 		commonInit();
 	}
 
@@ -66,17 +59,16 @@ public class JavaProject {
 
 		this.path = new File(path);
 		this.name = this.path.isDirectory() ? this.path.getName() : "";
-		checkPath();
 		commonInit();
 	}
 
-	private void commonInit(){
-
+	private void commonInit() throws InvalidJavaProjectPathException{
+		
+		checkPath();
+		this.collector = new MetricsCollector();
 		this.code_packages = new ArrayList<JavaPackage>();
 		this.test_packages = new ArrayList<JavaPackage>();
 		this.visitor = new GroundhogASTVisitor();
-		this.st_code = new StatisticsTable();
-		this.st_test = new StatisticsTable();
 	}
 
 	private void checkPath() throws InvalidJavaProjectPathException{
@@ -156,14 +148,14 @@ public class JavaProject {
 
 		//Check if this project have files on default package
 		if(dir.equals(this.src) && hasJavaFiles(dir)){			
-			System.out.println("Package default detected!");
+			//System.out.println("Package default detected!");
 			packages.add(new JavaPackage(dir,"default"));
 		}
 
 		for(File file : dir.listFiles()){
 			//We have a directory and java files, so we have a package
 			if(file.isDirectory() && hasJavaFiles(file)){
-				System.out.println("Package " + extractPackageName(src,file) + " detected!");
+				//System.out.println("Package " + extractPackageName(src,file) + " detected!");
 				JavaPackage java_package = new JavaPackage(file,extractPackageName(src,file));
 				packages.add(java_package);
 				detectPackages(file,packages,src);
@@ -203,24 +195,20 @@ public class JavaProject {
 	}
 
 	public void generateMetrics(boolean include_tests){
+		//For each code package of this project generate their metrics
 		for (JavaPackage _package : this.code_packages){
-			_package.generateMetrics(visitor);
+			_package.generateMetrics(this.visitor, this.collector);
 		}
 				
-		for (JavaPackage _package : this.code_packages){
-			statistics.merge(_package.statistics);
-		}
-		
-		MetricsCollector collector = new MetricsCollector();
-		collector.processAll(statistics);
-		
 		System.out.println("All code packages done!");
 		
 		if(include_tests){
 			for (JavaPackage _package : this.test_packages){
-				_package.generateMetrics(visitor);
+				_package.generateMetrics(this.visitor,this.collector);
 			}
 		}
+		
 		System.out.println("All test packages done!");
+		
 	}
 }

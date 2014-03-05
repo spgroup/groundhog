@@ -1,12 +1,18 @@
 package br.ufpe.cin.groundhog.metrics;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Stack;
 
+import org.eclipse.jdt.core.ToolFactory;
+import org.eclipse.jdt.core.compiler.IScanner;
+import org.eclipse.jdt.core.compiler.ITerminalSymbols;
+import org.eclipse.jdt.core.compiler.InvalidInputException;
+
 public class Util {
-	
-	
 	
 	/**
 	 * Merge Hashtable ht2 onto ht1
@@ -61,5 +67,39 @@ public class Util {
 		return to_return;
 	}
 	
+	
+	public static int countCodeLines(String source){
+		String temp = source.trim();
+		//Because we can get many tokens from the same line and JDT compiler removes all
+		//space, comment and line break in scanner, we need to create a Set to unique store
+		//the line number of tokens and get total of line codes
+		HashSet<Integer> set = new HashSet<>();
+		//We need to process the file without whiteSpace and Commenst, but with the rest
+		IScanner scanner = ToolFactory.createScanner(false,false,true,true);
+		scanner.setSource(temp.toCharArray());
+		int token = 0x00;
+
+		//While don't reach the end of file count the number of lines
+		try {
+			
+			do{
+				
+				//Get the next token
+				token = scanner.getNextToken();
+				//And them process your line number
+				set.add(new Integer(scanner.getLineNumber(scanner.getCurrentTokenStartPosition())));
+				
+			}while(token != ITerminalSymbols.TokenNameEOF);
+		} catch (InvalidInputException e) {
+			return 0;
+		}
+		return set.size();
+	}
+	
+	public static double safeCalculateAvg(long numerator, int denominator){
+		BigDecimal bNumerator = new BigDecimal(numerator);
+		BigDecimal bDenominator = new BigDecimal(denominator);
+		return bNumerator.divide(bDenominator,10,RoundingMode.HALF_EVEN).doubleValue();
+	}
 	
 }

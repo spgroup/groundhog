@@ -7,7 +7,6 @@ import java.util.Scanner;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-
 import br.ufpe.cin.groundhog.metrics.exception.InvalidJavaFileException;
 
 /**
@@ -24,6 +23,8 @@ public class JavaFile {
 	private Scanner scanner;
 	private CompilationUnit cu;
 	private Statistics stat;
+	
+	private StatisticsTableFile table;
 	
 	public Statistics getStat() {
 		return stat;
@@ -60,25 +61,27 @@ public class JavaFile {
 	
 	private void commonInit() throws InvalidJavaFileException{
 		
+		//Generate statistics structure
+		this.stat = new Statistics();
+		this.stat.compilationUnits++;
+				
 		try{
+					
 			//Read java file
 			this.scanner = new Scanner(this.path);
 			this.scanner.useDelimiter("\\Z");
 			
 			//Generate AST
 			this.parser = ASTParser.newParser(AST.JLS3);
-			this.parser.setSource(this.scanner.next().toCharArray());
+			String source = this.scanner.next();
+			this.parser.setSource(source.toCharArray());
 			
 			//Close scanner 
 			this.scanner.close();
 			
 			//Generate compilation unit to be visited
 			this.cu = (CompilationUnit) parser.createAST(null);
-			
-			//Generate statistics structure
-			this.stat = new Statistics();
-			this.stat.compilationUnits++;
-			
+			this.stat.totalCode = Util.countCodeLines(source);
 		}catch(FileNotFoundException e){
 			throw new InvalidJavaFileException();
 		}
@@ -96,11 +99,13 @@ public class JavaFile {
 	public void setFile(File file) {
 		this.path = file;
 	}
-	
-	public void generateMetrics(GroundhogASTVisitor visitor){
+		
+	public Statistics generateMetrics(GroundhogASTVisitor visitor, MetricsCollector collector){
 		visitor.setStatistics(this.stat);
 		this.cu.accept(visitor);
 		this.stat = visitor.getStatistics();
+		collector.processFileLevel(table, stat);
+		return this.stat;
 	}
 	
 }
