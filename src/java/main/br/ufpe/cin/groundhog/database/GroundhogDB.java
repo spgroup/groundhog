@@ -4,6 +4,7 @@ import java.net.UnknownHostException;
 
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
+import org.mongodb.morphia.Key;
 
 import br.ufpe.cin.groundhog.GitHubEntity;
 
@@ -20,11 +21,13 @@ public class GroundhogDB {
 	private String dbName;
 	private MongoClient mongo;
     private Datastore datastore;
+    private Morphia mapper;
     
 	public GroundhogDB(String host, String dbName) throws UnknownHostException {
 		this.dbName = dbName;
 		this.mongo = new MongoClient(host);
-		this.datastore = new Morphia().createDatastore(this.mongo, dbName);
+		this.mapper = new Morphia();
+		this.datastore = this.mapper.createDatastore(this.mongo, dbName);
 	}
 	
 	public static void query(GitHubEntity entity, String params) {
@@ -35,8 +38,8 @@ public class GroundhogDB {
 	 * Receives a GitHub entity object and persists it to the database
 	 * @param entity, a {@link Object} representing one of the many GitHub entities covered by Groundhog
 	 */
-	public void save(Object entity) {
-		this.datastore.save(entity);
+	public <T> Key<T> save(T entity) {
+		return this.datastore.save(entity);
 	}
 
 	public String getDbName() {
@@ -62,4 +65,13 @@ public class GroundhogDB {
 	public void setDatastore(Datastore datastore) {
 		this.datastore = datastore;
 	}
+
+	public Morphia getMapper() {
+		return mapper;
+	}
+
+	public void setMapper(Morphia mapper) {
+		this.mapper = mapper;
+	}
+
 }
