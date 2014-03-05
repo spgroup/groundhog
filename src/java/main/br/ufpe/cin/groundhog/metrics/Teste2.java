@@ -1,7 +1,5 @@
 package br.ufpe.cin.groundhog.metrics;
 
-import java.math.BigInteger;
-
 import br.ufpe.cin.groundhog.metrics.exception.InvalidJavaFileException;
 import br.ufpe.cin.groundhog.metrics.exception.InvalidJavaProjectPathException;
 import br.ufpe.cin.groundhog.metrics.exception.InvalidSourceRootCodePathException;

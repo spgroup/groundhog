@@ -8,7 +8,6 @@ import org.eclipse.jdt.core.dom.*;
 class GroundhogASTVisitor extends ASTVisitor{
 
 	Statistics stat;
-	MetricsCollector util = new MetricsCollector();
 
 	/**
 	 *	Auxiliar fields to extract metrics

@@ -28,9 +28,13 @@ public class Statistics {
 	 * Accumulators for files metrics
 	 */
 	public long anonymousClasses = 0;
+	public long anonymousClasses_max = 0;
 	public long interfaces = 0;
+	public long interfaces_max = 0;
 	public long classes = 0;
+	public long classes_max = 0;
 	public long totalCode = 0;
+	public long totalCode_max = 0;
 	
 	/**
 	 * Accumulators for package metrics
@@ -49,10 +53,35 @@ public class Statistics {
 		this.sFieldCounter = Util.mergeHashTable(this.sFieldCounter, statistics.sFieldCounter);
 		this.sMethodCounter = Util.mergeHashTable(this.sMethodCounter, statistics.sMethodCounter);
 		this.anonymousClasses += statistics.anonymousClasses;
+		if(statistics.anonymousClasses > this.anonymousClasses_max) this.anonymousClasses_max = statistics.anonymousClasses;
 		this.interfaces += statistics.interfaces;
+		if(statistics.interfaces > this.interfaces_max) this.interfaces_max = statistics.interfaces;
 		this.classes += statistics.classes;
+		if(statistics.classes > this.classes_max) this.classes_max = statistics.classes;
 		this.totalCode += statistics.totalCode;
+		if(statistics.totalCode > this.totalCode_max) this.totalCode_max = statistics.totalCode;
 		this.compilationUnits += statistics.compilationUnits;
+	}
+	
+	public void clear() {
+		this.methodCall.clear();
+		this.lineCounter.clear();
+		this.depCounter.clear();
+		this.parameters.clear();
+		this.cycloCounter.clear();
+		this.fieldCounter.clear();
+		this.methodCounter.clear();
+		this.sFieldCounter.clear();
+		this.sMethodCounter.clear();
+		this.anonymousClasses = 0;
+		this.anonymousClasses_max = 0;
+		this.interfaces = 0;
+		this.interfaces_max = 0;
+		this.classes = 0;
+		this.classes_max = 0;
+		this.totalCode = 0;
+		this.totalCode_max = 0;
+		this.compilationUnits = 0;
 	}
 	
 	@Override

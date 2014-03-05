@@ -2,26 +2,18 @@ package br.ufpe.cin.groundhog.metrics;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.net.UnknownHostException;
-import java.util.List;
 import java.util.Scanner;
 
 import org.bson.types.ObjectId;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-
 import br.ufpe.cin.groundhog.metrics.exception.InvalidJavaFileException;
 
 import com.google.gson.annotations.SerializedName;
-import com.mongodb.Mongo;
-
-import org.mongodb.morphia.Datastore;
-import org.mongodb.morphia.Morphia;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Indexed;
-import org.mongodb.morphia.annotations.Reference;
 import org.mongodb.morphia.annotations.Transient;
 
 /**
@@ -61,6 +53,8 @@ public class JavaFile {
 	
 	@Transient
 	private Statistics stat;
+	
+	private StatisticsTableFile table;
 	
 	public Statistics getStat() {
 		
@@ -105,25 +99,27 @@ public class JavaFile {
 		
 		this.absolutePath = this.path.getAbsolutePath();
 		
+		//Generate statistics structure
+		this.stat = new Statistics();
+		this.stat.compilationUnits++;
+				
 		try{
+					
 			//Read java file
 			this.scanner = new Scanner(this.path);
 			this.scanner.useDelimiter("\\Z");
 			
 			//Generate AST
 			this.parser = ASTParser.newParser(AST.JLS3);
-			this.parser.setSource(this.scanner.next().toCharArray());
+			String source = this.scanner.next();
+			this.parser.setSource(source.toCharArray());
 			
 			//Close scanner 
 			this.scanner.close();
 			
 			//Generate compilation unit to be visited
 			this.cu = (CompilationUnit) parser.createAST(null);
-			
-			//Generate statistics structure
-			this.stat = new Statistics();
-			this.stat.compilationUnits++;
-			
+			this.stat.totalCode = Util.countCodeLines(source);
 		}catch(FileNotFoundException e){
 			
 			throw new InvalidJavaFileException();
@@ -145,11 +141,13 @@ public class JavaFile {
 		
 		this.path = file;
 	}
-	
-	public void generateMetrics(GroundhogASTVisitor visitor){
 		
+	public Statistics generateMetrics(GroundhogASTVisitor visitor, MetricsCollector collector){
+
 		visitor.setStatistics(this.stat);
 		this.cu.accept(visitor);
 		this.stat = visitor.getStatistics();
+		collector.processFileLevel(table, stat);
+		return this.stat;
 	}
 }
