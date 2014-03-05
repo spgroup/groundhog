@@ -2,6 +2,7 @@ package br.ufpe.cin.groundhog.metrics;
 
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Stack;
 
 public class Util {
 	
@@ -32,7 +33,7 @@ public class Util {
 			table.put(position, 1);
 		}
 	}
-	
+		
 	public static void safeAddToHashTable(Hashtable<Integer, Integer> table, int key, int value){
 
 		if(table.containsKey(key)){
@@ -41,4 +42,24 @@ public class Util {
 			table.put(key, value);
 		}
 	}
+	
+	/**
+	 * Safe add the passed value to the top element of a stack
+	 * @param stack
+	 * @param value
+	 * @return
+	 */
+	public static int safeAddStackTop(Stack<Integer> stack, int value){
+		
+		int to_return = 0;
+		
+		if(!stack.empty()){
+			to_return = stack.pop();
+			stack.push(to_return+value);
+		}
+		
+		return to_return;
+	}
+	
+	
 }

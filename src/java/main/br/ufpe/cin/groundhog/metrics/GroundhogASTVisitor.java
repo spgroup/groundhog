@@ -1,10 +1,5 @@
 package br.ufpe.cin.groundhog.metrics;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.Stack;
 
 import org.eclipse.jdt.core.Flags;
@@ -18,7 +13,6 @@ class GroundhogASTVisitor extends ASTVisitor{
 	/**
 	 *	Auxiliar fields to extract metrics
 	 */
-	//Hashtable<Integer, Integer> depthBlock = new Hashtable<Integer,Integer>();
 	int methods = 0;
 	int fields = 0;
 	int methodCalls = 0;
@@ -26,12 +20,8 @@ class GroundhogASTVisitor extends ASTVisitor{
 	int staticField = 0;
 	int cycloComplexity = 1;
 	int returns = 0;
-	//int depth = 0;
-	//int maxDepth = 0;
 	
 	//fields used to nested block depth metric calculation
-//	List<Integer> depth = new ArrayList<Integer>();
-//	List<Integer> maxDepth = new ArrayList<Integer>();
 	Stack<Integer> depth = new Stack<Integer>();
 	Stack<Integer> maxDepth = new Stack<Integer>();
 	
@@ -64,6 +54,7 @@ class GroundhogASTVisitor extends ASTVisitor{
 	}
 
 	public boolean visit(MethodDeclaration md){
+		
 		this.methods++;
 		this.methodCalls = 0;
 		this.cycloComplexity = 1;
@@ -81,23 +72,15 @@ class GroundhogASTVisitor extends ASTVisitor{
 		Util.safeAddToHashTable(this.stat.parameters,param);
 		return true;
 	}
-
-	//	public int localMax(){
-	//		int max = 0;
-	//		
-	//		for (Map.Entry<Integer, Integer> map : this.depthBlock.entrySet()){
-	//			if(max < map.getKey()) max = map.getKey();
-	//		}
-	//		
-	//		return max;
-	//	}
-
+	
 	public void endVisit(MethodDeclaration md){
-
+		
 		this.depth.pop();
+		int max = this.maxDepth.pop();
+		Util.safeAddStackTop(this.depth, max);
 		this.cycloComplexity += 2*Math.max(0, this.returns-1);
 		Util.safeAddToHashTable(this.stat.cycloCounter,this.cycloComplexity);
-		Util.safeAddToHashTable(this.stat.depCounter,this.maxDepth.pop());
+		Util.safeAddToHashTable(this.stat.depCounter,max);
 		Util.safeAddToHashTable(this.stat.methodCall,this.methodCalls);
 	}
 
@@ -179,23 +162,26 @@ class GroundhogASTVisitor extends ASTVisitor{
 	}
 
 	public boolean visit(FieldDeclaration fd){
+		
 		this.fields++;
 		if(Flags.isStatic(fd.getModifiers())){
 			this.staticField++;
 		}
+		
 		return true;
 	}
 
 	public boolean visit(Block node){
+
 		//Using an stack strategy to count the max nested block depth
 		//If I visit an block, so I have one more level of code
 		if(!this.depth.empty()){
 			/**
 			 * We also want to calculate block nested depth for methods
-			 * so, the stack will have at least onde element if we was visited
+			 * so, the stack will have at least one element if we was visited
 			 * an method before
 			 */
-			this.depth.push(this.depth.pop()+1);
+			Util.safeAddStackTop(this.depth, 1);
 		}
 		
 		return true;
@@ -212,20 +198,17 @@ class GroundhogASTVisitor extends ASTVisitor{
 		if(!this.depth.empty()){
 			/**
 			 * We also want to calculate block nested depth for methods
-			 * so, the stack will have at least onde element if we was visited
+			 * so, the stack will have at least one element if we was visited
 			 * an method before
+			 * 
+			 * Once I finish to visit a block, I need to reduce the nested level because
+			 * we complete one sub-level of nested block
 			 */
-			int temp = this.depth.pop();
+			int temp = Util.safeAddStackTop(depth, -1);
 			if(temp > this.maxDepth.peek()){
 				this.maxDepth.pop();
 				this.maxDepth.push(temp);
 			}
-
-			/**
-			 * Once I finish to visit a block, I need to reduce the nested level because
-			 * we complete one sub-level of nested block  
-			 */
-			this.depth.push(temp--);
 		}
 	}
 	

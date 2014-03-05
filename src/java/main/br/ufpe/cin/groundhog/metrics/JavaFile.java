@@ -75,7 +75,9 @@ public class JavaFile {
 			//Generate compilation unit to be visited
 			this.cu = (CompilationUnit) parser.createAST(null);
 			
+			//Generate statistics structure
 			this.stat = new Statistics();
+			this.stat.compilationUnits++;
 			
 		}catch(FileNotFoundException e){
 			throw new InvalidJavaFileException();

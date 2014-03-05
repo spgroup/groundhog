@@ -10,7 +10,6 @@ public class Statistics {
 	/**
 	 * Accumulators for method metrics
 	 */
-	
 	public Hashtable<Integer, Integer> methodCall = new Hashtable<Integer,Integer>();
 	public Hashtable<Integer, Integer> lineCounter = new Hashtable<Integer,Integer>();
 	public Hashtable<Integer, Integer> depCounter = new Hashtable<Integer,Integer>();
@@ -31,6 +30,13 @@ public class Statistics {
 	public long anonymousClasses = 0;
 	public long interfaces = 0;
 	public long classes = 0;
+	public long totalCode = 0;
+	
+	/**
+	 * Accumulators for package metrics
+	 */
+	public long compilationUnits = 0;
+	
 	
 	public void merge(Statistics statistics){
 		this.methodCall = Util.mergeHashTable(this.methodCall, statistics.methodCall);
@@ -45,18 +51,27 @@ public class Statistics {
 		this.anonymousClasses += statistics.anonymousClasses;
 		this.interfaces += statistics.interfaces;
 		this.classes += statistics.classes;
+		this.totalCode += statistics.totalCode;
+		this.compilationUnits += statistics.compilationUnits;
 	}
 	
 	@Override
 	public String toString() {
-		return "methodCall" + methodCall + "\n" +
-				"lineCounter" + lineCounter + "\n" +
-				"depCounter" + depCounter + "\n" +
-				"parameters" + parameters + "\n" +
-				"cycloCounter" + cycloCounter + "\n" +
-				"fieldCounter" + fieldCounter + "\n" +
-				"methodCounter" + methodCounter + "\n" +
-				"sFieldCounter" + sFieldCounter + "\n" +
-				"sMethodCounter" + sMethodCounter;
+		return "FOUT: " + methodCall + "\n" +
+				"MLOC: " + lineCounter + "\n" +
+				"NBD: " + depCounter + "\n" +
+				"PAR: " + parameters + "\n" +
+				"VG: " + cycloCounter + "\n" +
+				
+				"NOF: " + fieldCounter + "\n" +
+				"NOM:  " + methodCounter + "\n" +
+				"NSF:  " + sFieldCounter + "\n" +
+				"NSM:  " + sMethodCounter + "\n" +
+				
+				"ACD: " + anonymousClasses + "\n" +
+				"NOI: " + interfaces + "\n" +
+				"NOT: " + classes + "\n" +
+				"TLOC: " + totalCode + "\n" +
+				"NOCU: " + compilationUnits;
 	}
 }
