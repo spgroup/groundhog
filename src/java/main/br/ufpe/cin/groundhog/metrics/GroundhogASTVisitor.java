@@ -25,15 +25,22 @@ class GroundhogASTVisitor extends ASTVisitor{
 	Stack<Integer> depth = new Stack<Integer>();
 	Stack<Integer> maxDepth = new Stack<Integer>();
 	
+	/**
+	 * Flag for preventing the calculation of methods from interfaces
+	 */
+	boolean countMethods = true;
+	
 	public boolean visit(AnonymousClassDeclaration node){
 		this.stat.anonymousClasses++;
 		return true;
 	}
 
 	public boolean visit(TypeDeclaration td){
-		if(Flags.isInterface(td.getModifiers())){
+		if (td.isInterface()) {
+			this.countMethods = false;
 			this.stat.interfaces++;
-		}else{
+		} else {
+			this.countMethods = true;
 			this.stat.classes++;
 		}
 
@@ -55,33 +62,41 @@ class GroundhogASTVisitor extends ASTVisitor{
 
 	public boolean visit(MethodDeclaration md){
 		
-		this.methods++;
-		this.methodCalls = 0;
-		this.cycloComplexity = 1;
-		this.returns = 0;
-
-		//nested block depth calculation
-		this.depth.push(0);
-		this.maxDepth.push(0);
-
-		String[] lines = md.toString().split("\n");
-		Util.safeAddToHashTable(this.stat.lineCounter,lines.length);
-		int f = md.getModifiers();
-		if(Flags.isStatic(f)) this.staticMethod++;
-		int param = md.parameters().size();
-		Util.safeAddToHashTable(this.stat.parameters,param);
+		//We only take the metrics if the method isn't from an interface
+		if (this.countMethods) {
+		
+			this.methods++;
+			this.methodCalls = 0;
+			this.cycloComplexity = 1;
+			this.returns = 0;
+	
+			//nested block depth calculation
+			this.depth.push(0);
+			this.maxDepth.push(0);
+	
+			String[] lines = md.toString().split("\n");
+			Util.safeAddToHashTable(this.stat.lineCounter,lines.length);
+			int f = md.getModifiers();
+			if(Flags.isStatic(f)) this.staticMethod++;
+			int param = md.parameters().size();
+			Util.safeAddToHashTable(this.stat.parameters,param);
+		}
 		return true;
 	}
 	
 	public void endVisit(MethodDeclaration md){
 		
-		this.depth.pop();
-		int max = this.maxDepth.pop();
-		Util.safeAddStackTop(this.depth, max);
-		this.cycloComplexity += 2*Math.max(0, this.returns-1);
-		Util.safeAddToHashTable(this.stat.cycloCounter,this.cycloComplexity);
-		Util.safeAddToHashTable(this.stat.depCounter,max);
-		Util.safeAddToHashTable(this.stat.methodCall,this.methodCalls);
+		//The same as the visit, we only take metrics if the method isn't from an interface
+		if (this.countMethods){
+			
+			this.depth.pop();
+			int max = this.maxDepth.pop();
+			Util.safeAddStackTop(this.depth, max);
+			this.cycloComplexity += 2*Math.max(0, this.returns-1);
+			Util.safeAddToHashTable(this.stat.cycloCounter,this.cycloComplexity);
+			Util.safeAddToHashTable(this.stat.depCounter,max);
+			Util.safeAddToHashTable(this.stat.methodCall,this.methodCalls);
+		}
 	}
 
 	public boolean visit(MethodInvocation mi){
