@@ -4,6 +4,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 
+import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Reference;
+import org.mongodb.morphia.annotations.Transient;
+
+import com.google.gson.annotations.SerializedName;
+
 import br.ufpe.cin.groundhog.metrics.exception.InvalidJavaFileException;
 import br.ufpe.cin.groundhog.metrics.exception.InvalidJavaProjectPathException;
 import br.ufpe.cin.groundhog.metrics.exception.InvalidSourceRootCodePathException;
@@ -15,27 +21,42 @@ import br.ufpe.cin.groundhog.metrics.exception.InvalidTestSourcePathException;
  * @since 0.1.0
  */
 
+@Entity("javaprojects")
 public class JavaProject {
 
 	public static final String default_source_root_code = "src";
 
+	@Reference
 	private ArrayList<JavaPackage> code_packages;
+	
+	@Reference
 	private ArrayList<JavaPackage> test_packages;
 
+	@Transient
 	private File path;
 
+	@Transient
 	private File src;
 
+	@Transient
 	private File srtc;
 
+	@SerializedName("absolutepath")
+	private String absolutePath;
+	
+	@SerializedName("name")
 	private String name;
 
+	@Transient
 	private GroundhogASTVisitor visitor;
 	
+	@Transient
 	private StatisticsTable st_code;
 	
+	@Transient
 	private StatisticsTable st_test;
 	
+	@Transient
 	Statistics statistics = new Statistics();
 	
 	public JavaProject(File path, String name) throws InvalidJavaProjectPathException {
@@ -54,9 +75,9 @@ public class JavaProject {
 		commonInit();
 	}
 
-	public JavaProject(String path, String name) throws InvalidJavaProjectPathException{
+	public JavaProject(String absolutePath, String name) throws InvalidJavaProjectPathException{
 
-		this.path = new File(path);
+		this.path = new File(absolutePath);
 		this.name = name;
 		checkPath();
 		commonInit();
@@ -71,7 +92,8 @@ public class JavaProject {
 	}
 
 	private void commonInit(){
-
+		
+		this.absolutePath = this.path.getAbsolutePath();
 		this.code_packages = new ArrayList<JavaPackage>();
 		this.test_packages = new ArrayList<JavaPackage>();
 		this.visitor = new GroundhogASTVisitor();

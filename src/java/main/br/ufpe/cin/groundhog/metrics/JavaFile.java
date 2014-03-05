@@ -2,13 +2,27 @@ package br.ufpe.cin.groundhog.metrics;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.net.UnknownHostException;
+import java.util.List;
 import java.util.Scanner;
 
+import org.bson.types.ObjectId;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import br.ufpe.cin.groundhog.metrics.exception.InvalidJavaFileException;
+
+import com.google.gson.annotations.SerializedName;
+import com.mongodb.Mongo;
+
+import org.mongodb.morphia.Datastore;
+import org.mongodb.morphia.Morphia;
+import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Id;
+import org.mongodb.morphia.annotations.Indexed;
+import org.mongodb.morphia.annotations.Reference;
+import org.mongodb.morphia.annotations.Transient;
 
 /**
  * Represents a java class in Groundhog metrics extractor
@@ -16,18 +30,47 @@ import br.ufpe.cin.groundhog.metrics.exception.InvalidJavaFileException;
  * @since 0.1.0
  */
 
+@Entity("javafiles")
 public class JavaFile {
 	
+	/**
+	 * Transient annotations will not be stored in the database
+	 */
+	
+	@Id
+	@Indexed(unique=true, dropDups=true)
+	ObjectId id;
+
+	@Transient
 	private File path;
+
+	@SerializedName("absolutepath")
+	private String absolutePath;
+	
+	@SerializedName("name")
 	private String name;
+	
+	@Transient
 	private ASTParser parser;
+
+	@Transient
 	private Scanner scanner;
+	
+	@Transient
 	private CompilationUnit cu;
+	
+	@Transient
 	private Statistics stat;
 	
 	public Statistics getStat() {
+		
 		return stat;
 	}
+	
+	/**
+	 * Default constructor used by morphia to create a empty object setting the annotated attributes using reflection 
+	 */
+	public JavaFile(){}
 
 	public JavaFile(File path, String name) throws InvalidJavaFileException{
 		
@@ -43,9 +86,9 @@ public class JavaFile {
 		commonInit();
 	}
 
-	public JavaFile(String path, String name) throws InvalidJavaFileException{
+	public JavaFile(String absolutePath, String name) throws InvalidJavaFileException{
 		
-		this.path = new File(path);
+		this.path = new File(absolutePath);
 		this.name = name;
 		commonInit();
 		
@@ -59,6 +102,8 @@ public class JavaFile {
 	}
 	
 	private void commonInit() throws InvalidJavaFileException{
+		
+		this.absolutePath = this.path.getAbsolutePath();
 		
 		try{
 			//Read java file
@@ -80,27 +125,31 @@ public class JavaFile {
 			this.stat.compilationUnits++;
 			
 		}catch(FileNotFoundException e){
+			
 			throw new InvalidJavaFileException();
 		}
 	}
 	
 	@Override
-	public String toString() {
+	public String toString(){
+		
 		return "File: " + this.name;
 	}
 	
-	public File getFile() {
+	public File getFile(){
+		
 		return path;
 	}
 
-	public void setFile(File file) {
+	public void setFile(File file){
+		
 		this.path = file;
 	}
 	
 	public void generateMetrics(GroundhogASTVisitor visitor){
+		
 		visitor.setStatistics(this.stat);
 		this.cu.accept(visitor);
 		this.stat = visitor.getStatistics();
 	}
-	
 }
