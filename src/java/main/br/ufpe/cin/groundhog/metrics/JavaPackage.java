@@ -41,10 +41,14 @@ public class JavaPackage {
 	private String name;
 	
 	@Transient
-	Statistics statistics = new Statistics();
+	private Statistics statistics = new Statistics();
 	
-	StatisticsTablePackage table;
+	@Reference(ignoreMissing = true)
+	private StatisticsTablePackage table;
 
+	/**
+	 * Default constructor used by morphia to create a empty object setting the annotated attributes using reflection 
+	 */
 	public JavaPackage(){}
 	
 	public JavaPackage(File path, String name) throws InvalidJavaFileException{

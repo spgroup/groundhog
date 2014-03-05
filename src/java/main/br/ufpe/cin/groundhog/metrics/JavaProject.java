@@ -57,9 +57,15 @@ public class JavaProject {
 	private StatisticsTable st_test;
 	
 	@Transient
-	Statistics statistics = new Statistics();
-		
+	private Statistics statistics = new Statistics();
+	
+	@Transient
 	private MetricsCollector collector;
+	
+	/**
+	 * Default constructor used by morphia to create a empty object setting the annotated attributes using reflection 
+	 */
+	public JavaProject() {}
 	
 	public JavaProject(File path, String name) throws InvalidJavaProjectPathException {
 
