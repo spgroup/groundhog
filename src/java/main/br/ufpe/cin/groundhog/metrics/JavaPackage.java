@@ -10,6 +10,8 @@ import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Indexed;
 import org.mongodb.morphia.annotations.Reference;
 import org.mongodb.morphia.annotations.Transient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -24,6 +26,9 @@ import br.ufpe.cin.groundhog.metrics.exception.InvalidJavaFileException;
 
 @Entity("javapackages")
 public class JavaPackage {
+	
+	@Transient
+	private static Logger logger = LoggerFactory.getLogger(JavaProject.class);
 	
 	@Id
 	@Indexed(unique=true, dropDups=true)
@@ -147,7 +152,7 @@ public class JavaPackage {
 		}
 		
 		collector.processPackageLevel(table, stats);
-		System.out.println(table);
+		logger.debug(table.toString());
 		return stats;
 	}
 	
@@ -161,7 +166,7 @@ public class JavaPackage {
 		
 		collector.processPackageLevel(table, stats);
 		
-		System.out.println(table);
+		logger.debug(table.toString());
 		
 		db.save(this.table);
 		db.save(this);
@@ -175,7 +180,7 @@ public class JavaPackage {
 		for (File file : this.path.listFiles()){
 			if(file.getName().endsWith(".java")){
 				this.files.add(new JavaFile(file,file.getName()));
-				//System.out.println("Java File " + file.getName() + " detected!");
+				logger.debug("Java File " + file.getName() + " detected!");
 			}
 		}
 	}

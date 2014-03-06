@@ -27,6 +27,10 @@ public final class JsonInputFile {
 	private String outputformat;
 	private Search search;
 	private String gitHubOauthAcessToken;
+	private File javaprojectpath;
+	private File child_path_src;
+	private File child_path_srtc;
+	private String dbname;
 
 	public JsonInputFile(CmdOptions opt) {
 		super();
@@ -38,6 +42,10 @@ public final class JsonInputFile {
 		this.outputformat = opt.getMetricsFormat();
 		this.search = new Search(opt.getArguments(), opt.getUsername());
 		this.gitHubOauthAcessToken = opt.getGitHubOauthAcessToken();
+		this.javaprojectpath = opt.getProjectPath();
+		this.child_path_src = opt.getChild_path_src();
+		this.child_path_srtc = opt.getChild_path_srtc();
+		this.dbname = opt.getDbName();
 	}
 
 	//TODO: this should be discovered dynamically
@@ -87,6 +95,36 @@ public final class JsonInputFile {
 		return this.search;
 	}
 
+	public File getJavaProjectPath(){
+		return this.javaprojectpath;
+	}
+	
+	public File getJavaProjectSourceRootPath(){
+		if(this.child_path_src == null){
+			return null;
+		}else if(this.child_path_src.isDirectory()){
+			return this.child_path_src;
+		}else{
+			File to_return = new File(javaprojectpath, this.child_path_src.toString());
+			return to_return;
+		}
+	}
+	
+	public File getJavaProjectSourceRootTestPath(){
+		if(this.child_path_srtc == null){
+			return null;
+		}else if(this.child_path_srtc.isDirectory()){
+			return this.child_path_srtc;
+		}else{
+			File to_return = new File(javaprojectpath, this.child_path_srtc.toString());
+			return to_return;
+		}
+	}
+	
+	public String getDBName(){
+		return this.dbname;
+	}
+	
 	public String toString() {
 		return Objects.toStringHelper("")
 				.add("forge", forge)
@@ -96,6 +134,10 @@ public final class JsonInputFile {
 				.add("nproject", nprojects)
 				.add("outputformat", outputformat)
 				.add("search", search)
+				.add("javaprojectpath", javaprojectpath)
+				.add("javaprojectsourcerootpath", child_path_src)
+				.add("javaprojectsourcetestrootpath", child_path_srtc)
+				.add("dbname", dbname)
 				.toString();
 	}
 }

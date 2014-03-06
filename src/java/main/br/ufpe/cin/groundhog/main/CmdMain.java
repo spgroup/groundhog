@@ -3,6 +3,7 @@ package br.ufpe.cin.groundhog.main;
 import static java.lang.String.format;
 
 import java.io.File;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,8 +29,14 @@ import br.ufpe.cin.groundhog.crawler.CrawlGitHub;
 import br.ufpe.cin.groundhog.crawler.CrawlGoogleCode;
 import br.ufpe.cin.groundhog.crawler.CrawlSourceForge;
 import br.ufpe.cin.groundhog.crawler.ForgeCrawler;
+import br.ufpe.cin.groundhog.database.GroundhogDB;
 import br.ufpe.cin.groundhog.http.HttpModule;
 import br.ufpe.cin.groundhog.http.Requests;
+import br.ufpe.cin.groundhog.metrics.JavaProject;
+import br.ufpe.cin.groundhog.metrics.exception.InvalidJavaFileException;
+import br.ufpe.cin.groundhog.metrics.exception.InvalidJavaProjectPathException;
+import br.ufpe.cin.groundhog.metrics.exception.InvalidSourceRootCodePathException;
+import br.ufpe.cin.groundhog.metrics.exception.InvalidTestSourcePathException;
 import br.ufpe.cin.groundhog.parser.java.JavaParser;
 import br.ufpe.cin.groundhog.parser.java.MutableInt;
 import br.ufpe.cin.groundhog.parser.java.NotAJavaProjectException;
@@ -171,7 +178,7 @@ public final class CmdMain extends GroundhogMain {
 
 			File repositoryFolder = repositoryFolderFuture.get();
 			logger.info(format("Project %s was downloaded", name));
-			
+
 			logger.info(format("Project has %d forks", project.getForksCount()));
 
 			logger.info(format("Checking out project %s to %s...", name, datetimeStr));
@@ -237,74 +244,99 @@ public final class CmdMain extends GroundhogMain {
 	@Override
 	public void run(JsonInputFile input) {
 		try {
-			final File destinationFolder = input.getDest();
-			final File metricsFolder = input.getOut();
 
-			logger.info("Creating temp folders...");
-			createTempFolders(destinationFolder, metricsFolder);
+			//Java Metrics
+			if(input.getDBName()!= null || input.getJavaProjectSourceRootPath() != null || input.getJavaProjectSourceRootTestPath() != null){
+				
+				final GroundhogDB ghdb = new GroundhogDB("127.0.0.1", input.getDBName());
+				ghdb.getMapper().mapPackage("br.ufpe.cin.groundhog.metrics");
+				
+				JavaProject project = new JavaProject(input.getJavaProjectPath());
+				try {
+					project.generateStructure(input.getJavaProjectSourceRootPath(), input.getJavaProjectSourceRootTestPath());
+				} catch (Exception e) {
+					logger.error("The struture of passed Java project can't be reconstructed!\nPlease check your parameters");
+					e.printStackTrace();
+				}
+				
+				project.generateMetrics(
+						input.getJavaProjectSourceRootTestPath() != null ? true: false,
+								ghdb);
 
-			final Date datetime = input.getDatetime();
-			final int nProjects = input.getNprojects();
-			final String username = input.getSearch().getUsername();
+			}else{
+				
+				final File destinationFolder = input.getDest();
+				final File metricsFolder = input.getOut();
 
-			// Search for projects
-			logger.info("Searching for projects... " + input.getSearch().getProjects());
-			ForgeSearch search = defineForgeSearch(input.getForge());
-			ForgeCrawler crawler = defineForgeCrawler(input.getForge(), destinationFolder);
+				logger.info("Creating temp folders...");
+				createTempFolders(destinationFolder, metricsFolder);
 
-			String term = input.getSearch().getProjects().get(0);
+				final Date datetime = input.getDatetime();
+				final int nProjects = input.getNprojects();
+				final String username = input.getSearch().getUsername();
 
-			List<Project> allProjects = null;
-			if(username != null && !username.isEmpty()) {
-				allProjects = search.getProjects(term, username, 1);				
-			} else {
-				allProjects = search.getProjects(term, 1,-1);
+				// Search for projects
+				logger.info("Searching for projects... " + input.getSearch().getProjects());
+				ForgeSearch search = defineForgeSearch(input.getForge());
+				ForgeCrawler crawler = defineForgeCrawler(input.getForge(), destinationFolder);
+
+				String term = input.getSearch().getProjects().get(0);
+
+				List<Project> allProjects = null;
+				if(username != null && !username.isEmpty()) {
+					allProjects = search.getProjects(term, username, 1);				
+				} else {
+					allProjects = search.getProjects(term, 1,-1);
+				}
+
+				//TODO the getProjects method already limits the number of searched projects
+				List<Project> projects = new ArrayList<Project>();
+				for (int i = 0; i < nProjects; i++) {
+					if (i < allProjects.size()) {
+						projects.add(allProjects.get(i));
+					}
+				}
+
+				// Download and analyze projects
+				logger.info("Downloading and processing projects...");
+				ExecutorService ex = Executors.newFixedThreadPool(JsonInputFile.getMaxThreads());
+				List<Future<File>> downloadFutures = crawler.asyncDownloadProjects(projects);
+				List<Future<?>> analysisFutures = new ArrayList<Future<?>>();
+
+				for (int i = 0; i < downloadFutures.size(); i++) {
+					final Project project = projects.get(i);
+					final Future<File> repositoryFolderFuture = downloadFutures.get(i);
+					final Formater metricsFormat = input.getOutputformat();
+
+					analysisFutures.add(ex.submit(new Runnable() {
+						@Override
+						public void run() {
+							File checkedOutRepository = downloadAndCheckoutProject(project, datetime, repositoryFolderFuture);
+
+							if (checkedOutRepository != null) {
+								analyzeProject(project, checkedOutRepository, datetime, metricsFolder, metricsFormat);
+							}
+						}
+					}));
+				}
+
+				ex.shutdown();
+				for (int i = 0; i < analysisFutures.size(); i++) {
+					try {
+						analysisFutures.get(i).get();
+					} catch (InterruptedException | ExecutionException e) {
+						logger.error(format("Error while analyzing project %s", projects.get(i).getName()), e);
+					}
+				}
+				logger.info("All projects were downloaded and analyzed!");
 			}
 			
-			//TODO the getProjects method already limits the number of searched projects
-			List<Project> projects = new ArrayList<Project>();
-			for (int i = 0; i < nProjects; i++) {
-				if (i < allProjects.size()) {
-					projects.add(allProjects.get(i));
-				}
-			}
-
-			// Download and analyze projects
-			logger.info("Downloading and processing projects...");
-			ExecutorService ex = Executors.newFixedThreadPool(JsonInputFile.getMaxThreads());
-			List<Future<File>> downloadFutures = crawler.asyncDownloadProjects(projects);
-			List<Future<?>> analysisFutures = new ArrayList<Future<?>>();
-
-			for (int i = 0; i < downloadFutures.size(); i++) {
-				final Project project = projects.get(i);
-				final Future<File> repositoryFolderFuture = downloadFutures.get(i);
-				final Formater metricsFormat = input.getOutputformat();
-
-				analysisFutures.add(ex.submit(new Runnable() {
-					@Override
-					public void run() {
-						File checkedOutRepository = downloadAndCheckoutProject(project, datetime, repositoryFolderFuture);
-
-						if (checkedOutRepository != null) {
-							analyzeProject(project, checkedOutRepository, datetime, metricsFolder, metricsFormat);
-						}
-					}
-				}));
-			}
-
-			ex.shutdown();
-			for (int i = 0; i < analysisFutures.size(); i++) {
-				try {
-					analysisFutures.get(i).get();
-				} catch (InterruptedException | ExecutionException e) {
-					logger.error(format("Error while analyzing project %s", projects.get(i).getName()), e);
-				}
-			}
-			logger.info("All projects were downloaded and analyzed!");
-
 		} catch (GroundhogException e) {
 			e.printStackTrace();
 			logger.error(e.getMessage());
+		} catch (UnknownHostException e1) {
+			e1.printStackTrace();
+			logger.error("Fail to acess MongoDB database, please check if its installed and running");
 		}
 	}
 

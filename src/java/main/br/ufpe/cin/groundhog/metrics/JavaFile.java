@@ -2,7 +2,6 @@ package br.ufpe.cin.groundhog.metrics;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.net.UnknownHostException;
 import java.util.Scanner;
 
 import org.bson.types.ObjectId;
@@ -14,11 +13,6 @@ import br.ufpe.cin.groundhog.database.GroundhogDB;
 import br.ufpe.cin.groundhog.metrics.exception.InvalidJavaFileException;
 
 import com.google.gson.annotations.SerializedName;
-import com.mongodb.Mongo;
-import com.mongodb.MongoClient;
-
-import org.mongodb.morphia.Datastore;
-import org.mongodb.morphia.Morphia;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Indexed;
@@ -175,16 +169,5 @@ public class JavaFile {
 		db.save(this.table);
 		db.save(this);
 		return to_return;
-	}
-	
-	public static void main(String[] args) throws UnknownHostException, InvalidJavaFileException {
-		Mongo mongo = new MongoClient("localhost");
-		Morphia morphia = new Morphia();
-		morphia.map(JavaFile.class);
-		Datastore datastore = morphia.createDatastore(mongo, "meudb");
-		
-		JavaFile f = new JavaFile("/home/tulio/projetos/github/groundhog/src/java/main/br/ufpe/cin/groundhog/metrics/JavaFile.java", "JavaFile.java");
-		
-		System.out.println(datastore.save(f));
 	}
 }

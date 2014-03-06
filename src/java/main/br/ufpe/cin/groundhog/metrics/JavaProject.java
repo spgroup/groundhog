@@ -10,6 +10,8 @@ import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Indexed;
 import org.mongodb.morphia.annotations.Reference;
 import org.mongodb.morphia.annotations.Transient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -27,6 +29,9 @@ import br.ufpe.cin.groundhog.metrics.exception.InvalidTestSourcePathException;
 
 @Entity("javaprojects")
 public class JavaProject {
+
+	@Transient
+	private static Logger logger = LoggerFactory.getLogger(JavaProject.class);
 
 	@Id
 	@Indexed(unique=true, dropDups=true)
@@ -225,7 +230,8 @@ public class JavaProject {
 
 		if(!this.path.isDirectory()){
 
-			System.out.println("This project has an invalid path!");
+			logger.error("This project has an invalid path!");
+
 			throw new InvalidJavaProjectPathException();
 		}
 	}
@@ -243,48 +249,70 @@ public class JavaProject {
 		}
 	}
 
+	public boolean generateStructure(File src, File srtc) throws InvalidJavaProjectPathException, InvalidSourceRootCodePathException, InvalidTestSourcePathException, InvalidJavaFileException{
+
+		if(this.path == null || !this.path.isDirectory())
+			return false;
+		else{
+
+			detectSourceRootCode(src);
+			detectCodePackages();
+
+			if(srtc != null){
+				detectSourceRootTestCode(srtc);
+				detectTestCodePackages();
+			}
+
+			return true;
+		}
+	}
+
 	private void detectSourceRootCode(String source_root_code) throws InvalidJavaProjectPathException, InvalidSourceRootCodePathException{
-		System.out.println("Detecting sorce root code...");
+		logger.info("Detecting sorce root code...");
 		//This line has been commented because we need to decide how to detect the correct java source root code
 		//String scr = (source_root_code == null ? JavaProject.default_source_root_code : source_root_code);
 
 		File temp_src = null;
 		String src = source_root_code;
 
-		try{
+		temp_src = new File(this.path.getAbsolutePath(), src);
 
-			temp_src = new File(this.path.getAbsolutePath(), src);
+		detectSourceRootCode(temp_src);
 
-			if(temp_src.exists())
-				this.src = temp_src;
+	}
+
+	private void detectSourceRootCode(File source_root_code) throws InvalidJavaProjectPathException, InvalidSourceRootCodePathException{
+
+		try{	
+			if(source_root_code.exists())
+				this.src = source_root_code;
 			else
 				throw new InvalidSourceRootCodePathException();
 		}catch (NullPointerException e){
 			System.err.println("Source root code not found!");
 		}
-
-
 	}
 
 	private void detectSourceRootTestCode(String source_test_root_code) throws InvalidTestSourcePathException{
-		System.out.println("Detecting sorce root test code...");
+		logger.info("Detecting sorce root test code...");
 
 		File temp_srtc = null;
 
-		try{
+		temp_srtc = new File(this.path.getAbsolutePath(),source_test_root_code);
 
-			temp_srtc = new File(this.path.getAbsolutePath(),source_test_root_code);
+		detectSourceRootTestCode(temp_srtc);
+	}
 
-			if(temp_srtc.exists())
-				this.srtc = temp_srtc;
+	private void detectSourceRootTestCode(File source_test_root_code) throws InvalidTestSourcePathException{
+
+		try{	
+			if(source_test_root_code.exists())
+				this.srtc = source_test_root_code;
 			else
 				throw new InvalidTestSourcePathException();
-		}catch(NullPointerException e){
+		}catch (NullPointerException e){
 			System.err.println("Source root test code not found!");
 		}
-
-
-
 	}
 
 	@Override
@@ -298,14 +326,14 @@ public class JavaProject {
 
 		//Check if this project have files on default package
 		if(dir.equals(this.src) && hasJavaFiles(dir)){			
-			//System.out.println("Package default detected!");
+			logger.debug("Package default detected!");
 			packages.add(new JavaPackage(dir,"default"));
 		}
 
 		for(File file : dir.listFiles()){
 			//We have a directory and java files, so we have a package
 			if(file.isDirectory() && hasJavaFiles(file)){
-				//System.out.println("Package " + extractPackageName(src,file) + " detected!");
+				logger.debug("Package " + extractPackageName(src,file) + " detected!");
 				JavaPackage java_package = new JavaPackage(file,extractPackageName(src,file));
 				packages.add(java_package);
 				detectPackages(file,packages,src);
@@ -351,7 +379,7 @@ public class JavaProject {
 			_package.generateMetrics(this.visitor, this.collector);
 		}
 
-		System.out.println("All code packages done!");
+		logger.info("All code packages done!");
 
 		if(include_tests){
 			for (JavaPackage _package : this.test_packages){
@@ -359,7 +387,7 @@ public class JavaProject {
 			}
 		}
 
-		System.out.println("All test packages done!");
+		logger.info("All test packages done!");
 
 		return true;
 	}
@@ -371,16 +399,16 @@ public class JavaProject {
 			_package.generateMetrics(this.visitor, this.collector,db);
 		}
 
-		System.out.println("All code packages done!");
+		logger.info("All code packages done!");
 
 		if(include_tests){
 
 			for (JavaPackage _package : this.test_packages){
 				_package.generateMetrics(this.visitor,this.collector,db);
 			}
-		}
 
-		System.out.println("All test packages done!");
+			logger.info("All test packages done!");
+		}
 
 		db.save(this);
 
