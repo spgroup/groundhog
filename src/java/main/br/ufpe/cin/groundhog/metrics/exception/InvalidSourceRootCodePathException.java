@@ -1,6 +1,8 @@
 package br.ufpe.cin.groundhog.metrics.exception;
 
-public class InvalidSourceRootCodePathException extends Exception {
+import br.ufpe.cin.groundhog.GroundhogException;
+
+public class InvalidSourceRootCodePathException extends GroundhogException {
 
 	/**
 	 * If an invalid Java path has passed this exception will be raised

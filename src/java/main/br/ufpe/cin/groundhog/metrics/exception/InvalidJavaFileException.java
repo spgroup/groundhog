@@ -1,6 +1,8 @@
 package br.ufpe.cin.groundhog.metrics.exception;
 
-public class InvalidJavaFileException extends Exception {
+import br.ufpe.cin.groundhog.GroundhogException;
+
+public class InvalidJavaFileException extends GroundhogException {
 	
 	/**
 	 * 
