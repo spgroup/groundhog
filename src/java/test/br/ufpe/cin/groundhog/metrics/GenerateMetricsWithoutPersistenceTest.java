@@ -14,8 +14,8 @@ public class GenerateMetricsWithoutPersistenceTest {
 	@Test
 	public void test() {
 		try {
-			JavaProject project = new JavaProject("src/main/resources/scribe-java/");
-			project.generateStructure("src/main", "src/test");
+			JavaProject project = new JavaProject("src/main/resources/scribe-java-project/");
+			project.generateStructure("src/main/", "src/test/");
 			project.generateMetrics(false);
 			long linesOfCode = 0;
 			for (JavaPackage table : project.getCode_packages()){
@@ -23,7 +23,7 @@ public class GenerateMetricsWithoutPersistenceTest {
 			}
 			assertEquals("There should be 2808 lines of code in the source mais code", 2808, linesOfCode);
 		} catch (InvalidJavaProjectPathException | InvalidSourceRootCodePathException | InvalidTestSourcePathException | InvalidJavaFileException e) {
-			e.printStackTrace();
+			fail("An exception has occurred!");
 		}
 	}
 

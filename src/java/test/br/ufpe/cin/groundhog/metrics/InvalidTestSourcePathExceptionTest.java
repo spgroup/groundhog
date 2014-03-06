@@ -16,7 +16,7 @@ public class InvalidTestSourcePathExceptionTest {
 	@Test
 	public void testInvalidTestSourcePathException() {
 		try {
-			JavaProject jp = new JavaProject("src/main/resources/scribe-java/");
+			JavaProject jp = new JavaProject("src/main/resources/scribe-java-project/");
 			jp.generateStructure("src/main/", "invalid/path/");
 			fail("Should have thrown an InvalidTestSourcePathException because the test path is invalid!");
 		}catch(InvalidTestSourcePathException e) {
