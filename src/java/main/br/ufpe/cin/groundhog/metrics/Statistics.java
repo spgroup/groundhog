@@ -41,8 +41,19 @@ public class Statistics {
 	 */
 	public long compilationUnits = 0;
 	
+	/**
+	 * Count of how many statistics this statistics represents
+	 */
+	public long fileCount = 1;
 	
+	public Statistics() {}
+	
+	public Statistics(boolean Package){
+		this.fileCount = 0;
+	}
+		
 	public void merge(Statistics statistics){
+		this.fileCount++;
 		this.methodCall = Util.mergeHashTable(this.methodCall, statistics.methodCall);
 		this.lineCounter = Util.mergeHashTable(this.lineCounter, statistics.lineCounter);
 		this.depCounter = Util.mergeHashTable(this.depCounter, statistics.depCounter);

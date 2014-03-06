@@ -10,6 +10,7 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
+import br.ufpe.cin.groundhog.database.GroundhogDB;
 import br.ufpe.cin.groundhog.metrics.exception.InvalidJavaFileException;
 
 import com.google.gson.annotations.SerializedName;
@@ -62,11 +63,11 @@ public class JavaFile {
 	@Transient
 	private Statistics stat;
 	
-	@Reference(ignoreMissing = true)
+	@Reference
+	@SerializedName("sttablefile")
 	private StatisticsTableFile table;
 	
 	public Statistics getStat() {
-		
 		return stat;
 	}
 	
@@ -107,6 +108,7 @@ public class JavaFile {
 	private void commonInit() throws InvalidJavaFileException{
 		
 		this.absolutePath = this.path.getAbsolutePath();
+		this.table = new StatisticsTableFile();
 		
 		//Generate statistics structure
 		this.stat = new Statistics();
@@ -150,14 +152,29 @@ public class JavaFile {
 		
 		this.path = file;
 	}
-		
+
+	public StatisticsTableFile getTable() {
+		return table;
+	}
+
+	public void setTable(StatisticsTableFile table) {
+		this.table = table;
+	}
+
 	public Statistics generateMetrics(GroundhogASTVisitor visitor, MetricsCollector collector){
 
 		visitor.setStatistics(this.stat);
 		this.cu.accept(visitor);
 		this.stat = visitor.getStatistics();
-		collector.processFileLevel(table, stat);
+		collector.processFileLevel(this.table, this.stat);
 		return this.stat;
+	}
+	
+	public Statistics generateMetrics(GroundhogASTVisitor visitor, MetricsCollector collector, GroundhogDB db){
+		Statistics to_return = generateMetrics(visitor, collector);
+		db.save(this.table);
+		db.save(this);
+		return to_return;
 	}
 	
 	public static void main(String[] args) throws UnknownHostException, InvalidJavaFileException {

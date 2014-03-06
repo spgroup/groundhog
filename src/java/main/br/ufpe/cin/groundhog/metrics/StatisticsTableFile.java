@@ -25,4 +25,13 @@ public class StatisticsTableFile extends StatisticsTable{
 
 	@SerializedName("metric_tloc")
 	public long TLOC;
+	
+	@Override
+	public String toString() {
+		return super.toString() +
+				"metric_acd: " + ACD + "\n" +
+				"metric_noi: " + NOI + "\n" +
+				"metric_not: " + NOT + "\n" +
+				"metric_tloc: " + TLOC;
+	}
 }

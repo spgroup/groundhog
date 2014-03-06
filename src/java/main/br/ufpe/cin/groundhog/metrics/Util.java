@@ -96,10 +96,13 @@ public class Util {
 		return set.size();
 	}
 	
-	public static double safeCalculateAvg(long numerator, int denominator){
+	public static double safeCalculateAvg(long numerator, long denominator){
+		
 		BigDecimal bNumerator = new BigDecimal(numerator);
 		BigDecimal bDenominator = new BigDecimal(denominator);
-		return bNumerator.divide(bDenominator,10,RoundingMode.HALF_EVEN).doubleValue();
+		
+		if (denominator !=0) return bNumerator.divide(bDenominator,10,RoundingMode.HALF_EVEN).doubleValue();
+		else return 0;
 	}
 	
 }

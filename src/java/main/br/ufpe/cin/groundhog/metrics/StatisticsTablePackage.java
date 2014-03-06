@@ -44,4 +44,23 @@ public class StatisticsTablePackage extends StatisticsTable{
 	public long TLOC_max;
 	@SerializedName("metric_tloc_sum")
 	public long TLOC_sum;
+	
+	@Override
+	public String toString() {
+		return super.toString() +
+				"metric_acd_avg: " + ACD_avg + "\n" +
+				"metric_acd_max: " + ACD_max + "\n" +
+				"metric_acd_sum: " + ACD_sum + "\n" +
+				"metric_noi_avg: " + NOI_avg + "\n" +
+				"metric_noi_max: " + NOI_max + "\n" +
+				"metric_noi_sum: " + NOI_sum + "\n" +
+				"metric_not_avg: " + NOT_avg + "\n" +
+				"metric_not_max: " + NOT_max + "\n" +
+				"metric_not_sum: " + NOT_sum + "\n" +
+				"metric_tloc_avg: " + TLOC_avg + "\n" +
+				"metric_tloc_max: " + TLOC_max + "\n" +
+				"metric_tloc_sum: " + TLOC_sum + "\n" +
+				"metric_nocu: " + NOCU;
+	}
+
 }

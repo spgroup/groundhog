@@ -13,6 +13,7 @@ import org.mongodb.morphia.annotations.Transient;
 
 import com.google.gson.annotations.SerializedName;
 
+import br.ufpe.cin.groundhog.database.GroundhogDB;
 import br.ufpe.cin.groundhog.metrics.exception.InvalidJavaFileException;
 
 /**
@@ -29,6 +30,7 @@ public class JavaPackage {
 	ObjectId id;
 	
 	@Reference
+	@SerializedName("javafiles")
 	private ArrayList<JavaFile> files;
 	
 	@Transient
@@ -43,7 +45,8 @@ public class JavaPackage {
 	@Transient
 	private Statistics statistics = new Statistics();
 	
-	@Reference(ignoreMissing = true)
+	@Reference
+	@SerializedName("sttablepackage")
 	private StatisticsTablePackage table;
 
 	/**
@@ -86,7 +89,7 @@ public class JavaPackage {
 		return "Package: " + this.name;
 	}
 	
-	public void generateMetrics(GroundhogASTVisitor visitor, MetricsCollector collector){
+	public List<Statistics> generateMetrics(GroundhogASTVisitor visitor, MetricsCollector collector){
 		
 		List<Statistics> stats = new ArrayList<Statistics>();
 				
@@ -96,6 +99,26 @@ public class JavaPackage {
 		}
 		
 		collector.processPackageLevel(table, stats);
+		System.out.println(table);
+		return stats;
+	}
+	
+	public List<Statistics> generateMetrics(GroundhogASTVisitor visitor, MetricsCollector collector, GroundhogDB db){
+		List<Statistics> stats = new ArrayList<Statistics>();
+		
+		//Collect metrics
+		for(JavaFile file : this.files){
+			stats.add(file.generateMetrics(visitor, collector,db));
+		}
+		
+		collector.processPackageLevel(table, stats);
+		
+		System.out.println(table);
+		
+		db.save(this.table);
+		db.save(this);
+		
+		return stats;
 	}
 	
 	private void detectJavaFiles() throws InvalidJavaFileException{
@@ -104,7 +127,7 @@ public class JavaPackage {
 		for (File file : this.path.listFiles()){
 			if(file.getName().endsWith(".java")){
 				this.files.add(new JavaFile(file,file.getName()));
-				System.out.println("Java File " + file.getName() + " detected!");
+				//System.out.println("Java File " + file.getName() + " detected!");
 			}
 		}
 	}

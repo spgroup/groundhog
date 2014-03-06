@@ -4,12 +4,16 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 
+import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Id;
+import org.mongodb.morphia.annotations.Indexed;
 import org.mongodb.morphia.annotations.Reference;
 import org.mongodb.morphia.annotations.Transient;
 
 import com.google.gson.annotations.SerializedName;
 
+import br.ufpe.cin.groundhog.database.GroundhogDB;
 import br.ufpe.cin.groundhog.metrics.exception.InvalidJavaFileException;
 import br.ufpe.cin.groundhog.metrics.exception.InvalidJavaProjectPathException;
 import br.ufpe.cin.groundhog.metrics.exception.InvalidSourceRootCodePathException;
@@ -24,11 +28,15 @@ import br.ufpe.cin.groundhog.metrics.exception.InvalidTestSourcePathException;
 @Entity("javaprojects")
 public class JavaProject {
 
+	@Id
+	@Indexed(unique=true, dropDups=true)
+	private ObjectId id;
+
 	public static final String default_source_root_code = "src";
 
 	@Reference
 	private ArrayList<JavaPackage> code_packages;
-	
+
 	@Reference
 	private ArrayList<JavaPackage> test_packages;
 
@@ -43,30 +51,30 @@ public class JavaProject {
 
 	@SerializedName("absolutepath")
 	private String absolutePath;
-	
+
 	@SerializedName("name")
 	private String name;
 
 	@Transient
 	private GroundhogASTVisitor visitor;
-	
+
 	@Transient
 	private StatisticsTable st_code;
-	
+
 	@Transient
 	private StatisticsTable st_test;
-	
+
 	@Transient
 	private Statistics statistics = new Statistics();
-	
+
 	@Transient
 	private MetricsCollector collector;
-	
+
 	/**
 	 * Default constructor used by morphia to create a empty object setting the annotated attributes using reflection 
 	 */
 	public JavaProject() {}
-	
+
 	public JavaProject(File path, String name) throws InvalidJavaProjectPathException {
 
 		this.path = path;
@@ -96,7 +104,7 @@ public class JavaProject {
 	}
 
 	private void commonInit() throws InvalidJavaProjectPathException{
-		
+
 		checkPath();
 		this.absolutePath = this.path.getAbsolutePath();
 		this.collector = new MetricsCollector();
@@ -131,12 +139,12 @@ public class JavaProject {
 		System.out.println("Detecting sorce root code...");
 		//This line has been commented because we need to decide how to detect the correct java source root code
 		//String scr = (source_root_code == null ? JavaProject.default_source_root_code : source_root_code);
-		
+
 		File temp_src = null;
 		String src = source_root_code;
-		
+
 		try{
-			
+
 			temp_src = new File(this.path.getAbsolutePath(), src);
 
 			if(temp_src.exists())
@@ -154,11 +162,11 @@ public class JavaProject {
 		System.out.println("Detecting sorce root test code...");
 
 		File temp_srtc = null;
-		
+
 		try{
-			
+
 			temp_srtc = new File(this.path.getAbsolutePath(),source_test_root_code);
-			
+
 			if(temp_srtc.exists())
 				this.srtc = temp_srtc;
 			else
@@ -166,8 +174,8 @@ public class JavaProject {
 		}catch(NullPointerException e){
 			System.err.println("Source root test code not found!");
 		}
-		
-		
+
+
 
 	}
 
@@ -228,21 +236,46 @@ public class JavaProject {
 				.replaceAll(Matcher.quoteReplacement(File.separator), ".");
 	}
 
-	public void generateMetrics(boolean include_tests){
+	public boolean generateMetrics(boolean include_tests){
+
 		//For each code package of this project generate their metrics
 		for (JavaPackage _package : this.code_packages){
 			_package.generateMetrics(this.visitor, this.collector);
 		}
-				
+
 		System.out.println("All code packages done!");
-		
+
 		if(include_tests){
 			for (JavaPackage _package : this.test_packages){
 				_package.generateMetrics(this.visitor,this.collector);
 			}
 		}
-		
+
 		System.out.println("All test packages done!");
-		
+
+		return true;
+	}
+
+	public boolean generateMetrics(boolean include_tests, GroundhogDB db){
+
+		//For each code package of this project generate their metrics
+		for (JavaPackage _package : this.code_packages){
+			_package.generateMetrics(this.visitor, this.collector,db);
+		}
+
+		System.out.println("All code packages done!");
+
+		if(include_tests){
+
+			for (JavaPackage _package : this.test_packages){
+				_package.generateMetrics(this.visitor,this.collector,db);
+			}
+		}
+
+		System.out.println("All test packages done!");
+
+		db.save(this);
+
+		return true;
 	}
 }
