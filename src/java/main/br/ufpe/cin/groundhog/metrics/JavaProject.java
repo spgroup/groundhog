@@ -52,6 +52,114 @@ public class JavaProject {
 	@SerializedName("absolutepath")
 	private String absolutePath;
 
+	public ObjectId getId() {
+		return id;
+	}
+
+	public void setId(ObjectId id) {
+		this.id = id;
+	}
+
+	public ArrayList<JavaPackage> getCode_packages() {
+		return code_packages;
+	}
+
+	public void setCode_packages(ArrayList<JavaPackage> code_packages) {
+		this.code_packages = code_packages;
+	}
+
+	public ArrayList<JavaPackage> getTest_packages() {
+		return test_packages;
+	}
+
+	public void setTest_packages(ArrayList<JavaPackage> test_packages) {
+		this.test_packages = test_packages;
+	}
+
+	public File getPath() {
+		return path;
+	}
+
+	public void setPath(File path) {
+		this.path = path;
+	}
+
+	public File getSrc() {
+		return src;
+	}
+
+	public void setSrc(File src) {
+		this.src = src;
+	}
+
+	public File getSrtc() {
+		return srtc;
+	}
+
+	public void setSrtc(File srtc) {
+		this.srtc = srtc;
+	}
+
+	public String getAbsolutePath() {
+		return absolutePath;
+	}
+
+	public void setAbsolutePath(String absolutePath) {
+		this.absolutePath = absolutePath;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public GroundhogASTVisitor getVisitor() {
+		return visitor;
+	}
+
+	public void setVisitor(GroundhogASTVisitor visitor) {
+		this.visitor = visitor;
+	}
+
+	public StatisticsTable getSt_code() {
+		return st_code;
+	}
+
+	public void setSt_code(StatisticsTable st_code) {
+		this.st_code = st_code;
+	}
+
+	public StatisticsTable getSt_test() {
+		return st_test;
+	}
+
+	public void setSt_test(StatisticsTable st_test) {
+		this.st_test = st_test;
+	}
+
+	public Statistics getStatistics() {
+		return statistics;
+	}
+
+	public void setStatistics(Statistics statistics) {
+		this.statistics = statistics;
+	}
+
+	public MetricsCollector getCollector() {
+		return collector;
+	}
+
+	public void setCollector(MetricsCollector collector) {
+		this.collector = collector;
+	}
+
+	public static String getDefaultSourceRootCode() {
+		return default_source_root_code;
+	}
+
 	@SerializedName("name")
 	private String name;
 
@@ -117,7 +225,7 @@ public class JavaProject {
 
 		if(!this.path.isDirectory()){
 
-			System.out.println("This project have an invalid path!");
+			System.out.println("This project has an invalid path!");
 			throw new InvalidJavaProjectPathException();
 		}
 	}

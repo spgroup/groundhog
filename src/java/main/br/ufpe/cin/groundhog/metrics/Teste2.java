@@ -14,8 +14,9 @@ public class Teste2 {
 		GroundhogDB ghdb = new GroundhogDB("127.0.0.1", "java_metrics");
 		ghdb.getMapper().mapPackage("br.ufpe.cin.groundhog.metrics");
 		
-		JavaProject project = new JavaProject("/home/bruno/scm/github.com/groundhog2");
-		project.generateStructure("src/java/main", "src/java/test");
+		JavaFile j = new JavaFile("oi");
+		JavaProject project = new JavaProject("src/main/resources/scribe-java/");
+		project.generateStructure("src/main", "src/test");
 		System.out.println("Scanning packages to project:");
 		System.out.println(project.toString());
 		System.out.println("################################################");

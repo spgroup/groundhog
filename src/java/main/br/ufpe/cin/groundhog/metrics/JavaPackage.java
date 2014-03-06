@@ -45,6 +45,54 @@ public class JavaPackage {
 	@Transient
 	private Statistics statistics = new Statistics();
 	
+	public ObjectId getId() {
+		return id;
+	}
+
+	public void setId(ObjectId id) {
+		this.id = id;
+	}
+
+	public ArrayList<JavaFile> getFiles() {
+		return files;
+	}
+
+	public void setFiles(ArrayList<JavaFile> files) {
+		this.files = files;
+	}
+
+	public File getPath() {
+		return path;
+	}
+
+	public void setPath(File path) {
+		this.path = path;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Statistics getStatistics() {
+		return statistics;
+	}
+
+	public void setStatistics(Statistics statistics) {
+		this.statistics = statistics;
+	}
+
+	public StatisticsTablePackage getTable() {
+		return table;
+	}
+
+	public void setTable(StatisticsTablePackage table) {
+		this.table = table;
+	}
+
 	@Reference
 	@SerializedName("sttablepackage")
 	private StatisticsTablePackage table;

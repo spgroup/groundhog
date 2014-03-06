@@ -21,8 +21,11 @@ public final class MetricsCollector {
 			if(this.max < map.getKey()) this.max = map.getKey();
 		}
 		
-		if(fileCount > 1) this.avg = Util.safeCalculateAvg(numerator, fileCount);
-		else this.avg = Util.safeCalculateAvg(numerator, denominator);
+		//This code activates the calculation of the avg of the pakages taking into account its files rather than its methods. 
+		//if(fileCount > 1) this.avg = Util.safeCalculateAvg(numerator, fileCount);
+		//else this.avg = Util.safeCalculateAvg(numerator, denominator);
+		
+		this.avg = Util.safeCalculateAvg(numerator, denominator);
 		
 		this.total = numerator;
 	}
