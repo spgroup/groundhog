@@ -18,6 +18,7 @@ import com.mongodb.MongoClient;
  * 
  */
 public class GroundhogDB {
+
 	private String dbName;
 	private MongoClient mongo;
     private Datastore datastore;
@@ -28,6 +29,12 @@ public class GroundhogDB {
 		this.mongo = new MongoClient(host);
 		this.mapper = new Morphia();
 		this.datastore = this.mapper.createDatastore(this.mongo, dbName);
+	}
+	
+	public GroundhogDB(MongoClient mongo, String dbName) throws UnknownHostException {
+		this.dbName = dbName;
+		this.mongo = null;
+		this.datastore = new Morphia().createDatastore(mongo, dbName);
 	}
 	
 	public static void query(GitHubEntity entity, String params) {
@@ -46,16 +53,8 @@ public class GroundhogDB {
 		return dbName;
 	}
 
-	public void setDbName(String dbName) {
-		this.dbName = dbName;
-	}
-
 	public MongoClient getMongo() {
 		return this.mongo;
-	}
-
-	public void setMongo(MongoClient mongo) {
-		this.mongo = mongo;
 	}
 
 	public Datastore getDatastore() {

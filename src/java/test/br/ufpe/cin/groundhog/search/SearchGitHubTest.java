@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import br.ufpe.cin.groundhog.Commit;
+import br.ufpe.cin.groundhog.Contributor;
 import br.ufpe.cin.groundhog.Language;
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.Release;
@@ -27,7 +28,7 @@ public class SearchGitHubTest {
 		Injector injector = Guice.createInjector(new SearchModule(), new HttpModule());
 		searchGitHub = injector.getInstance(SearchGitHub.class);
 		User user = new User("elixir-lang");
-		fakeProject = new Project("elixir", "", SCM.GIT, "git@github.com:elixir-lang/elixir.git");
+		fakeProject = new Project("elixir", "", "git@github.com:elixir-lang/elixir.git");
 		fakeProject.setUser(user);
 	}
 	
@@ -79,10 +80,11 @@ public class SearchGitHubTest {
 	@Test
 	public void testGetAllProjectCommits() {
 		try {
-			User u = new User("vkostyukov");
-			Project project = new Project(u, "la4j");
-					
+
+			Project project = new Project(new User("github"),"android");
+		 
 			List<Commit> commits = searchGitHub.getAllProjectCommits(project);
+			
 			Assert.assertNotNull(commits);	
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -94,10 +96,14 @@ public class SearchGitHubTest {
 	public void testGetAllProjectContributors() {
 		try {
 			
-			Project project = new Project("twitter", "ambrose");
-			List<User> contributors = searchGitHub.getAllProjectContributors(project);
-						
+			/*Sanity test, if the list of contributors is null, something is wrong*/
+			Project project = new Project(new User("twitter"), "ambrose");
+			List<Contributor> contributors = searchGitHub.getAllProjectContributors(project);
 			Assert.assertNotNull(contributors);
+			
+			
+			
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail();
@@ -113,6 +119,9 @@ public class SearchGitHubTest {
 			List<Release> releases = searchGitHub.getAllProjectReleases(project);
 						
 			Assert.assertNotNull(releases);
+			
+			
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail();

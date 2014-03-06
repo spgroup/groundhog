@@ -5,14 +5,17 @@ import java.util.Date;
 import com.google.gson.annotations.SerializedName;
 
 import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Indexed;
 
 /**
  * Represents a Pull Request object in Groundhog
  * @author Rodrigo Alves
  */
-@Entity("pullRequests")
+@Entity("pull_requests")
 public class PullRequest extends Issue  {
+	@SerializedName("id")
+	@Id private int id;
 
 	@SerializedName("merged_at")
 	private Date mergedAt;
@@ -53,6 +56,14 @@ public class PullRequest extends Issue  {
 		super(project, number, state);
 	}
 
+	public int getId() {
+		return this.id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+	
 	/**
 	 * Returns the merge date of the Pull Request
 	 * @return

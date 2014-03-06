@@ -5,33 +5,34 @@ import java.util.Date;
 import com.google.gson.annotations.SerializedName;
 
 import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Indexed;
 import org.mongodb.morphia.annotations.Reference;
 
-/** <p>This class represents a Release in Groundhog 
+/** <h3>This class represents a Release in Groundhog</h3>
  * 
  * <p> <i>"Releases are first-class objects with changelogs and binary 
  * assets that present a full project history beyond Git artifacts.
  *  They're accessible from a repository's homepage" </i> 
- *  - Release description at GitHub oficial website, for more informations you can check at this <a href= https://github.com/blog/1547-release-your-software> link </a>.
+ *  - Release description at GitHub oficial website, for more informations you can check at this <a href= https://github.com/blog/1547-release-your-software> link </a>.</p>
  *	 
  *@see
- * <p>This class have a list of attributes whom <b> should be set </b> after the instantiation. These attributes represent the entities of a Release on the GitHub, see they below.   
- * <p>The attributes are at form bellow:    
- * <p>Class/type attributeName: What he represent  
+ * <p>This class have a list of attributes whom <b> should be set </b> after the instantiation. These attributes represent the entities of a Release on the GitHub, see they below. </p>
+ * <p>The attributes are at form bellow:</p>
+ * <p>Class/type attributeName: What he represent </p>  
  * <ul>
- * 		 <li> String tagName: Tag Name of the Release on GitHub. 
- *		 <li> String name: The name of the Release on GitHub.
- *		 <li> String targetCommitish: The Commitish value that determines where the Git tag is created from. Can be any branch or commit SHA. Defaults to the repository’s default branch (usually “master”). Unused if the Git tag already exists.
- *		 <li> String body: The Markdown-syntax-based description of the Release.
- * 		 <li> String assetsUrl: That present a full project history beyond Git artifacts
- * 		 <li> boolean draft: If the Release is a draft (unpublished) or not.
- *		 <li> booelan preRelease: If the Release is or not a full release.
- *		 <li> Date createdAt: When the Release was created.
- *		 <li> Date publishedAt: When the Release was published.
+ * 		 <li> <b>String</b> tagName: Tag Name of the Release on GitHub. 
+ *		 <li> <b>String</b> name: The name of the Release on GitHub.
+ *		 <li> <b>String</b> targetCommitish: The Commitish value that determines where the Git tag is created from. Can be any branch or commit SHA. Defaults to the repository’s default branch (usually “master”). Unused if the Git tag already exists.
+ *		 <li> <b>String</b> body: The Markdown-syntax-based description of the Release.
+ * 		 <li> <b>String</b> assetsUrl: That present a full project history beyond Git artifacts
+ * 		 <li> <b>boolean</b> draft: If the Release is a draft (unpublished) or not.
+ *		 <li> <b>booelan</b> preRelease: If the Release is or not a full release.
+ *		 <li> <b>Date</b> createdAt: When the Release was created.
+ *		 <li> <b>Date</b> publishedAt: When the Release was published.
  *		
  * </ul> 	
- * <p> These descriptions can also be seen in the Get methods.
+ * <p> These descriptions can also be seen in the Get methods. </p>
  * @author Marlon Reghert (mras) & Tomer Simis (tls)
  * 
 
@@ -42,7 +43,7 @@ import org.mongodb.morphia.annotations.Reference;
 public class Release extends GitHubEntity {
     @Indexed(unique=true, dropDups=true)
 	@SerializedName("id")
-	private int id;
+	@Id private int id;
 
 	@SerializedName("tag_name")
 	private String tagName;
@@ -248,6 +249,7 @@ public class Release extends GitHubEntity {
 		return stringReturn;
 	}
 
+	
 	/**This method return the URL of the release*/
 	@Override
 	public String getURL() {

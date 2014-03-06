@@ -8,6 +8,7 @@ import java.io.InputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 
+@Deprecated
 public class TarUncompressor {
 
 	// Adapted from:

@@ -54,7 +54,7 @@ public class SearchGoogleCode implements ForgeSearch {
 	 */
 	private void setCheckoutCommandToProject(String command, Project project) {
 		String url = command.split(" ")[2];
-		project.setScmURL(url);
+		project.setCheckoutURL(url);
 
 		if (command.startsWith("svn")) {
 			project.setSCM(SCM.SVN);

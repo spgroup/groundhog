@@ -173,33 +173,28 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.11</version>
-    </dependency>
-    <!--<dependency>
-      <groupId>org.gitective</groupId>
-      <artifactId>gitective-core</artifactId>
-      <version>0.9.9</version>
-    </dependency>-->
-    <dependency>
-        <groupId>org.mongodb</groupId>
-        <artifactId>mongo-java-driver</artifactId>
-        <version>2.11.3</version>
-    </dependency>
-    <dependency>
-        <groupId>org.mongodb.morphia</groupId>
-        <artifactId>morphia</artifactId>
-        <version>0.105</version>
-    </dependency>
-  	<dependency>
-        <groupId>org.eclipse.jdt</groupId>
-        <artifactId>core</artifactId>
-        <version>3.3.0-v_771</version>
-    </dependency>
-    <dependency>
-		<groupId>org.eclipse.jdt</groupId>
-		<artifactId>org.eclipse.jdt.core</artifactId>
-		<version>3.7.1</version>
-	</dependency>
-    </dependencies>
+		</dependency>
+		<dependency>
+		        <groupId>org.mongodb</groupId>
+		        <artifactId>mongo-java-driver</artifactId>
+		        <version>2.11.3</version>
+		 </dependency>
+		 <dependency>
+		        <groupId>org.mongodb.morphia</groupId>
+		        <artifactId>morphia</artifactId>
+		        <version>0.105</version>
+		 </dependency>
+		 <dependency>
+			<groupId>org.eclipse.jdt</groupId>
+			<artifactId>org.eclipse.jdt.core</artifactId>
+			<version>3.7.1</version>
+		</dependency>
+		 <dependency>
+			    <groupId>de.flapdoodle.embed</groupId>
+			    <artifactId>de.flapdoodle.embed.mongo</artifactId>
+			    <version>1.42</version>
+			</dependency>
+	</dependencies>
 
 	<build>
 		<sourceDirectory>${project.basedir}/src/java/main</sourceDirectory>

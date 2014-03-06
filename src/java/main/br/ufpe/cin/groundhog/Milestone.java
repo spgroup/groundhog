@@ -6,6 +6,7 @@ import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
 import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Indexed;
 import org.mongodb.morphia.annotations.Reference;
 
@@ -17,7 +18,7 @@ import org.mongodb.morphia.annotations.Reference;
 public class Milestone extends GitHubEntity {
     @Indexed(unique=true, dropDups=true)
 	@SerializedName("id")
-	private int id;
+	@Id private int id;
 	
 	@SerializedName("number")
 	private int number;

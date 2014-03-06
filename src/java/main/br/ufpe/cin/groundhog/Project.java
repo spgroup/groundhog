@@ -3,20 +3,40 @@ package br.ufpe.cin.groundhog;
 import java.util.Date;
 import java.util.List;
 
+import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Id;
+import org.mongodb.morphia.annotations.Indexed;
+import org.mongodb.morphia.annotations.Reference;
+
 import br.ufpe.cin.groundhog.util.Dates;
 
-import org.mongodb.morphia.annotations.Entity;
-import org.mongodb.morphia.annotations.Reference;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Represents a software project in Groundhog
- * @author fjsj, gustavopinto, Rodrigo Alves
+ * <h1>Project -  <i>Represents a software project in Groundhog</i> </h1> 
+ * <p>
+ * 	This Class support the base of <i>Groundhog</i> and maybe the most important Class, because like
+ *  we can found at <a href="http://en.wikipedia.org/wiki/GitHub"><i>Wikipedia</i></a> <i>"GitHub is a web-based hosting service for software development projects that use the Git revision control system."</i>. 
+ *  A Project object contains all entities that in some way are connected. 
+ *  A <i>Groundhog</i> user want to extract metrics from projects hosted on <a href="https://github.com/"><i>Github</i></a>, so this Class can give support to all data that a project can have 
+ *	and consequently extract metrics from these. 
+ * </p>
+ *  
+ * @author 
+ * <ul>
+ * 		<li>fjsj</li>
+ * 		<li>gustavopinto</li>
+ * 		<li>Rodrigo Alves</li>
+ * </ul>
  * @since 0.0.1
  */
 
 @Entity("projects")
 public class Project extends GitHubEntity {
+	@SerializedName("id")
+	@Indexed(unique=true, dropDups=true)
+	@Id private int id;
+	
 	@SerializedName("name")
 	private String name;
 
@@ -30,13 +50,12 @@ public class Project extends GitHubEntity {
 	@Reference private List<Issue> issues;
 	@Reference private List<Milestone> milestones;
 	@Reference private List<Commit> commits;
-	@Reference private List<User> contributors;
+	@Reference private List<Contributor> contributors;
 
 	@Reference private User user;
-	private SCM scm;
 
 	@SerializedName("clone_url")
-	private String scmURL;
+	private String checkoutURL;
 
 	@SerializedName("html_url")
 	private String sourceCodeURL;
@@ -76,50 +95,20 @@ public class Project extends GitHubEntity {
 	public Project(User user, String name) {
 		this.user = user;
 		this.name = name;
-		this.scmURL = "https://github.com/" + user.getLogin() + "/" + name + ".git";
+		this.checkoutURL = "https://github.com/" + user.getLogin() + "/" + name + ".git";
+		this.sourceCodeURL = "https://github.com/" + user.getLogin() + "/" + name;
 	}
 	
-	/**
-	 * 2-parameter complimentary constructor so the Groundhog user does not have to create a user object every time
-	 * you want to initialize a new {@link Project}
-	 * @param user the {@link String} representing the user login on GitHub
-	 * @param name the name of the {@link Project}
-	 */
-	public Project(String userLogin, String name) {
-		this.user = new User(userLogin);
-		this.name = name;
-	}
-
 	/**
 	 * 3-parameter constructor
 	 * @param name the project name
 	 * @param description the project description
-	 * @param sourceCodeURL the project's source code URL
+	 * @param checkoutURL the project's source code URL
 	 */
-	public Project(String name, String description, String sourceCodeURL) {
+	public Project(String name, String description, String checkoutURL) {
 		this.name = name;
 		this.description = description;
-		this.sourceCodeURL = sourceCodeURL;
-	}
-
-	public Project(String name, String description, SCM scm, String scmURL) {
-		this.name = name;
-		this.description = description;
-		this.scm = scm;
-		this.scmURL = scmURL;
-	}
-
-	public Project(String name, String description, SCM scm, String scmURL,
-			String sourceCodeURL) {
-		this.name = name;
-		this.description = description;
-		this.sourceCodeURL = sourceCodeURL;
-	}
-
-	public Project(String name, String description, String sourceCodeURL, SCM scm, String scmURL) {
-		this(name, description, sourceCodeURL);
-		this.scm = scm;
-		this.scmURL = scmURL;
+		this.checkoutURL = checkoutURL;
 	}
 
 	/**
@@ -173,45 +162,47 @@ public class Project extends GitHubEntity {
 	/**
 	 * Informs the project's SCM
 	 * @return
+	 * @deprecated
 	 */
 	public SCM getSCM() {
-		return this.scm;
+		throw new UnsupportedOperationException("This method is not supported anymore.");
 	}
 
-	public void setSCM(SCM scm) {
-		this.scm = scm;
+	public void setSCM(SCM hg) {
+		throw new UnsupportedOperationException("This method is not supported anymore.");
 	}
+	
 	/**
 	 * Informs the project's SCM URL
 	 * @return
 	 */
-	public String getScmURL() {
-		return this.scmURL;
+	public String getCheckoutURL() {
+		return this.checkoutURL;
 	}
 
 	/**
 	 * Sets the project's SCM URL
 	 * @param scmURL
 	 */
-	public void setScmURL(String scmURL) {
-		this.scmURL = scmURL;
+	public void setCheckoutURL(String scmURL) {
+		this.checkoutURL = scmURL;
 	}
 
 	/**
 	 * Informs the source code URL of the project
 	 * @return a String correspondent to the source code URL of the project in question
 	 */
-	public String getSourceCodeURL() {
-		return this.sourceCodeURL;
-	}
+//	public String getSourceCodeURL() {
+//		return this.sourceCodeURL;
+//	}
 
 	/**
 	 * Sets the source code URL for the project
 	 * @param sourceCodeURL sets the URL String of the project's source code
 	 */
-	public void setSourceCodeURL(String sourceCodeURL) {
-		this.sourceCodeURL = sourceCodeURL;
-	}
+//	public void setSourceCodeURL(String sourceCodeURL) {
+//		this.sourceCodeURL = sourceCodeURL;
+//	}
 
 	/**
 	 * Informs whether a project allow downloads or not
@@ -452,11 +443,11 @@ public class Project extends GitHubEntity {
 	 * Returns the list of contributors of the project as GitHub users
 	 * @return
 	 */
-	public List<User> getContributors() {
+	public List<Contributor> getContributors() {
 		return this.contributors;
 	}
 	
-	public void setContributors(List<User> contributors) {
+	public void setContributors(List<Contributor> contributors) {
 		this.contributors = contributors;
 	}
 
@@ -474,6 +465,14 @@ public class Project extends GitHubEntity {
 	 */
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	/**
@@ -513,6 +512,18 @@ public class Project extends GitHubEntity {
 		return String.format("https://api.github.com/repos/%s/%s", this.getUser().getLogin(), this.getName());
 	}
 
+	/**
+	 * If two projects have the same ID, then they are equals.
+	 * */
+	public boolean equals(Project project){
+		if(this.id == project.getId()){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	
 	@Override
 	public String toString() {
 		return String.format("Project(%s, %s)", this.name, this.sourceCodeURL);

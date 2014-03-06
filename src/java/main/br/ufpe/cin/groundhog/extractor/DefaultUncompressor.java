@@ -15,7 +15,7 @@ import br.ufpe.cin.groundhog.GroundhogException;
 /**
  * The default file uncompressor in Groundhog
  * @author fjsj
- *
+ * @deprecated
  */
 public class DefaultUncompressor {
 	private static DefaultUncompressor instance;

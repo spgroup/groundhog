@@ -1,6 +1,8 @@
 # Groundhog
 [![Build Status](https://travis-ci.org/spgroup/groundhog.png?branch=master)](https://travis-ci.org/spgroup/groundhog)
 
+For discussions and suggestions, please refer to the [Groundhog list](https://groups.google.com/forum/#!forum/projeto-groundhog) on Google Groups.
+
 Groundhog is an easy to use framework for crawling raw GitHub data and to extract metrics from it. It leverages the power of the Java language, as well as the Github plataform, to help researchers to better understand software repositories. Groundhog goals are flexibility, extensibility and simplicity.
 
 **WARNING:** Groundhog is currently alpha-software and its API **will** suffer major changes. The current version is an experiment that showcases using the GitHub API and the JavaCompiler.
@@ -10,12 +12,10 @@ On the developer side, Groundhog focuses on simplicity by shipping with a bare s
 It is currently alpha software and it supports:
 
 * Partially integrated with GitHub API
-* Extract and download projects from three forges
-* Collect metrics about Java code
+* Collect Java code metrics
 * Plug-and-play features
 
-Before becoming beta, we want to add the following to Groundhog:
-* Fully-integrated with GitHub API
+Groundhog will become beta, as soon as we fully-integrated it with GitHub API
 
 ## Build
 
@@ -118,7 +118,7 @@ List<Issue> issues = searchGitHub.getAllProjectIssues(pr);
 
 System.out.println("Listing 'em Issues...");
 for (Issue issue: issues) {
-  System.out.println(issue.getTitle());
+    System.out.println(issue.getTitle());
 }
 ```
 
@@ -159,8 +159,7 @@ List<Language> languages = searchGitHub.fetchProjectLanguages(pr);
 You can also get the list of people who contributed to a project on GitHub:
 
 ```java
-User user = new User("rails");
-Project project = new Project(user, "rails"); // project github.com/rails/rails
+Project project = new Project("rails", "rails"); // project github.com/rails/rails
 
 List<User> contributors = searchGitHub.getAllProjectContributors(project);
 ```
@@ -196,7 +195,6 @@ for (Commit comm: commits) {
     db.save(comm);
     System.out.println(comm);
 }
-
 ```
 
 Refer to the [full Database Support Guide] in the wiki for more information.

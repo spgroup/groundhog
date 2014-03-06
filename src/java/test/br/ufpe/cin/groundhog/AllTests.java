@@ -1,5 +1,7 @@
 package br.ufpe.cin.groundhog;
 
+import org.junit.Assert;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -20,7 +22,7 @@ import br.ufpe.cin.groundhog.util.FileUtilTest;
 		CrawlGitHubTest.class, CrawlGoogleCodeTest.class,
 		CrawlSourceForgeTest.class, OptionsTest.class,
 		SearchGoogleCodeTest.class, SearchSourceForgeTest.class,
-		SearchGitHubTest.class, FileUtilTest.class })
+		SearchGitHubTest.class, FileUtilTest.class, EntityTest.class })
 public class AllTests {
 
 }

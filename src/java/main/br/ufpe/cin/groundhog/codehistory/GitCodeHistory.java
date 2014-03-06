@@ -47,10 +47,8 @@ public class GitCodeHistory implements CodeHistory {
 			logger.info("Checking out to the specific date..");
 			this.gitClient.checkout(projectFolder, date);
 			return projectFolder;
-		} catch (EmptyProjectAtDateException e) {
-			logger.error(e.getMessage());
-			throw new CheckoutException(e.getMessage());
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			throw new CheckoutException(e.getMessage());
 		}
 	}

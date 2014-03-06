@@ -11,7 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import br.ufpe.cin.groundhog.Project;
-import br.ufpe.cin.groundhog.SCM;
 import br.ufpe.cin.groundhog.scmclient.GitClient;
 import br.ufpe.cin.groundhog.scmclient.ScmModule;
 
@@ -20,7 +19,6 @@ import com.google.common.io.Files;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-@Deprecated
 public class CrawlGitHubTest {
 
 	private GitClient gitClient;
@@ -34,7 +32,7 @@ public class CrawlGitHubTest {
 	@Test
 	public void testCrawlGithub() throws InterruptedException, ExecutionException {
 		CrawlGitHub crawl = new CrawlGitHub(gitClient, Files.createTempDir());
-		Project p = new Project("modules.playframework.org", "", SCM.GIT, "git@github.com:playframework/modules.playframework.org.git");
+		Project p = new Project("modules.playframework.org", "description", "https://github.com/spgroup/groundhog.git");
 		List<Future<File>> fs = crawl.asyncDownloadProjects(Lists.newArrayList(p));
 		for (Future<File> f : fs) {
 			File file = f.get();
