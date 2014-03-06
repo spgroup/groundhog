@@ -193,11 +193,4 @@ public class JavaPackage {
 		this.absolutePath = absolutePath;
 	}
 	
-	public void storeData() {
-		
-		/**
-		 * Stores all the collected data from JavaFiles, JavaPackages, JavaProjects 
-		 * and its statistics in the local database
-		 */
-	}
 }
