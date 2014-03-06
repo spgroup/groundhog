@@ -16,7 +16,7 @@ public class InvalidSourceRootCodePathExceptionTest {
 	@Test
 	public void testInvalidSourceRootCodePathException() {
 		try {
-			JavaProject jp = new JavaProject("src/main/resources/scribe-java/");
+			JavaProject jp = new JavaProject("src/main/resources/scribe-java-project/");
 			jp.generateStructure("invalid/path/", "src/test/");
 			fail("Should have thrown an InvalidSourceRootCodePathException because the source root code path is invalid!");
 		}catch(InvalidSourceRootCodePathException e) {

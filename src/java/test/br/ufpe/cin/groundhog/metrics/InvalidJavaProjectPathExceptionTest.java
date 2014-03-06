@@ -13,7 +13,7 @@ public class InvalidJavaProjectPathExceptionTest {
 	@Test
 	public void testInvalidJavaProjectPathException() {
 		try {
-			new JavaProject("/home/tulio/projetos/github/scribe-java/");
+			new JavaProject("/invalid/path/");
 			fail("Should have thrown an InvalidJavaProjectPathException because the project path is invalid!");
 		}catch(InvalidJavaProjectPathException e) {
 			assertThat(e.getMessage(), containsString("Invalid Java project path"));
