@@ -51,6 +51,26 @@ public class CmdOptions {
 	@Option(name = "-githubtoken", usage = "use authenticated requests to github api")
 	private String gitHubOauthAcessToken;
 	
+	@Option(name = "-jm", usage = "use to extract some metrics from java projects, like McGabe complexity and total lines of code (TLOC), to the project passed\n"
+			+ "By default the path is your actual directory",
+			aliases = {"--generate-java-metrics"}, metaVar = "<file>")
+	private File projectPath = new File(System.getProperty("user.dir"));
+	
+	@Option(name = "-src", usage = "use this option to provide the path of source root code directory from project root",
+			aliases = {"--source-root-code"}, metaVar = "<file>")
+	private File child_path_src;
+	
+	@Option(name = "-srtc", usage = "use this option to provide the path of source root code directory from project root",
+			aliases = {"--source-root-test-code"}, metaVar = "<file>")
+	private File child_path_srtc;
+	
+	@Option(name = "-dm", usage = "use this option to provide the name of Groundhog database when the generated metrics will be stored.\n"
+			+ "By default the database name are java_metrics",
+			aliases = {"--database-name"})
+	private String dbName = "java_metrics";
+	
+	
+	
 	private JsonInputFile input = null;
 
 	@Argument
@@ -172,7 +192,47 @@ public class CmdOptions {
 	public void setGitHubOauthAcessToken(String gitHubOauthAcessToken) {
 		this.gitHubOauthAcessToken = gitHubOauthAcessToken;
 	}
+	
+	public File getProjectPath() {
+		return projectPath;
+	}
 
+	public void setProjectPath(File projectPath) {
+		this.projectPath = projectPath;
+	}
+
+	public File getChild_path_src() {
+		return child_path_src;
+	}
+
+	public void setChild_path_src(File child_path_src) {
+		this.child_path_src = child_path_src;
+	}
+
+	public File getChild_path_srtc() {
+		return child_path_srtc;
+	}
+
+	public void setChild_path_srtc(File child_path_srtc) {
+		this.child_path_srtc = child_path_srtc;
+	}
+
+	public String getDbName() {
+		return dbName;
+	}
+
+	public void setDbName(String dbName) {
+		this.dbName = dbName;
+	}
+
+	public JsonInputFile getInput() {
+		return input;
+	}
+
+	public void setInput(JsonInputFile input) {
+		this.input = input;
+	}
+	
 	@Option(name = "-in", usage = "all inputs together in one json file")
 	public void setInputFile(File inputFile) {
 		try {

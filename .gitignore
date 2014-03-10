@@ -12,4 +12,3 @@ bin
 *.log
 
 *.jar
-metrics/
